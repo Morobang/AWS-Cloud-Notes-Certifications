@@ -1,81 +1,64 @@
 
 # AWS Certifications & Study Notes
 
-Welcome to my AWS certification repository! This project organizes my **study notes** and **official certificates** for AWS cloud certifications.  
+Welcome to my AWS certification repository! This project organizes my **study notes**, **hands-on labs**, and **official certificates** for AWS certifications.  
 
 ## Certifications
 
 | Certification | Notes | Certificate | Status |
 |--------------|-------|-------------|--------|
-| [AWS Certified Cloud Practitioner](AWS-Cloud-Practitioner/) | [📝 Notes](AWS-Cloud-Practitioner/Notes.md) | [📜 PDF](AWS-Cloud-Practitioner/Certificate.pdf) |  Obtained |
-| [AWS Data Engineer Associate](AWS-Data-Engineer-Associate/) | [📝 Notes](AWS-Data-Engineer-Associate/Notes.md) | [📜 PDF](AWS-Data-Engineer-Associate/Certificate.pdf) |  Obtained |
+| [AWS Certified Cloud Practitioner](AWS-Cloud-Practitioner/) | [📝 Notes](AWS-Cloud-Practitioner/Notes.md) | [📜 PDF](AWS-Cloud-Practitioner/AWS%20Certified%20Cloud%20Practitioner%20certificate%20Morobang%20Tshigidimisa.pdf) | ✅ Obtained |
+| [AWS Certified Data Engineer - Associate](AWS-Data-Engineer-Associate/) | [📝 Notes](AWS-Data-Engineer-Associate/Notes.md) | [📜 PDF](AWS-Data-Engineer-Associate/AWS%20Certified%20Data%20Engineer%20-%20Associate%20certificate%20Morobang%20Tshigidimisa.pdf) | ✅ Obtained |
+| [AWS Certified Security Specialty (SCS-C02)](AWS-Security-Specialty/) | [📝 Notes (In Progress)](AWS-Security-Specialty/Notes.md) | 🚧 Expected 2025 | 🔄 Studying |
 
 ---
 
 ## Repository Structure
 ```
-AWS-Certifications/
+AWS-Cloud-Notes-Certifications/
 ├── AWS-Cloud-Practitioner/
 │   ├── Notes.md          # Detailed study notes
 │   ├── Cheat-Sheet.md    # Quick reference guide
-│   └── Certificate.pdf   # Official certificate
+│   └── AWS Certified Cloud Practitioner certificate Morobang Tshigidimisa.pdf
 │
 ├── AWS-Data-Engineer-Associate/
 │   ├── Notes.md
 │   ├── Labs/             # Hands-on exercises
-│   └── Certificate.pdf
+│   └── AWS Certified Data Engineer - Associate certificate Morobang Tshigidimisa.pdf
 │
-└── README.md             # You are here!
+├── AWS-Security-Specialty/  # New!
+│   ├── Notes.md          # WIP: IAM Advanced, KMS, Detective Controls
+│   └── Cheat-Sheet.md    # Coming soon
+│
+└── README.md
 ```
 
 ---
 
 ## How to Use
-- **For Recruiters**: Click the PDF links above to verify my certifications.
-- **For Learners**: Feel free to use my notes! All materials are open-source (see [License](#-license)).
-- **For Me**: Tracking my AWS learning journey with structured documentation.
+- **Recruiters**: Verify certs via PDF links above.
+- **Learners**: Reuse notes (MIT Licensed).  
+- **Me**: Tracking progress with [GitHub Projects](https://github.com/users/Morobang/projects/1).
 
 ---
 
-## Notes Style
-- **Code Snippets**: AWS CLI, Python (boto3), Terraform examples.
-- **Diagrams**: Architecture visuals using Mermaid.js.
-- **Key Topics**: Focus on services, best practices, and exam tips.
+## Current Focus: Security Specialty (SCS-C02)
+**Topics I'm Mastering**:
+- 🔐 IAM Advanced (Permissions Boundaries, SCPs)
+- 🛡️ AWS KMS & CloudHSM
+- 🔍 Security Detective Controls (GuardDuty, Macie)
+- 📜 Compliance Frameworks (NIST, HIPAA)
 
 ---
 
 ## License
-This repository is licensed under [MIT License](LICENSE.md).  
-_Note: Certificates are personal credentials; do not redistribute PDFs._
+Notes: [MIT License](LICENSE.md)  
+⚠️ Certificates: Personal verification only (do not redistribute).
 
 ---
 
-## Connect With Me
+## Connect
 - [LinkedIn](www.linkedin.com/in/morobang-tshigidimisa-84172b26b)
-- [Personal Website](https://yourwebsite.com)
-- Email: morobangtshigidimisa
+- [GitHub](https://github.com/Morobang)
+- ✉️ morobangtshigidimisa@gmail.com
 
----
-
-> "Documentation is the love letter you write to your future self." — Unknown
-```
-
----
-
-### Key Features:
-1. **Professional Table**: Clear status tracking (✅/🚧) for certifications.
-2. **Mobile-Friendly**: Clean Markdown formatting.
-3. **Transparent Usage**: Clarifies who should use what (recruiters vs. learners).
-4. **Future-Proof**: Easy to add more certifications by copying folder structure.
-
-**Pro Tip**: Add a [Mermaid.js](https://mermaid.js.org/) diagram in your notes to visualize AWS architectures! Example:
-````markdown
-```mermaid
-graph LR
-  A[User] --> B(API Gateway)
-  B --> C[Lambda]
-  C --> D[(DynamoDB)]
-```
-````
-
-Let me know if you'd like to tweak any sections!
