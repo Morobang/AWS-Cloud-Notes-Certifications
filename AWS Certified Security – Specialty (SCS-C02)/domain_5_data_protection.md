@@ -98,10 +98,3 @@ This is about securely managing **credentials, API keys, secrets, and encryption
 | 5.3 | Manage Data Lifecycle | S3 Lifecycle, AWS Backup, Data Lifecycle Manager |
 | 5.4 | Protect Secrets/Keys | Secrets Manager, Parameter Store, KMS |
 
----
-
-Let me know if you’d like:
-- A full printable PDF with all domains
-- Practice quizzes or flashcards
-- Visual diagrams for this domain
-
