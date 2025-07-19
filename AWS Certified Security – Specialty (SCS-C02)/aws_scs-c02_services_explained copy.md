@@ -608,4 +608,3 @@ It inspects and filters traffic at the network level (Layer 3/4) using **Suricat
    - [AWS Security Pillar (Well-Architected Framework)](https://aws.amazon.com/architecture/well-architected/)  
    - [AWS Encryption Best Practices](https://docs.aws.amazon.com/whitepapers/latest/kms-best-practices/introduction.html)  
 
-Would you like **flashcards** or a **practice quiz**? Let me know! 🎯
