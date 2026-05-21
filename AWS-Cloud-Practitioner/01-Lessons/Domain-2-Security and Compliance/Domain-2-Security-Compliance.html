@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Domain 2: Security and Compliance — AWS Cloud Practitioner</title>
+  <style>
+    :root {
+      --aws-orange: #FF9900;
+      --aws-dark: #232F3E;
+      --aws-blue: #1A73E8;
+      --aws-teal: #00A591;
+      --aws-red: #e74c3c;
+      --text-primary: #1a1a2e;
+      --text-secondary: #4a4a6a;
+      --bg-page: #f5f6fa;
+      --bg-card: #ffffff;
+      --border: #e0e4f0;
+      --accent-light: #fff8ec;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg-page);
+      color: var(--text-primary);
+      line-height: 1.7;
+    }
+
+    /* ─── COVER ─── */
+    .cover {
+      background: linear-gradient(135deg, var(--aws-dark) 0%, #16213e 60%, #0f3460 100%);
+      color: #fff;
+      padding: 80px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 50%, rgba(255,153,0,0.12) 0%, transparent 60%);
+    }
+    .cover-badge {
+      display: inline-block;
+      background: rgba(255,153,0,0.2);
+      border: 1px solid rgba(255,153,0,0.5);
+      color: var(--aws-orange);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+    .cover h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .cover h1 span { color: var(--aws-orange); }
+    .cover p {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.75);
+      max-width: 600px;
+      margin: 0 auto 36px;
+    }
+    .cover-stats { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+    .stat { text-align: center; }
+    .stat-value { font-size: 2rem; font-weight: 800; color: var(--aws-orange); }
+    .stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ─── NAV ─── */
+    .chapter-nav {
+      background: var(--aws-dark);
+      padding: 0 40px;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .chapter-nav::-webkit-scrollbar { display: none; }
+    .nav-item {
+      color: rgba(255,255,255,0.55);
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 14px 18px;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .nav-item:hover { color: #fff; border-color: var(--aws-orange); }
+
+    /* ─── LAYOUT ─── */
+    .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 64px 0 48px; }
+    .section-header { margin-bottom: 40px; }
+    .section-tag {
+      display: inline-block;
+      background: var(--accent-light);
+      border: 1px solid rgba(255,153,0,0.3);
+      color: var(--aws-orange);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+    .section-header h2 {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+    .section-header p {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      margin-top: 10px;
+      max-width: 640px;
+    }
+
+    /* ─── INTRO CARD ─── */
+    .intro-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--aws-orange);
+      border-radius: 12px;
+      padding: 32px 36px;
+      margin-bottom: 32px;
+    }
+    .intro-card h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; }
+    .intro-card p { color: var(--text-secondary); line-height: 1.8; }
+    .intro-card p + p { margin-top: 12px; }
+
+    /* ─── DOMAIN TABLE ─── */
+    .domain-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+    .domain-table thead { background: var(--aws-dark); color: #fff; }
+    .domain-table thead th { padding: 14px 20px; text-align: left; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .domain-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    .domain-table tbody tr:last-child { border-bottom: none; }
+    .domain-table tbody tr:hover { background: #f9fafb; }
+    .domain-table tbody td { padding: 14px 20px; font-size: 0.92rem; color: var(--text-secondary); }
+    .domain-table tbody td:first-child { font-weight: 700; color: var(--text-primary); }
+
+    /* ─── RESPONSIBILITY MODEL ─── */
+    .responsibility-model {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    @media (max-width: 640px) { .responsibility-model { grid-template-columns: 1fr; } }
+
+    .resp-box {
+      border-radius: 12px;
+      padding: 28px;
+    }
+    .resp-aws {
+      background: linear-gradient(135deg, #232F3E 0%, #16213e 100%);
+      color: #fff;
+    }
+    .resp-customer {
+      background: linear-gradient(135deg, #1a73e8 0%, #0d5fc4 100%);
+      color: #fff;
+    }
+    .resp-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 6px;
+    }
+    .resp-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+    .resp-title span { color: var(--aws-orange); }
+    .resp-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+      font-size: 0.88rem;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+    .resp-item:last-child { border-bottom: none; }
+    .resp-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--aws-orange);
+      flex-shrink: 0;
+      margin-top: 8px;
+    }
+
+    /* ─── SERVICE TYPE TABLE ─── */
+    .matrix-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); font-size: 0.88rem; }
+    .matrix-table thead { background: var(--aws-dark); color: #fff; }
+    .matrix-table thead th { padding: 12px 16px; text-align: center; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .matrix-table thead th:first-child { text-align: left; }
+    .matrix-table tbody tr { border-bottom: 1px solid var(--border); }
+    .matrix-table tbody tr:last-child { border-bottom: none; }
+    .matrix-table tbody tr:hover { background: #f9fafb; }
+    .matrix-table tbody td { padding: 12px 16px; text-align: center; color: var(--text-secondary); }
+    .matrix-table tbody td:first-child { text-align: left; font-weight: 600; color: var(--text-primary); }
+    .badge-aws {
+      display: inline-block;
+      background: rgba(35,47,62,0.1);
+      color: var(--aws-dark);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .badge-you {
+      display: inline-block;
+      background: rgba(26,115,232,0.1);
+      color: var(--aws-blue);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .badge-na {
+      display: inline-block;
+      color: #bbb;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 8px;
+    }
+
+    /* ─── CARDS GRID ─── */
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+
+    .service-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .service-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); transform: translateY(-2px); }
+
+    .service-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 16px;
+    }
+    .icon-orange { background: rgba(255,153,0,0.12); }
+    .icon-blue   { background: rgba(26,115,232,0.1); }
+    .icon-teal   { background: rgba(0,165,145,0.1); }
+    .icon-purple { background: rgba(123,82,173,0.1); }
+    .icon-red    { background: rgba(231,76,60,0.1); }
+
+    .service-card h3 { font-size: 0.98rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
+    .service-card .service-subtitle { font-size: 0.78rem; font-weight: 600; color: var(--aws-orange); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; }
+    .service-card p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
+
+    /* ─── IAM GRID ─── */
+    .iam-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; margin-bottom: 32px; }
+
+    .iam-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .iam-header {
+      background: var(--aws-dark);
+      color: #fff;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .iam-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background: rgba(255,153,0,0.2);
+      border: 1px solid rgba(255,153,0,0.4);
+      color: var(--aws-orange);
+      font-size: 0.8rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .iam-title { font-size: 0.9rem; font-weight: 700; }
+    .iam-body { padding: 14px 18px; }
+    .iam-body p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.55; }
+
+    /* ─── TWO COLS ─── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px; }
+    @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+    .info-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+    }
+    .info-box h4 { font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; }
+    .info-box ul { padding-left: 18px; }
+    .info-box ul li { font-size: 0.87rem; color: var(--text-secondary); line-height: 1.6; padding: 2px 0; }
+
+    /* ─── CALLOUTS ─── */
+    .callout {
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 24px 0;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .callout-info { background: #eef4ff; border-left: 4px solid var(--aws-blue); }
+    .callout-warning { background: #fff8ec; border-left: 4px solid var(--aws-orange); }
+    .callout-danger { background: #fef0ef; border-left: 4px solid var(--aws-red); }
+    .callout-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+    .callout-body h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary); }
+    .callout-body p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
+
+    /* ─── COMPLIANCE CARDS ─── */
+    .compliance-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-bottom: 28px; }
+
+    .compliance-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .compliance-tag {
+      display: inline-block;
+      background: var(--aws-dark);
+      color: var(--aws-orange);
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    .compliance-card h3 { font-size: 0.93rem; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+    .compliance-card p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.55; }
+
+    /* ─── BEST PRACTICES TABLE ─── */
+    .bp-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+    .bp-table thead { background: var(--aws-dark); color: #fff; }
+    .bp-table thead th { padding: 12px 18px; text-align: left; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .bp-table tbody tr { border-bottom: 1px solid var(--border); }
+    .bp-table tbody tr:last-child { border-bottom: none; }
+    .bp-table tbody tr:hover { background: #f9fafb; }
+    .bp-table tbody td { padding: 12px 18px; font-size: 0.88rem; color: var(--text-secondary); }
+    .bp-table tbody td:first-child { font-weight: 700; color: var(--text-primary); }
+
+    /* ─── DIVIDER ─── */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+    /* ─── PRACTICE QUESTIONS ─── */
+    .questions-list { display: flex; flex-direction: column; gap: 20px; }
+    .question-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .question-stem { padding: 20px 24px; font-size: 0.95rem; font-weight: 600; color: var(--text-primary); }
+    .question-options { padding: 0 24px 16px; display: flex; flex-direction: column; gap: 8px; }
+    .option {
+      display: flex; gap: 12px; padding: 10px 14px; border-radius: 8px;
+      font-size: 0.88rem; color: var(--text-secondary); background: #f8f9ff; border: 1px solid transparent;
+    }
+    .option.correct { background: #edfaf5; border-color: #2ecc71; color: var(--text-primary); font-weight: 600; }
+    .option-letter { font-weight: 700; color: var(--aws-orange); flex-shrink: 0; }
+    .option.correct .option-letter { color: #27ae60; }
+    .question-explanation { background: #f8f9ff; border-top: 1px solid var(--border); padding: 14px 24px; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+    .question-explanation strong { color: var(--text-primary); }
+
+    /* ─── KEY TERMS ─── */
+    .terms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+    .term-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+    .term-name { font-size: 0.88rem; font-weight: 700; color: var(--aws-orange); margin-bottom: 4px; }
+    .term-def { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
+
+    /* ─── FOOTER ─── */
+    footer { background: var(--aws-dark); color: rgba(255,255,255,0.5); text-align: center; padding: 32px 24px; font-size: 0.82rem; }
+    footer strong { color: rgba(255,255,255,0.8); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 700px) {
+      .cover { padding: 60px 24px; }
+      .cover-stats { gap: 24px; }
+      .cards-grid, .iam-grid, .compliance-grid { grid-template-columns: 1fr; }
+      .chapter-nav { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ COVER ═══════════════════════════════════ -->
+<section class="cover">
+  <div class="cover-badge">AWS Cloud Practitioner — CLF-C02</div>
+  <h1>Domain 2: <span>Security &amp; Compliance</span></h1>
+  <p>Who is responsible for what, how to control access, how to protect data, and how to meet regulatory requirements on AWS.</p>
+  <div class="cover-stats">
+    <div class="stat">
+      <div class="stat-value">30%</div>
+      <div class="stat-label">of the exam</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">~20</div>
+      <div class="stat-label">exam questions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">4</div>
+      <div class="stat-label">task statements</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CHAPTER NAV ─── -->
+<nav class="chapter-nav">
+  <a class="nav-item" href="#overview">Overview</a>
+  <a class="nav-item" href="#shared">2.1 Shared Responsibility</a>
+  <a class="nav-item" href="#security">2.2 Security &amp; Governance</a>
+  <a class="nav-item" href="#iam">2.3 Access Management</a>
+  <a class="nav-item" href="#services">2.4 Security Services</a>
+  <a class="nav-item" href="#practice">Practice Questions</a>
+</nav>
+
+
+<!-- ═══════════════════════════ OVERVIEW ═══════════════════════════ -->
+<div id="overview">
+  <div class="container">
+    <div class="section">
+
+      <div class="section-header">
+        <div class="section-tag">Introduction</div>
+        <h2>Security is a shared responsibility</h2>
+        <p>Domain 2 is the largest domain on the Cloud Practitioner exam at 30%. It covers who is responsible for what, how to build a secure environment, how to control access, and how to meet compliance requirements.</p>
+      </div>
+
+      <div class="intro-card">
+        <h3>The core idea</h3>
+        <p>AWS secures the infrastructure — the physical hardware, data centers, networking, and underlying software. You secure what you put on that infrastructure — your data, your applications, your access controls, and your network configuration.</p>
+        <p>Neither party can fully secure the environment alone. AWS's secure data centers don't help you if your S3 bucket is publicly accessible. Your encryption settings don't help if AWS's hardware gets breached. That's why it's called the shared responsibility model.</p>
+      </div>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:20px;">
+        <h2 style="font-size:1.3rem;">What this domain covers</h2>
+      </div>
+
+      <table class="domain-table">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Topic</th>
+            <th>The key question</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2.1</td>
+            <td>Shared Responsibility Model</td>
+            <td>If something goes wrong, whose job was it to prevent it?</td>
+          </tr>
+          <tr>
+            <td>2.2</td>
+            <td>Security, Governance &amp; Compliance</td>
+            <td>How do you secure your environment and meet regulatory requirements?</td>
+          </tr>
+          <tr>
+            <td>2.3</td>
+            <td>Access Management (IAM)</td>
+            <td>How do you control who can access what in your AWS account?</td>
+          </tr>
+          <tr>
+            <td>2.4</td>
+            <td>Security Components &amp; Resources</td>
+            <td>What security tools does AWS provide, and when do you use each?</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top: 40px;">
+        <div class="section-header" style="margin-bottom:20px;">
+          <h2 style="font-size:1.3rem;">Key terms</h2>
+        </div>
+        <div class="terms-grid">
+          <div class="term-card">
+            <div class="term-name">Authentication</div>
+            <div class="term-def">Proving who you are. Username + password is authentication.</div>
+          </div>
+          <div class="term-card">
+            <div class="term-name">Authorization</div>
+            <div class="term-def">Determining what you're allowed to do after your identity is confirmed. IAM policies control authorization.</div>
+          </div>
+          <div class="term-card">
+            <div class="term-name">Encryption at rest</div>
+            <div class="term-def">Data is encrypted when stored — in S3, RDS, EBS, etc. Must be enabled explicitly.</div>
+          </div>
+          <div class="term-card">
+            <div class="term-name">Encryption in transit</div>
+            <div class="term-def">Data is encrypted while traveling over a network. HTTPS/TLS provides this.</div>
+          </div>
+          <div class="term-card">
+            <div class="term-name">MFA</div>
+            <div class="term-def">Multi-Factor Authentication — requires password plus a second factor (phone, hardware token).</div>
+          </div>
+          <div class="term-card">
+            <div class="term-name">Principle of least privilege</div>
+            <div class="term-def">Give users only the minimum permissions they need. Nothing more.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════ 2.1 SHARED RESPONSIBILITY ═══════════════════════════ -->
+<div id="shared">
+  <div class="container">
+    <div class="section">
+
+      <div class="section-header">
+        <div class="section-tag">Task 2.1</div>
+        <h2>The Shared Responsibility Model</h2>
+        <p>AWS and the customer divide security responsibilities. Understanding where each party's job ends and the other begins is foundational to everything else in this domain.</p>
+      </div>
+
+      <div class="responsibility-model">
+        <div class="resp-box resp-aws">
+          <div class="resp-label">AWS is responsible for</div>
+          <div class="resp-title">Security <span>OF</span> the Cloud</div>
+          <div class="resp-item"><div class="resp-dot"></div><span>Physical data center security — guards, cameras, biometric access</span></div>
+          <div class="resp-item"><div class="resp-dot"></div><span>Server hardware and networking gear</span></div>
+          <div class="resp-item"><div class="resp-dot"></div><span>Hypervisor and virtualization layer</span></div>
+          <div class="resp-item"><div class="resp-dot"></div><span>Global fiber network connecting AWS regions</span></div>
+          <div class="resp-item"><div class="resp-dot"></div><span>Host OS patching for managed services (RDS, Lambda)</span></div>
+        </div>
+        <div class="resp-box resp-customer">
+          <div class="resp-label">You are responsible for</div>
+          <div class="resp-title">Security <span>IN</span> the Cloud</div>
+          <div class="resp-item"><div class="resp-dot"></div><span>IAM — users, permissions, MFA, credential rotation</span></div>
+          <div class="resp-item"><div class="resp-dot"></div><span>Data encryption (at rest and in transit)</span></div>
+          <div class="resp-item"><div class="resp-dot"></div><span>Network configuration — security groups, VPC, subnets</span></div>
+          <div class="resp-item"><div class="resp-dot"></div><span>Application security — your code's vulnerabilities</span></div>
+          <div class="resp-item"><div class="resp-dot"></div><span>Compliance configuration — your workload must meet the standard, not just AWS</span></div>
+        </div>
+      </div>
+
+      <div class="callout callout-warning">
+        <div class="callout-icon">&#9888;</div>
+        <div class="callout-body">
+          <h4>The one constant across every service type</h4>
+          <p>Regardless of whether you're using EC2, RDS, S3, or Lambda — data protection and access management (IAM) are always your responsibility. AWS never manages your encryption settings or your access controls for you.</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top: 40px; margin-bottom: 20px;">
+        <h2 style="font-size:1.3rem;">Responsibility shifts by service type</h2>
+        <p style="margin-top:8px;">The more AWS manages, the more AWS takes on. The more control you have, the more you're responsible for.</p>
+      </div>
+
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th>Security task</th>
+            <th>EC2 (IaaS)</th>
+            <th>RDS (PaaS)</th>
+            <th>S3</th>
+            <th>Lambda</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Physical data center security</td>
+            <td><span class="badge-aws">AWS</span></td>
+            <td><span class="badge-aws">AWS</span></td>
+            <td><span class="badge-aws">AWS</span></td>
+            <td><span class="badge-aws">AWS</span></td>
+          </tr>
+          <tr>
+            <td>Hypervisor / virtualization</td>
+            <td><span class="badge-aws">AWS</span></td>
+            <td><span class="badge-aws">AWS</span></td>
+            <td><span class="badge-aws">AWS</span></td>
+            <td><span class="badge-aws">AWS</span></td>
+          </tr>
+          <tr>
+            <td>Host OS patching</td>
+            <td><span class="badge-you">You</span></td>
+            <td><span class="badge-aws">AWS</span></td>
+            <td><span class="badge-aws">AWS</span></td>
+            <td><span class="badge-aws">AWS</span></td>
+          </tr>
+          <tr>
+            <td>Database / runtime patching</td>
+            <td><span class="badge-you">You</span></td>
+            <td><span class="badge-aws">AWS</span></td>
+            <td><span class="badge-na">N/A</span></td>
+            <td><span class="badge-aws">AWS</span></td>
+          </tr>
+          <tr>
+            <td>Network firewall settings</td>
+            <td><span class="badge-you">You</span></td>
+            <td><span class="badge-you">You</span></td>
+            <td><span class="badge-you">You</span></td>
+            <td><span class="badge-aws">AWS</span></td>
+          </tr>
+          <tr>
+            <td>Data encryption</td>
+            <td><span class="badge-you">You</span></td>
+            <td><span class="badge-you">You</span></td>
+            <td><span class="badge-you">You</span></td>
+            <td><span class="badge-you">You</span></td>
+          </tr>
+          <tr>
+            <td>IAM and access control</td>
+            <td><span class="badge-you">You</span></td>
+            <td><span class="badge-you">You</span></td>
+            <td><span class="badge-you">You</span></td>
+            <td><span class="badge-you">You</span></td>
+          </tr>
+          <tr>
+            <td>Application security</td>
+            <td><span class="badge-you">You</span></td>
+            <td><span class="badge-you">You</span></td>
+            <td><span class="badge-na">N/A</span></td>
+            <td><span class="badge-you">You</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-info" style="margin-top: 28px;">
+        <div class="callout-icon">&#9432;</div>
+        <div class="callout-body">
+          <h4>Exam decision rule</h4>
+          <p>When a question asks who is responsible: <strong>Can the customer configure or change it?</strong> If yes → customer's responsibility. <strong>Is it about physical infrastructure or AWS's underlying software?</strong> If yes → AWS's responsibility. The rule of thumb: if you can SSH into it, patch it, or configure it — it's yours.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════ 2.2 SECURITY & GOVERNANCE ═══════════════════════════ -->
+<div id="security">
+  <div class="container">
+    <div class="section">
+
+      <div class="section-header">
+        <div class="section-tag">Task 2.2</div>
+        <h2>Security, Governance &amp; Compliance</h2>
+        <p>How to protect your data, control your network, audit your account, enforce policies across multiple accounts, and meet regulatory requirements.</p>
+      </div>
+
+      <!-- Encryption -->
+      <div class="section-header" style="margin-bottom: 18px;">
+        <h2 style="font-size:1.2rem;">Data protection and encryption</h2>
+      </div>
+      <div class="two-col">
+        <div class="info-box">
+          <h4>Encryption at rest</h4>
+          <ul>
+            <li>Data encrypted while stored in S3, EBS, RDS, etc.</li>
+            <li>If a hard drive is physically stolen, data is unreadable</li>
+            <li>Must be explicitly enabled per service</li>
+            <li>Keys managed by AWS KMS</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Encryption in transit</h4>
+          <ul>
+            <li>Data encrypted while moving over the network</li>
+            <li>HTTPS/TLS is the standard mechanism</li>
+            <li>AWS services communicate over encrypted connections</li>
+            <li>Enforced by configuring HTTPS endpoints</li>
+          </ul>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="info-box">
+          <h4>AWS-managed keys (KMS)</h4>
+          <ul>
+            <li>AWS creates and rotates keys on your behalf</li>
+            <li>You control who can use them</li>
+            <li>Simpler to manage; meets most compliance needs</li>
+            <li>Every key use is logged in CloudTrail</li>
+          </ul>
+        </div>
+        <div class="info-box">
+          <h4>Customer-managed keys (KMS)</h4>
+          <ul>
+            <li>You create, configure, and manage the key</li>
+            <li>You control rotation schedule and access</li>
+            <li>Required for regulations that mandate customer key ownership</li>
+            <li>More control, more responsibility</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Network Security -->
+      <div class="section-header" style="margin-top: 44px; margin-bottom: 18px;">
+        <h2 style="font-size:1.2rem;">Network security</h2>
+      </div>
+      <div class="cards-grid">
+        <div class="service-card">
+          <div class="service-subtitle">Foundation</div>
+          <h3>VPC — Virtual Private Cloud</h3>
+          <p>Your private, isolated section of the AWS network. You control IP ranges, traffic routing, and internet access. Resources in <strong>private subnets</strong> have no direct internet route — databases live here. Resources in <strong>public subnets</strong> can reach the internet.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-subtitle">Instance-level firewall</div>
+          <h3>Security Groups</h3>
+          <p>Virtual firewalls attached to individual resources. <strong>Stateful</strong> — allowing inbound traffic automatically allows the response outbound. Default deny: traffic not explicitly allowed is blocked. Write rules for inbound only.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-subtitle">Subnet-level firewall</div>
+          <h3>Network ACLs (NACLs)</h3>
+          <p>Additional firewall layer at the subnet level. <strong>Stateless</strong> — you must allow both inbound AND outbound traffic explicitly. Processed in numbered order; first match wins. Adds defense-in-depth alongside Security Groups.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-subtitle">Application firewall</div>
+          <h3>AWS WAF</h3>
+          <p>Protects web applications from SQL injection, cross-site scripting (XSS), bot traffic, and known attack patterns. Attaches to CloudFront, Application Load Balancers, or API Gateway. AWS Managed Rules provide pre-built protection.</p>
+        </div>
+      </div>
+
+      <!-- Logging and Monitoring -->
+      <div class="section-header" style="margin-top: 44px; margin-bottom: 18px;">
+        <h2 style="font-size:1.2rem;">Logging and monitoring</h2>
+      </div>
+      <div class="cards-grid">
+        <div class="service-card">
+          <div class="service-icon icon-orange">&#128196;</div>
+          <div class="service-subtitle">Audit trail</div>
+          <h3>AWS CloudTrail</h3>
+          <p>Records every API call made in your account — who, what, when, where, how, and whether it succeeded. The audit log for your entire account. Essential for security investigations and compliance audits.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon icon-blue">&#128202;</div>
+          <div class="service-subtitle">Operational monitoring</div>
+          <h3>Amazon CloudWatch</h3>
+          <p>Collects metrics (CPU, network, disk I/O), logs (application output), and alarms (notify or auto-respond when thresholds are crossed). Dashboards give a live view of system health.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon icon-teal">&#9881;</div>
+          <div class="service-subtitle">Configuration tracking</div>
+          <h3>AWS Config</h3>
+          <p>Tracks the configuration state of your resources over time. Can show you what a Security Group looked like at any past date. Config Rules continuously check whether your setup meets your compliance requirements.</p>
+        </div>
+      </div>
+
+      <!-- Governance -->
+      <div class="section-header" style="margin-top: 44px; margin-bottom: 18px;">
+        <h2 style="font-size:1.2rem;">Governance</h2>
+      </div>
+      <div class="cards-grid">
+        <div class="service-card">
+          <div class="service-subtitle">Multi-account management</div>
+          <h3>AWS Organizations</h3>
+          <p>Centrally manage multiple AWS accounts. Enables consolidated billing (one invoice), central policy enforcement, and account isolation. Accounts are grouped into Organizational Units (OUs) that share policies.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-subtitle">Account guardrails</div>
+          <h3>Service Control Policies (SCPs)</h3>
+          <p>Set the maximum permissions available in accounts within your organization. SCPs <em>prevent</em> actions — they don't grant them. An SCP saying "deny resource creation outside us-east-1" blocks all accounts in that OU, including admins.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-subtitle">Resource organization</div>
+          <h3>Resource Tagging</h3>
+          <p>Key-value labels on AWS resources (Environment: Production, Department: Engineering). Enable cost allocation reports, automation scripts, access control by tag, and Config rules that flag untagged resources.</p>
+        </div>
+      </div>
+
+      <!-- Compliance -->
+      <div class="section-header" style="margin-top: 44px; margin-bottom: 18px;">
+        <h2 style="font-size:1.2rem;">Compliance standards</h2>
+      </div>
+      <div class="compliance-grid">
+        <div class="compliance-card">
+          <div class="compliance-tag">GDPR</div>
+          <h3>EU Data Protection</h3>
+          <p>Governs personal data of EU residents. Requires consent, right to access/delete data, 72-hour breach notification. Applies to any company handling EU resident data.</p>
+        </div>
+        <div class="compliance-card">
+          <div class="compliance-tag">HIPAA</div>
+          <h3>US Healthcare</h3>
+          <p>Protects patient health information. Requires encryption, access controls, audit logging, and a Business Associate Agreement (BAA) with AWS.</p>
+        </div>
+        <div class="compliance-card">
+          <div class="compliance-tag">PCI DSS</div>
+          <h3>Payment Cards</h3>
+          <p>Required for companies processing payment card data. Requires network segmentation, encryption, access controls, and regular vulnerability scanning.</p>
+        </div>
+        <div class="compliance-card">
+          <div class="compliance-tag">SOC 1/2/3</div>
+          <h3>Audit Reports</h3>
+          <p>Independent audits of internal controls. SOC 2 covers security, availability, confidentiality. Commonly required in enterprise B2B contracts.</p>
+        </div>
+        <div class="compliance-card">
+          <div class="compliance-tag">ISO 27001</div>
+          <h3>Info Security Mgmt</h3>
+          <p>International standard for information security management systems. Covers policies, controls, and ongoing improvement. Requires independent certification.</p>
+        </div>
+        <div class="compliance-card">
+          <div class="compliance-tag">AWS Artifact</div>
+          <h3>Compliance Reports Portal</h3>
+          <p>Self-service portal to download AWS's SOC reports, ISO certifications, PCI attestations, and sign the HIPAA BAA — on demand, no sales contact required.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-danger">
+        <div class="callout-icon">&#10071;</div>
+        <div class="callout-body">
+          <h4>AWS being compliant does not make your workload compliant</h4>
+          <p>AWS holds HIPAA eligibility, PCI DSS certification, SOC 2 certification, and more — but those cover AWS's <em>infrastructure</em>. Your application running on that infrastructure must be separately configured to meet the same requirements: encryption enabled, access controls set, audit logging configured, BAA signed.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════ 2.3 ACCESS MANAGEMENT ═══════════════════════════ -->
+<div id="iam">
+  <div class="container">
+    <div class="section">
+
+      <div class="section-header">
+        <div class="section-tag">Task 2.3</div>
+        <h2>AWS Access Management (IAM)</h2>
+        <p>Identity and Access Management controls who can do what in your AWS account. Everything from creating a user to granting an EC2 instance permission to read S3 goes through IAM.</p>
+      </div>
+
+      <!-- Auth vs Authz -->
+      <div class="two-col" style="margin-bottom: 32px;">
+        <div class="info-box" style="border-top: 4px solid var(--aws-orange);">
+          <h4>Authentication — "Who are you?"</h4>
+          <ul>
+            <li>Proving your identity to AWS</li>
+            <li>Username + password for console</li>
+            <li>Access keys for CLI/API</li>
+            <li>MFA adds a second factor</li>
+            <li>Handled at login time</li>
+          </ul>
+        </div>
+        <div class="info-box" style="border-top: 4px solid var(--aws-blue);">
+          <h4>Authorization — "What can you do?"</h4>
+          <ul>
+            <li>Determining what actions are permitted</li>
+            <li>IAM policies define allowed/denied actions</li>
+            <li>Checked on every API call</li>
+            <li>Default: deny everything not explicitly allowed</li>
+            <li>Explicit Deny always wins over Allow</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- IAM Components -->
+      <div class="section-header" style="margin-bottom: 18px;">
+        <h2 style="font-size:1.2rem;">The four IAM building blocks</h2>
+      </div>
+      <div class="iam-grid">
+        <div class="iam-card">
+          <div class="iam-header">
+            <div class="iam-num">1</div>
+            <div class="iam-title">Users</div>
+          </div>
+          <div class="iam-body">
+            <p>Identities for individual people or applications. Each user has credentials (password for console, or access keys for API). One person = one user. Never share credentials between people.</p>
+          </div>
+        </div>
+        <div class="iam-card">
+          <div class="iam-header">
+            <div class="iam-num">2</div>
+            <div class="iam-title">Groups</div>
+          </div>
+          <div class="iam-body">
+            <p>Collections of users with shared permissions. Attach a policy to the group; all members inherit it. Add/remove users from the group to manage access at scale. Groups cannot contain other groups.</p>
+          </div>
+        </div>
+        <div class="iam-card">
+          <div class="iam-header">
+            <div class="iam-num">3</div>
+            <div class="iam-title">Roles</div>
+          </div>
+          <div class="iam-body">
+            <p>Identities that issue temporary credentials when assumed. Used by EC2 instances needing S3 access, Lambda functions, cross-account users, and federated corporate identities. No long-term credentials to manage.</p>
+          </div>
+        </div>
+        <div class="iam-card">
+          <div class="iam-header">
+            <div class="iam-num">4</div>
+            <div class="iam-title">Policies</div>
+          </div>
+          <div class="iam-body">
+            <p>JSON documents defining allowed/denied actions on specific resources. Attached to users, groups, or roles. AWS provides pre-built managed policies; you can also write custom ones for precise control.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Root User -->
+      <div class="section-header" style="margin-top: 44px; margin-bottom: 18px;">
+        <h2 style="font-size:1.2rem;">The root user</h2>
+      </div>
+      <div class="intro-card">
+        <h3>The root user has unrestricted access — protect it carefully</h3>
+        <p>Created when you open your AWS account; tied to the account email address. No IAM policy can restrict the root user. The root user can close the account, change billing information, and modify the support plan — actions IAM users cannot perform.</p>
+        <p>Best practice: Enable MFA immediately on the root user. Create an IAM administrator for daily work. Never create access keys for root. Never use root for routine tasks.</p>
+      </div>
+
+      <!-- MFA -->
+      <div class="section-header" style="margin-top: 44px; margin-bottom: 18px;">
+        <h2 style="font-size:1.2rem;">Multi-Factor Authentication (MFA)</h2>
+      </div>
+      <div class="two-col">
+        <div class="info-box">
+          <h4>The three factors</h4>
+          <ul>
+            <li><strong>Something you know</strong> — password, PIN</li>
+            <li><strong>Something you have</strong> — phone app, hardware token</li>
+            <li><strong>Something you are</strong> — fingerprint, face ID</li>
+          </ul>
+          <div style="margin-top: 12px; font-size: 0.87rem; color: var(--text-secondary);">
+            MFA combines at least two factors. Even if a password is stolen, the attacker cannot log in without the second factor.
+          </div>
+        </div>
+        <div class="info-box">
+          <h4>AWS MFA options</h4>
+          <ul>
+            <li><strong>Virtual MFA</strong> — authenticator app (most common)</li>
+            <li><strong>Hardware MFA</strong> — physical device like YubiKey (most secure)</li>
+            <li><strong>SMS MFA</strong> — text message codes (least secure, not recommended)</li>
+          </ul>
+          <div style="margin-top: 12px; font-size: 0.87rem; color: var(--text-secondary);">
+            Always enable MFA on the root user and any user with administrative access.
+          </div>
+        </div>
+      </div>
+
+      <!-- Best practices table -->
+      <div class="section-header" style="margin-top: 44px; margin-bottom: 18px;">
+        <h2 style="font-size:1.2rem;">IAM best practices</h2>
+      </div>
+      <table class="bp-table">
+        <thead>
+          <tr>
+            <th>Practice</th>
+            <th>Why it matters</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Enable MFA on the root user</td>
+            <td>Root cannot be restricted by IAM. Compromise is catastrophic — full account control.</td>
+          </tr>
+          <tr>
+            <td>Don't use root for daily work</td>
+            <td>Creates unnecessary risk. An IAM admin can do almost everything with a much smaller blast radius.</td>
+          </tr>
+          <tr>
+            <td>Create individual users per person</td>
+            <td>Maintains audit trail. Shared accounts make it impossible to know who took an action.</td>
+          </tr>
+          <tr>
+            <td>Use groups to manage permissions</td>
+            <td>Changing group permissions affects all members instantly. Simpler than updating per-user policies.</td>
+          </tr>
+          <tr>
+            <td>Use roles for applications and services</td>
+            <td>Temporary credentials auto-rotate. No access keys sitting in config files that could be leaked.</td>
+          </tr>
+          <tr>
+            <td>Apply principle of least privilege</td>
+            <td>Limits damage from compromised credentials or accidental actions. Start minimal, add as needed.</td>
+          </tr>
+          <tr>
+            <td>Rotate access keys regularly</td>
+            <td>Limits the exposure window if a key is compromised. 90-day maximum recommended.</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════ 2.4 SECURITY SERVICES ═══════════════════════════ -->
+<div id="services">
+  <div class="container">
+    <div class="section">
+
+      <div class="section-header">
+        <div class="section-tag">Task 2.4</div>
+        <h2>Security Services &amp; Resources</h2>
+        <p>AWS provides specialized security services for threat detection, vulnerability assessment, DDoS protection, secrets management, and compliance evidence. Know what each service does and when to use it.</p>
+      </div>
+
+      <!-- Threat Detection -->
+      <div class="section-header" style="margin-bottom: 18px;">
+        <h2 style="font-size:1.2rem;">Threat detection and monitoring</h2>
+      </div>
+      <div class="cards-grid">
+        <div class="service-card">
+          <div class="service-icon icon-orange">&#128270;</div>
+          <div class="service-subtitle">Behavioral threat detection</div>
+          <h3>Amazon GuardDuty</h3>
+          <p>Analyzes CloudTrail logs, VPC Flow Logs, and DNS logs to detect threats: compromised instances communicating with malware servers, unusual API calls, port scanning, credential theft attempts. Produces severity-rated findings. Detects but does not block.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon icon-blue">&#128203;</div>
+          <div class="service-subtitle">Vulnerability assessment</div>
+          <h3>Amazon Inspector</h3>
+          <p>Runs automated security assessments to find software vulnerabilities (CVEs) in EC2 instances, Lambda functions, and container images. Proactively finds weaknesses before attackers do. Provides CVSS severity scores and remediation guidance.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon icon-purple">&#128194;</div>
+          <div class="service-subtitle">Sensitive data discovery</div>
+          <h3>Amazon Macie</h3>
+          <p>Uses machine learning to scan S3 buckets and identify sensitive data — credit card numbers, social security numbers, names, email addresses (PII). Flags buckets where sensitive data is publicly accessible or poorly protected.</p>
+        </div>
+      </div>
+
+      <!-- DDoS Protection -->
+      <div class="section-header" style="margin-top: 44px; margin-bottom: 18px;">
+        <h2 style="font-size:1.2rem;">DDoS and web attack protection</h2>
+      </div>
+      <div class="cards-grid">
+        <div class="service-card">
+          <div class="service-icon icon-teal">&#128737;</div>
+          <div class="service-subtitle">Always-on DDoS protection</div>
+          <h3>AWS Shield Standard</h3>
+          <p>Automatically enabled for all AWS customers at no cost. Protects against common volumetric and protocol DDoS attacks. Most applications are adequately protected by Shield Standard with no configuration required.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon icon-red">&#128737;</div>
+          <div class="service-subtitle">Enhanced DDoS protection</div>
+          <h3>AWS Shield Advanced</h3>
+          <p>Paid service for high-value applications. Adds near real-time attack visibility, 24/7 AWS DDoS Response Team (DRT) access, and <strong>cost protection</strong> — AWS absorbs scaling costs during attacks. For applications where every minute of downtime is costly.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon icon-orange">&#128296;</div>
+          <div class="service-subtitle">Web application firewall</div>
+          <h3>AWS WAF</h3>
+          <p>Filters HTTP requests against rules you define. Blocks SQL injection, XSS, bad bots, and rate-abuse. AWS Managed Rules provide pre-built protection. Attaches to CloudFront, Application Load Balancers, and API Gateway.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon icon-blue">&#128203;</div>
+          <div class="service-subtitle">Centralized findings</div>
+          <h3>AWS Security Hub</h3>
+          <p>Aggregates findings from GuardDuty, Inspector, Macie, and IAM Access Analyzer into one dashboard. Normalizes findings to a standard format. Also runs automated compliance checks against CIS benchmarks and AWS security best practices.</p>
+        </div>
+      </div>
+
+      <!-- Secrets and Keys -->
+      <div class="section-header" style="margin-top: 44px; margin-bottom: 18px;">
+        <h2 style="font-size:1.2rem;">Secrets and key management</h2>
+      </div>
+      <div class="two-col">
+        <div class="service-card">
+          <div class="service-subtitle">Application credentials</div>
+          <h3>AWS Secrets Manager</h3>
+          <p>Stores database passwords, API keys, and other application secrets securely. Applications retrieve secrets at runtime via API — no hardcoded credentials. <strong>Automatic rotation</strong> changes passwords on a schedule (e.g., every 30 days) without application downtime.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-subtitle">Encryption key management</div>
+          <h3>AWS KMS</h3>
+          <p>Creates and manages encryption keys used by S3, EBS, RDS, and other services. You control who can use each key and for what. Every key use is logged in CloudTrail. Supports AWS-managed keys (simple) and customer-managed keys (full control).</p>
+        </div>
+      </div>
+
+      <!-- Compliance Resources -->
+      <div class="section-header" style="margin-top: 44px; margin-bottom: 18px;">
+        <h2 style="font-size:1.2rem;">Compliance resources</h2>
+      </div>
+      <div class="two-col">
+        <div class="service-card">
+          <div class="service-subtitle">Compliance evidence portal</div>
+          <h3>AWS Artifact</h3>
+          <p>Self-service portal to download AWS's compliance reports on demand — SOC 1/2/3, PCI DSS attestations, ISO certifications, HIPAA BAA, GDPR addendums. No sales contact needed. When auditors ask for proof, go here.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-subtitle">Account health advisor</div>
+          <h3>AWS Trusted Advisor</h3>
+          <p>Analyzes your account against best practices in five categories: Cost Optimization, Performance, Security, Fault Tolerance, and Service Limits. Security checks include: public S3 buckets, open Security Groups on sensitive ports, users without MFA, root access keys.</p>
+        </div>
+      </div>
+
+      <!-- Quick reference table -->
+      <div class="section-header" style="margin-top: 44px; margin-bottom: 18px;">
+        <h2 style="font-size:1.2rem;">Quick service reference</h2>
+      </div>
+      <table class="bp-table">
+        <thead>
+          <tr>
+            <th>Security need</th>
+            <th>AWS service</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Detect threats from compromised accounts or instances</td>
+            <td>Amazon GuardDuty</td>
+          </tr>
+          <tr>
+            <td>Find software vulnerabilities in EC2, Lambda, containers</td>
+            <td>Amazon Inspector</td>
+          </tr>
+          <tr>
+            <td>Discover sensitive data (PII) in S3 buckets</td>
+            <td>Amazon Macie</td>
+          </tr>
+          <tr>
+            <td>Basic DDoS protection (automatic, free)</td>
+            <td>AWS Shield Standard</td>
+          </tr>
+          <tr>
+            <td>Advanced DDoS protection with DRT access and cost coverage</td>
+            <td>AWS Shield Advanced</td>
+          </tr>
+          <tr>
+            <td>Filter malicious web requests (SQL injection, XSS, bots)</td>
+            <td>AWS WAF</td>
+          </tr>
+          <tr>
+            <td>Centralize all security findings in one view</td>
+            <td>AWS Security Hub</td>
+          </tr>
+          <tr>
+            <td>Store and auto-rotate application secrets and passwords</td>
+            <td>AWS Secrets Manager</td>
+          </tr>
+          <tr>
+            <td>Manage encryption keys for data at rest</td>
+            <td>AWS KMS</td>
+          </tr>
+          <tr>
+            <td>Download AWS compliance certifications and reports</td>
+            <td>AWS Artifact</td>
+          </tr>
+          <tr>
+            <td>Get security best practice recommendations for your account</td>
+            <td>AWS Trusted Advisor</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════ PRACTICE QUESTIONS ═══════════════════════════ -->
+<div id="practice">
+  <div class="container">
+    <div class="section">
+
+      <div class="section-header">
+        <div class="section-tag">Exam Prep</div>
+        <h2>Practice Questions</h2>
+        <p>These questions cover the most commonly tested concepts across all four Domain 2 task statements.</p>
+      </div>
+
+      <div class="questions-list">
+
+        <!-- Q1 -->
+        <div class="question-card">
+          <div class="question-stem">Q1. An EC2 instance is running an application that requires patching of the operating system. The company's security team wants to know who is responsible for applying these patches.</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> AWS, because they manage EC2 infrastructure</div>
+            <div class="option correct"><span class="option-letter">B</span> The customer, because OS patching on EC2 is the customer's responsibility</div>
+            <div class="option"><span class="option-letter">C</span> Both equally, since EC2 is a shared service</div>
+            <div class="option"><span class="option-letter">D</span> AWS, because they have automatic patching tools</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: B.</strong> EC2 is IaaS. AWS manages the hypervisor and physical hardware. The customer is responsible for the guest operating system, including security patches. Compare this to RDS — AWS patches the database engine because it's a managed service. The rule: if you can SSH into it, patching is your job.</div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="question-card">
+          <div class="question-stem">Q2. A company needs to ensure that no account in their AWS Organization can create resources outside of the us-east-1 and us-west-2 regions. What is the most effective mechanism?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Apply IAM deny policies to each individual user in each account</div>
+            <div class="option correct"><span class="option-letter">B</span> Apply a Service Control Policy to the Organizational Unit restricting resource creation to those regions</div>
+            <div class="option"><span class="option-letter">C</span> Configure VPCs in only those regions</div>
+            <div class="option"><span class="option-letter">D</span> Enable AWS Config rules that alert on out-of-region resources</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: B.</strong> SCPs applied to an OU affect all accounts in that OU without requiring changes to individual users or accounts. They enforce guardrails that even account administrators cannot override. Option A requires constant maintenance across many users. Options C and D don't prevent creation — they just limit networking or detect after the fact.</div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="question-card">
+          <div class="question-stem">Q3. An application running on EC2 needs to read objects from an S3 bucket. What is the most secure approach?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Create an IAM user, generate access keys, and hardcode them in the application</div>
+            <div class="option"><span class="option-letter">B</span> Create an IAM user, generate access keys, and store them in an environment variable on the instance</div>
+            <div class="option correct"><span class="option-letter">C</span> Create an IAM role with S3 read permissions and attach it to the EC2 instance</div>
+            <div class="option"><span class="option-letter">D</span> Make the S3 bucket public so the application can access it without credentials</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: C.</strong> IAM roles provide temporary, automatically rotating credentials to the EC2 instance. No credentials need to be stored anywhere — not in code, not in environment variables, not in config files. Options A and B use long-term credentials that could be leaked. Option D removes authentication entirely — dangerous for any non-public data.</div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="question-card">
+          <div class="question-stem">Q4. A security team is investigating unusual activity in their AWS account from last week. They want to see a complete list of every API call made, who made it, and from which IP address. Which service provides this?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Amazon CloudWatch</div>
+            <div class="option"><span class="option-letter">B</span> AWS Config</div>
+            <div class="option correct"><span class="option-letter">C</span> AWS CloudTrail</div>
+            <div class="option"><span class="option-letter">D</span> Amazon GuardDuty</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: C.</strong> CloudTrail records every API call with identity, timestamp, source IP, and outcome. It's the account audit log. CloudWatch monitors performance metrics and application logs. Config tracks resource configuration history. GuardDuty analyzes those same logs to detect threats — but CloudTrail is the source of truth for who did what.</div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="question-card">
+          <div class="question-stem">Q5. A company uses RDS for their database. A developer claims that because RDS is a managed service, the company has no security responsibilities for the database. What is wrong with this claim?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Nothing — AWS handles all security for managed services</div>
+            <div class="option correct"><span class="option-letter">B</span> AWS handles OS and engine patching, but the customer is still responsible for database access controls, encryption settings, and what data they store</div>
+            <div class="option"><span class="option-letter">C</span> AWS handles everything except OS patching for RDS</div>
+            <div class="option"><span class="option-letter">D</span> RDS is not a managed service</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: B.</strong> "Managed" means AWS handles operations (OS patching, DB engine updates, automated backups, hardware). The customer retains responsibility for who can connect to the database, whether data is encrypted, what data is stored, and database user accounts and permissions. Managed reduces operational burden — it doesn't eliminate security responsibility.</div>
+        </div>
+
+        <!-- Q6 -->
+        <div class="question-card">
+          <div class="question-stem">Q6. An e-commerce platform experienced a DDoS attack that overwhelmed their servers for 30 minutes. They want enhanced protection that includes 24/7 AWS incident response support and financial protection against scaling costs during attacks. Which service meets these requirements?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> AWS Shield Standard</div>
+            <div class="option correct"><span class="option-letter">B</span> AWS Shield Advanced</div>
+            <div class="option"><span class="option-letter">C</span> AWS WAF</div>
+            <div class="option"><span class="option-letter">D</span> Amazon GuardDuty</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: B.</strong> Shield Advanced adds the DDoS Response Team (24/7 support), near real-time attack visibility, and cost protection (AWS absorbs scaling charges during attacks). Shield Standard is already running but doesn't include these features. WAF filters application-layer requests but doesn't handle volumetric network floods. GuardDuty detects threats but provides no DDoS defense.</div>
+        </div>
+
+        <!-- Q7 -->
+        <div class="question-card">
+          <div class="question-stem">Q7. A company wants to download a copy of AWS's SOC 2 Type II report to share with a customer conducting a vendor security assessment. Where do they find this document?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> AWS Trusted Advisor</div>
+            <div class="option"><span class="option-letter">B</span> AWS Security Hub</div>
+            <div class="option correct"><span class="option-letter">C</span> AWS Artifact</div>
+            <div class="option"><span class="option-letter">D</span> AWS Config</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: C.</strong> AWS Artifact is the self-service portal for accessing AWS compliance documentation — SOC reports, ISO certificates, PCI DSS attestations, and more. It's available 24/7 after accepting a non-disclosure agreement. Trusted Advisor provides best-practice recommendations for your account. Security Hub aggregates security findings. Config tracks configuration changes.</div>
+        </div>
+
+        <!-- Q8 -->
+        <div class="question-card">
+          <div class="question-stem">Q8. A healthcare company stores patient records in S3. A compliance officer says "We're HIPAA compliant because we're using AWS, which is HIPAA-eligible." What is incorrect about this statement?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> AWS is not HIPAA-eligible</div>
+            <div class="option correct"><span class="option-letter">B</span> AWS HIPAA eligibility covers the infrastructure; the company must separately configure encryption, access controls, audit logging, and sign a Business Associate Agreement</div>
+            <div class="option"><span class="option-letter">C</span> HIPAA compliance is automatic when data is stored in S3</div>
+            <div class="option"><span class="option-letter">D</span> The statement is correct — AWS eligibility covers all customer workloads</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: B.</strong> This is the shared responsibility model applied to compliance. AWS's HIPAA eligibility means their infrastructure meets HIPAA requirements. The customer must still enable encryption for PHI, implement access controls, configure audit logging (CloudTrail), and execute a HIPAA Business Associate Agreement with AWS. Being on HIPAA-eligible infrastructure is necessary but not sufficient.</div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<footer>
+  <strong>AWS Cloud Practitioner — CLF-C02</strong> &nbsp;|&nbsp; Domain 2: Security and Compliance &nbsp;|&nbsp; 30% of the exam (~20 questions)
+  <br><br>
+  Next: <strong>Domain 3 — Cloud Technology and Services</strong>
+</footer>
+
+</body>
+</html>

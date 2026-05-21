@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dir \"c:\\\\Users\\\\User\\\\Documents\\\\Github\\\\AWS-Cloud-Notes-Certifications\\\\AWS-Cloud-Practitioner\" /b)"
+      "Bash(dir \"c:\\\\Users\\\\User\\\\Documents\\\\Github\\\\AWS-Cloud-Notes-Certifications\\\\AWS-Cloud-Practitioner\" /b)",
+      "Bash(Get-ChildItem \"c:\\\\Users\\\\User\\\\Documents\\\\Github\\\\AWS-Cloud-Notes-Certifications\\\\AWS-Cloud-Practitioner\\\\01-Lessons\\\\Domain-2-Security and Compliance\\\\\" | Select-Object Name, Length, LastWriteTime)"
     ]
   }
 }

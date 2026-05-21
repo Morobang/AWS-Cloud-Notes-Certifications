@@ -1,1007 +1,268 @@
 # Task Statement 2.2: Understand AWS Cloud Security, Governance, and Compliance Concepts
 
-## 🎯 **Learning Objective**
-**Master cloud security, governance, and compliance fundamentals** - understand how to secure your cloud environment, maintain proper oversight and controls, and meet regulatory requirements, all explained from absolute basics.
+## What you'll learn
+- How to protect data with encryption at rest and in transit
+- How network security works in AWS (VPC, Security Groups, NACLs, WAF)
+- How to track what's happening in your account (CloudTrail, CloudWatch, Config)
+- How AWS Organizations and Service Control Policies provide governance
+- What the major compliance standards are and how AWS helps you meet them
 
 ---
 
-## 🏛️ **Understanding Through Real-World Analogies**
+## Security concepts
 
-### **The Business Operation Analogy**
-Think of cloud security, governance, and compliance like running a legitimate business:
+### Encryption at rest vs. encryption in transit
 
-#### **Security = Protecting Your Business**
-```
-Physical Business Security:
-├── Building Security
-│   ├── Locks on doors and windows
-│   ├── Security cameras and alarms
-│   ├── Safe for valuable documents and cash
-│   └── Background checks for employees
-├── Information Security
-│   ├── Locked filing cabinets for sensitive documents
-│   ├── Shredding confidential papers
-│   ├── Limiting who can access financial records
-│   └── Secure communication with customers
-└── Operational Security
-    ├── Employee training on security procedures
-    ├── Regular security system maintenance
-    ├── Emergency response plans
-    └── Insurance for security breaches
-```
+**Encryption at rest** means your data is encrypted when stored — in S3, RDS, EBS volumes, and other storage services. If someone physically stole a hard drive, they couldn't read the data without the encryption key.
 
-#### **Governance = Managing Your Business Properly**
-```
-Business Governance:
-├── Policies and Procedures
-│   ├── Employee handbook with clear rules
-│   ├── Standard operating procedures
-│   ├── Decision-making processes
-│   └── Performance measurement standards
-├── Oversight and Control
-│   ├── Regular management reviews
-│   ├── Financial audits and reporting
-│   ├── Quality control processes
-│   └── Risk management procedures
-└── Accountability
-    ├── Clear roles and responsibilities
-    ├── Regular performance evaluations
-    ├── Corrective action procedures
-    └── Transparent reporting to stakeholders
-```
+**Encryption in transit** means your data is encrypted while traveling over a network. This is what HTTPS does for web traffic. AWS services communicate over encrypted connections using TLS.
 
-#### **Compliance = Following the Rules**
-```
-Business Compliance:
-├── Legal Requirements
-│   ├── Business licenses and permits
-│   ├── Tax reporting and payments
-│   ├── Labor law compliance
-│   └── Environmental regulations
-├── Industry Standards
-│   ├── Professional certifications
-│   ├── Industry best practices
-│   ├── Quality standards (ISO, etc.)
-│   └── Safety regulations
-└── Customer Requirements
-    ├── Contract terms and conditions
-    ├── Service level agreements
-    ├── Data protection requirements
-    └── Security standards
-```
+Neither is automatic for everything. You have to choose to enable encryption. For most AWS services, encryption is one setting away — but it's your responsibility to turn it on.
+
+### Key management
+
+AWS Key Management Service (KMS) handles encryption keys. There are two approaches:
+
+**AWS-managed keys** — AWS creates and rotates the keys on your behalf. You control who can use them, but AWS handles the key lifecycle. Simpler to manage; meets most compliance needs.
+
+**Customer-managed keys** — You create the key in KMS and control everything: rotation schedule, which services can use it, which users can access it. More control, more responsibility. Required when regulations demand that the customer hold the keys.
+
+The rule: use customer-managed keys when compliance requires it or when you need to audit key usage independently. Use AWS-managed keys for everything else.
 
 ---
 
-## 🔒 **Cloud Security Concepts Explained**
+## Network security
 
-### **What is Cloud Security?**
-**Definition:** Protecting digital assets, applications, and data in cloud computing environments from threats, unauthorized access, and breaches.
+### VPC — Virtual Private Cloud
 
-**Why cloud security is different from traditional security:**
-- **Shared responsibility**: You and the cloud provider both have security roles
-- **Dynamic environment**: Resources can be created and destroyed rapidly
-- **API-driven**: Everything is controlled through programming interfaces
-- **Global scale**: Your data and applications can be distributed worldwide
+A VPC is your private, isolated section of the AWS network. Every resource you create lives inside a VPC. You control the IP address ranges, how traffic flows, and what connects to the internet.
 
-### **1. Data Protection and Encryption**
+Inside a VPC, you divide the address space into **subnets**:
 
-#### **What is Data Protection?**
-**Definition:** Safeguarding important information from corruption, compromise, or loss.
+- **Public subnets** — have a route to the internet via an Internet Gateway. Web servers and load balancers typically go here.
+- **Private subnets** — no direct internet route. Databases and backend services go here. They can initiate outbound internet connections through a NAT Gateway if needed, but cannot receive inbound connections from the internet.
 
-**Three states of data you need to protect:**
+This architecture means your database is never directly reachable from the public internet, even if your web servers are.
 
-##### **Data at Rest** = Stored Data Protection
-**What it means:** Protecting data when it's stored on hard drives, databases, or other storage systems.
+### Security Groups
 
-**Real-world analogy:** **Documents in a Filing Cabinet**
-- **Unlocked cabinet**: Anyone can read your documents
-- **Locked cabinet**: Only people with keys can access documents
-- **Encrypted documents**: Even if someone breaks in, they can't understand the documents without the decryption key
+Security Groups are virtual firewalls attached to individual resources (EC2 instances, RDS databases, Lambda functions, etc.). They control inbound and outbound traffic with allow rules.
 
-**Digital examples:**
-- **Database encryption**: Customer records stored in encrypted database
-- **File encryption**: Important documents encrypted on your hard drive
-- **Backup encryption**: Backup copies are encrypted for protection
+Key behaviors:
+- **Stateful**: If you allow inbound traffic, the response traffic is automatically allowed out. You only write rules for one direction.
+- **Default deny**: Any traffic not explicitly allowed is blocked.
+- **Instance-level**: Different resources can have different Security Groups.
 
-**AWS tools for data at rest encryption:**
-- **Amazon S3**: Automatically encrypt files stored in S3 buckets
-- **Amazon EBS**: Encrypt the hard drives attached to your servers
-- **Amazon RDS**: Encrypt your databases
+A web server might have a Security Group that allows HTTP on port 80 from anywhere, HTTPS on port 443 from anywhere, and SSH on port 22 from your corporate IP only.
 
-##### **Data in Transit** = Moving Data Protection
-**What it means:** Protecting data while it travels from one place to another over networks.
+### Network Access Control Lists (NACLs)
 
-**Real-world analogy:** **Valuable Package Delivery**
-- **Regular mail**: Anyone can open and read your package
-- **Secured delivery**: Package is in locked container, only recipient can open
-- **Armored truck**: High-value items transported with maximum security
+NACLs are an additional layer of network control at the subnet level — they apply to all traffic entering or leaving a subnet, regardless of which resources are inside.
 
-**Digital examples:**
-- **HTTPS websites**: Your web browsing is encrypted between your browser and the website
-- **VPN connections**: Your internet traffic is encrypted through a secure tunnel
-- **Email encryption**: Email messages are encrypted during transmission
+Key difference from Security Groups:
+- **Stateless**: You must explicitly allow both inbound AND outbound traffic. If you allow inbound HTTP, you also need a rule allowing outbound responses.
+- **Ordered rules**: Rules are processed in number order. First match wins.
+- **Default allow**: A default NACL allows all traffic. Custom NACLs start with an explicit deny-all.
 
-**AWS tools for data in transit encryption:**
-- **SSL/TLS certificates**: Encrypt web traffic to your applications
-- **VPC endpoints**: Private connections that don't go over the public internet
-- **AWS PrivateLink**: Secure connections between AWS services
+Think of Security Groups as the lock on your apartment door; NACLs are the checkpoint at the building entrance. Both layers add defense in depth.
 
-##### **Data in Use** = Processing Data Protection
-**What it means:** Protecting data while it's being actively processed or used by applications.
+### WAF — Web Application Firewall
 
-**Real-world analogy:** **Doctor Examining Patient Records**
-- **Unsecured examination**: Anyone in the room can see patient information
-- **Private examination room**: Only authorized medical staff present
-- **Secure workstation**: Computer screen positioned so others can't see sensitive information
+WAF protects web applications from common web exploits: SQL injection (malicious database queries embedded in form inputs), cross-site scripting (malicious scripts injected into pages), bot traffic, and known attack patterns.
 
-**Digital examples:**
-- **Secure memory**: Data in computer memory is protected from other applications
-- **Application-level encryption**: Data remains encrypted even while being processed
-- **Secure enclaves**: Special secure areas of processors for handling sensitive data
+WAF operates at the application layer. It inspects HTTP/HTTPS requests before they reach your application and blocks requests that match rules you define or that match AWS Managed Rules (pre-built rule groups maintained by AWS).
 
-#### **Types of Encryption Keys**
-
-##### **Customer-Managed Keys**
-**What it means:** You create, control, and manage your own encryption keys.
-
-**Analogy:** **Your Own Safe with Your Own Combination**
-- **You choose the combination** (create the key)
-- **You can change the combination** (rotate the key)
-- **You control who knows the combination** (manage access)
-- **If you forget it, you can't open the safe** (key loss = data loss)
-
-**When to use:**
-- **Maximum control needed**: You want full control over encryption
-- **Strict compliance requirements**: Regulations require customer-controlled keys
-- **Sensitive data**: Highly confidential information requiring extra protection
-
-##### **AWS-Managed Keys**
-**What it means:** AWS creates and manages encryption keys for you, but you control their use.
-
-**Analogy:** **Bank Safety Deposit Box**
-- **Bank provides the secure box and keys** (AWS manages the encryption)
-- **You control access to your box** (you control permissions)
-- **Bank handles security of the vault** (AWS handles key security)
-- **You don't worry about key maintenance** (AWS handles rotation and backup)
-
-**When to use:**
-- **Simplified management**: You want security without complexity
-- **Standard protection**: Good security without specialized requirements
-- **Easy compliance**: AWS-managed keys meet most compliance standards
-
-### **2. Infrastructure Protection**
-
-#### **Network Security**
-
-##### **Virtual Private Cloud (VPC)**
-**What it is:** Your own private section of the AWS cloud where you can place and control your resources.
-
-**Real-world analogy:** **Gated Community**
-```
-Public Internet = Public Roads
-     ↓
-Internet Gateway = Main Gate to Community
-     ↓
-VPC = Your Gated Community
-     ├── Public Subnets = Areas visible from main roads
-     │   └── (Web servers, load balancers)
-     └── Private Subnets = Hidden residential areas  
-         └── (Databases, internal applications)
-```
-
-**Key components:**
-- **Internet Gateway**: The main entrance/exit to the internet
-- **Subnets**: Different neighborhoods within your community
-- **Route tables**: Directions for where traffic can go
-- **NAT Gateway**: Allows private resources to access internet without being directly accessible
-
-##### **Security Groups**
-**What they are:** Virtual firewalls that control traffic to your AWS resources.
-
-**Real-world analogy:** **Doorman at Apartment Building**
-```
-Security Group Rules = Doorman Instructions:
-├── "Allow delivery trucks between 9 AM - 5 PM" (HTTP traffic on port 80)
-├── "Allow residents with key cards 24/7" (SSH access on port 22)
-├── "Block all solicitors" (Deny all other traffic)
-└── "Log all visitors" (Monitor all connections)
-```
-
-**How they work:**
-- **Stateful**: If you allow traffic in, the response is automatically allowed out
-- **Default deny**: Unless you specifically allow something, it's blocked
-- **Instance-level**: Each server can have different security group rules
-
-##### **Network Access Control Lists (NACLs)**
-**What they are:** Additional network-level firewalls that operate at the subnet level.
-
-**Real-world analogy:** **Neighborhood Security Checkpoint**
-```
-Traffic Flow:
-Internet → Internet Gateway → NACL (Neighborhood Checkpoint) → Security Group (Building Doorman) → Your Server
-
-NACL checks: "Is this type of traffic allowed in this neighborhood?"
-Security Group checks: "Is this specific person allowed in this building?"
-```
-
-**Key differences from Security Groups:**
-- **Stateless**: You must explicitly allow both inbound AND outbound traffic
-- **Subnet-level**: Applies to all resources in a subnet
-- **Numbered rules**: Processed in order, first match wins
-
-#### **AWS WAF (Web Application Firewall)**
-**What it is:** Protection specifically designed for web applications against common attacks.
-
-**Real-world analogy:** **Specialized Security for Art Gallery**
-```
-Regular Security (Security Groups):
-├── Check IDs at entrance
-├── Control who can enter building
-└── Basic access control
-
-Specialized Web Security (WAF):
-├── Expert guards who know art theft techniques
-├── Detect fake visitors with suspicious behavior  
-├── Block known troublemakers from art theft database
-├── Analyze visitor patterns for unusual activity
-└── Protect specific valuable pieces (your web applications)
-```
-
-**Common protections WAF provides:**
-- **SQL injection attacks**: Malicious database queries
-- **Cross-site scripting (XSS)**: Malicious scripts injected into web pages
-- **DDoS protection**: Blocking overwhelming traffic attacks
-- **Bot protection**: Identifying and blocking malicious automated traffic
-
-### **3. Logging and Monitoring**
-
-#### **Why Logging and Monitoring Matter**
-**Logging** = Recording what happens
-**Monitoring** = Watching for problems and patterns
-
-**Real-world analogy:** **Security System for Your Store**
-```
-Logging (Security Cameras):
-├── Record everything that happens
-├── Store footage for later review
-├── Provide evidence if something goes wrong
-└── Help understand what happened and when
-
-Monitoring (Security Guard Watching Monitors):
-├── Watch for suspicious activity in real-time
-├── Alert when something unusual happens
-├── Take immediate action when problems occur
-└── Look for patterns that might indicate problems
-```
-
-#### **AWS CloudTrail**
-**What it is:** Service that records all actions taken in your AWS account.
-
-**Real-world analogy:** **Detailed Security Log Book**
-```
-Every entry records:
-├── WHO: Which person or system did something
-├── WHAT: Exactly what action was taken
-├── WHEN: Precise date and time
-├── WHERE: Which AWS region and service
-├── HOW: What method was used (console, API, etc.)
-└── RESULT: Whether the action succeeded or failed
-
-Example log entry:
-"John Smith logged into AWS console from IP 192.168.1.100 at 2:30 PM on March 15th and created a new S3 bucket called 'company-backups' in the us-east-1 region. Action was successful."
-```
-
-**Why CloudTrail is important:**
-- **Security investigations**: Track down what happened during a security incident
-- **Compliance auditing**: Prove you're following required procedures
-- **Change tracking**: Understand what changes were made and by whom
-- **Troubleshooting**: Figure out what went wrong and when
-
-#### **Amazon CloudWatch**
-**What it is:** Monitoring service that watches your AWS resources and applications for performance and health issues.
-
-**Real-world analogy:** **Hospital Patient Monitoring System**
-```
-CloudWatch monitors your AWS resources like hospital monitors track patients:
-├── Vital Signs (Metrics):
-│   ├── CPU usage = Heart rate
-│   ├── Memory usage = Blood pressure  
-│   ├── Network traffic = Breathing rate
-│   └── Storage usage = Temperature
-├── Alarms:
-│   ├── "Alert if CPU goes above 80%" = "Call doctor if heart rate over 120"
-│   ├── "Alert if website goes down" = "Alert if patient stops breathing"
-│   └── "Send notification to admin" = "Page the on-call physician"
-└── Logs:
-    ├── Application error messages = Patient symptoms log
-    ├── System events = Medical procedure notes
-    └── Performance data = Lab test results
-```
-
-**Key CloudWatch features:**
-- **Metrics**: Numerical data about your resources (CPU usage, network traffic)
-- **Alarms**: Automatic notifications when metrics exceed thresholds
-- **Logs**: Text-based records from your applications and services
-- **Dashboards**: Visual displays of your system health and performance
-
-#### **AWS Config**
-**What it is:** Service that tracks how your AWS resources are configured and alerts you to changes.
-
-**Real-world analogy:** **Building Inspector and Compliance Checker**
-```
-AWS Config acts like a building inspector who:
-├── Documentation:
-│   ├── Records how every room is set up initially
-│   ├── Takes photos of all safety equipment locations
-│   ├── Documents all security system configurations
-│   └── Maintains complete floor plans and layouts
-├── Change Detection:
-│   ├── Notices when someone moves a fire extinguisher
-│   ├── Alerts when security cameras are repositioned
-│   ├── Flags when emergency exits are blocked
-│   └── Reports when safety equipment is removed
-├── Compliance Checking:
-│   ├── Verifies building meets fire safety codes
-│   ├── Confirms accessibility requirements are met
-│   ├── Checks that security systems are properly installed
-│   └── Reports any violations of building standards
-└── Historical Tracking:
-    ├── Shows what the building looked like 6 months ago
-    ├── Tracks all changes made over time
-    ├── Provides timeline of modifications
-    └── Helps investigate when problems started
-```
-
-**Why AWS Config is valuable:**
-- **Compliance monitoring**: Automatically check if your setup meets required standards
-- **Change management**: Track what changed and when
-- **Security analysis**: Identify configuration changes that might create security vulnerabilities
-- **Troubleshooting**: Understand what was different when things were working
+You attach WAF to CloudFront, an Application Load Balancer, or API Gateway — wherever HTTP traffic enters your application.
 
 ---
 
-## 🏛️ **Governance Concepts Explained**
+## Logging and monitoring
 
-### **What is Cloud Governance?**
-**Definition:** The framework of policies, procedures, and controls used to manage and oversee cloud computing resources effectively and responsibly.
+### AWS CloudTrail
 
-**Real-world analogy:** **City Government Managing a City**
-```
-City Governance:
-├── Laws and Regulations (Policies)
-│   ├── Building codes for safety
-│   ├── Traffic laws for order
-│   ├── Zoning rules for organization
-│   └── Business licensing requirements
-├── Enforcement and Oversight (Controls)
-│   ├── Police enforce traffic laws
-│   ├── Building inspectors check construction
-│   ├── Health inspectors monitor restaurants
-│   └── City auditors review spending
-├── Resource Management (Operations)
-│   ├── Budget allocation for city services
-│   ├── Infrastructure maintenance planning
-│   ├── Emergency response coordination
-│   └── Public service delivery
-└── Accountability and Reporting (Transparency)
-    ├── Public meetings and records
-    ├── Annual budget reports
-    ├── Performance metrics
-    └── Citizen feedback systems
-```
+CloudTrail records every API call made in your AWS account: who took an action, what they did, when, from where, and whether it succeeded.
 
-### **1. Policies and Procedures**
+This includes actions taken through the Console, CLI, SDKs, and other AWS services — everything. CloudTrail is the audit log for your entire account.
 
-#### **AWS Organizations**
-**What it is:** Service that helps you centrally manage multiple AWS accounts.
+**Default behavior**: CloudTrail event history is enabled automatically and stores 90 days of management events. To store logs longer-term, you create a Trail that ships logs to S3.
 
-**Real-world analogy:** **Corporate Headquarters Managing Multiple Branch Offices**
-```
-Corporate Structure:
-├── Headquarters (Master Account)
-│   ├── Sets company-wide policies
-│   ├── Manages overall budget
-│   ├── Provides shared services
-│   └── Monitors all branch performance
-├── Regional Offices (Organizational Units)
-│   ├── Group branches by geography or function
-│   ├── Apply regional policies
-│   ├── Manage regional budgets
-│   └── Coordinate regional activities
-└── Branch Offices (Member Accounts)
-    ├── Follow corporate policies
-    ├── Operate within assigned budgets
-    ├── Report to regional management
-    └── Access shared corporate services
-```
+**What it captures**: Creating or deleting resources, changing permissions, launching instances, making configuration changes — any AWS API call.
 
-**Key benefits:**
-- **Centralized billing**: One bill for all accounts
-- **Policy enforcement**: Apply rules across all accounts automatically
-- **Account creation**: Easily create new accounts for different projects or teams
-- **Resource sharing**: Share services and resources between accounts
+CloudTrail is what you check after a security incident to answer "who did this and when." It's also what compliance auditors want to see.
 
-#### **Service Control Policies (SCPs)**
-**What they are:** Rules that limit what actions can be taken in AWS accounts within your organization.
+### Amazon CloudWatch
 
-**Real-world analogy:** **Corporate Policy Enforcement**
-```
-Company Policies That Prevent Risky Actions:
-├── "No employee can sign contracts over $10,000 without approval"
-│   └── SCP: "No account can launch expensive EC2 instances without approval"
-├── "No access to confidential customer data without security training"
-│   └── SCP: "No access to production databases without proper IAM role"
-├── "No purchases from unapproved vendors"
-│   └── SCP: "No use of AWS services not on approved list"
-└── "No working outside business hours without supervisor approval"
-    └── SCP: "No resource creation outside business hours"
-```
+CloudWatch is the monitoring service. It collects metrics (numerical measurements) and logs (text records) from your AWS resources and applications.
 
-**Important concept:** SCPs are **guardrails, not permissions**
-- **They PREVENT actions**: "You cannot do this"
-- **They don't GRANT permissions**: "You are allowed to do this"
-- **Think of them as corporate policies**: They set boundaries, but you still need specific job roles to do actual work
+**Metrics**: CPU utilization, network traffic, disk I/O, request counts, error rates — any numerical measurement over time. CloudWatch stores these and lets you graph them.
 
-### **2. Cost Management and Optimization**
+**Alarms**: You set thresholds on metrics. When CPU exceeds 80% for 5 minutes, send an email. When error rate exceeds 5%, trigger an Auto Scaling event. Alarms drive automated response.
 
-#### **AWS Budgets**
-**What it is:** Tool to set spending limits and get alerts when costs approach or exceed those limits.
+**Logs**: Application log files, VPC Flow Logs, CloudTrail logs, Lambda execution logs — CloudWatch Logs centralizes them for searching and retention.
 
-**Real-world analogy:** **Household Budget Management**
-```
-Monthly Budget Planning:
-├── Set Budget Categories:
-│   ├── Housing: $2,000/month
-│   ├── Food: $800/month  
-│   ├── Transportation: $500/month
-│   └── Entertainment: $300/month
-├── Track Spending:
-│   ├── Monitor credit card statements
-│   ├── Check bank account regularly
-│   ├── Compare actual vs planned spending
-│   └── Identify overspending early
-├── Get Alerts:
-│   ├── "Warning: 80% of food budget used"
-│   ├── "Alert: Entertainment budget exceeded"
-│   ├── "Forecast: May exceed housing budget"
-│   └── "Monthly summary: Total spending report"
-└── Take Action:
-    ├── Adjust spending if approaching limits
-    ├── Investigate unexpected charges
-    ├── Reallocate money between categories
-    └── Plan for next month based on trends
-```
+CloudWatch Dashboards give you a live view of your system's health across multiple metrics on one screen.
 
-**AWS Budget types:**
-- **Cost budgets**: "Alert me if spending exceeds $1,000/month"
-- **Usage budgets**: "Alert me if I use more than 100 GB of storage"
-- **Savings Plans budgets**: "Track my reserved instance savings"
-- **Reservation budgets**: "Monitor my reserved capacity utilization"
+### AWS Config
 
-#### **AWS Cost Explorer**
-**What it is:** Tool to visualize, understand, and manage your AWS costs and usage over time.
+Config tracks the configuration state of your AWS resources over time. It answers the question: "What did this resource look like at any point in the past?"
 
-**Real-world analogy:** **Personal Finance Analysis Software**
-```
-Financial Analysis Features:
-├── Spending Visualization:
-│   ├── Monthly spending trends over past year
-│   ├── Category breakdowns (groceries, gas, utilities)
-│   ├── Comparison of current vs previous periods
-│   └── Identification of spending spikes
-├── Pattern Recognition:
-│   ├── "Your grocery spending increases 20% in December"
-│   ├── "Utility bills are highest in summer months"
-│   ├── "Entertainment spending peaks on weekends"
-│   └── "Transportation costs vary with gas prices"
-├── Forecasting:
-│   ├── Predict next month's expenses based on trends
-│   ├── Project annual spending based on current patterns
-│   ├── Estimate impact of lifestyle changes
-│   └── Plan for seasonal variations
-└── Optimization Recommendations:
-    ├── "Switch to different phone plan to save $30/month"
-    ├── "Bundle insurance policies for 10% discount"
-    ├── "Consider carpooling to reduce gas costs"
-    └── "Review subscription services for unused accounts"
-```
+If a Security Group was changed last Tuesday and an incident happened Thursday, Config can show you exactly what the Security Group looked like before and after the change.
 
-### **3. Resource Organization and Tagging**
+Config also supports **Config Rules** — automated checks that evaluate whether your resources comply with specific requirements. Examples:
 
-#### **Resource Tags**
-**What they are:** Labels you assign to AWS resources to organize, manage, and track them.
+- "All S3 buckets must have encryption enabled" — Config flags any bucket that doesn't.
+- "All EC2 instances must belong to a VPC" — Config flags any instance outside a VPC.
+- "CloudTrail must be enabled in all regions" — Config alerts if it's not.
 
-**Real-world analogy:** **Library Organization System**
-```
-Library Book Organization:
-├── By Department:
-│   ├── "Science" books in science section
-│   ├── "History" books in history section
-│   ├── "Fiction" books in fiction section
-│   └── "Reference" books in reference area
-├── By Project:
-│   ├── "Research-Project-A" materials
-│   ├── "Class-Assignment-B" resources  
-│   ├── "Thesis-2024" references
-│   └── "Personal-Reading" collection
-├── By Cost Center:
-│   ├── "Department-Budget-2024" purchases
-│   ├── "Grant-Funding-ABC" acquisitions
-│   ├── "Student-Fees" funded materials
-│   └── "Donation-Funded" resources
-└── By Lifecycle:
-    ├── "New-Acquisitions" for recent purchases
-    ├── "Popular-Items" for frequently used
-    ├── "Archive-Candidates" for rarely used
-    └── "Disposal-Scheduled" for removal
-```
-
-**Common AWS tagging strategies:**
-```
-Tag Categories:
-├── Environment: "Production", "Development", "Testing"
-├── Department: "Marketing", "Engineering", "Finance"
-├── Project: "Website-Redesign", "Mobile-App", "Data-Migration"
-├── Owner: "john.smith@company.com", "team-backend"
-├── Cost-Center: "CC-1001", "Marketing-Budget-2024"
-├── Schedule: "24x7", "Business-Hours", "Weekend-Only"
-└── Lifecycle: "Temporary", "Permanent", "Archive-Ready"
-```
-
-**Benefits of consistent tagging:**
-- **Cost allocation**: "How much does the marketing department spend on AWS?"
-- **Resource management**: "Find all development environment resources"
-- **Automation**: "Automatically shut down all 'Business-Hours' resources at 6 PM"
-- **Security**: "Apply stricter security policies to all 'Production' resources"
+Config Rules can be AWS-managed (pre-built) or custom. They run continuously and report compliance status — which is exactly what security auditors ask for.
 
 ---
 
-## 📋 **Compliance Explained From Basics**
+## Governance
 
-### **What is Compliance?**
-**Definition:** Meeting and following specific rules, regulations, standards, or requirements that apply to your business or industry.
+Governance is the set of controls that ensure your cloud environment is used as intended — proper spending, appropriate security configurations, and compliance with internal policies.
 
-**Why compliance matters:**
-- **Legal requirements**: Avoid fines and legal penalties
-- **Customer trust**: Demonstrate you protect customer data properly
-- **Business opportunities**: Some customers only work with compliant vendors
-- **Risk management**: Reduce likelihood of security breaches and data loss
+### AWS Organizations
 
-### **Types of Compliance Requirements**
+AWS Organizations lets you manage multiple AWS accounts centrally from a single management account. Large companies use multiple accounts to separate environments (production, development, testing), business units, or teams.
 
-#### **1. Legal and Regulatory Compliance**
-These are laws and regulations enforced by governments.
+Benefits:
+- **Consolidated billing**: One invoice for all accounts. Volume discounts apply across the organization.
+- **Central policy enforcement**: Apply controls to all accounts from one place.
+- **Account isolation**: A mistake in one account doesn't affect others.
 
-##### **GDPR (General Data Protection Regulation)**
-**What it is:** European law that regulates how personal data of EU residents must be handled.
+Accounts are organized into **Organizational Units (OUs)** — groups of accounts that share policies. You might have a "Production" OU and a "Development" OU with different rules applied to each.
 
-**Real-world analogy:** **Strict Privacy Laws for Medical Records**
-```
-Medical Privacy Requirements:
-├── Patient Consent: "You must ask before using patient data"
-│   └── GDPR: "You must ask before collecting personal data"
-├── Access Rights: "Patients can request copies of their records"
-│   └── GDPR: "People can request copies of their personal data"
-├── Correction Rights: "Patients can correct errors in their records"
-│   └── GDPR: "People can correct errors in their personal data"
-├── Deletion Rights: "Patients can request records be destroyed"
-│   └── GDPR: "People can request their data be deleted"
-└── Security Requirements: "Medical records must be kept secure"
-    └── GDPR: "Personal data must be protected with appropriate security"
-```
+### Service Control Policies (SCPs)
 
-**Key GDPR requirements:**
-- **Consent**: Get clear permission before collecting personal data
-- **Data minimization**: Only collect data you actually need
-- **Right to access**: People can see what data you have about them
-- **Right to deletion**: People can request their data be deleted
-- **Breach notification**: Report data breaches within 72 hours
-- **Data Protection Officer**: Appoint someone responsible for compliance
+SCPs are guardrails that set the maximum permissions available in accounts within your organization. They don't grant permissions — they define what permissions are available to be granted.
 
-##### **HIPAA (Health Insurance Portability and Accountability Act)**
-**What it is:** US law that regulates how healthcare information must be protected.
+Important distinction: An SCP that allows an action doesn't mean a user in that account can do it. The user still needs their own IAM policy allowing it. But an SCP that denies an action blocks it for everyone in that account, even account administrators — with the exception of the management account.
 
-**Real-world analogy:** **Doctor-Patient Confidentiality Rules**
-```
-Medical Confidentiality Requirements:
-├── Who Can Access: Only authorized medical staff
-│   └── HIPAA: Only authorized personnel with legitimate need
-├── How to Share: Secure methods only, with patient consent
-│   └── HIPAA: Encrypted transmission, audit trails required
-├── Where to Store: Locked, secure locations only
-│   └── HIPAA: Encrypted storage with access controls
-├── When to Disclose: Only with patient consent or legal requirement
-│   └── HIPAA: Minimum necessary rule, authorized purposes only
-└── Record Keeping: Document all access and sharing
-    └── HIPAA: Audit logs of all access to patient data
-```
+Common SCP use cases:
+- "No account in this organization may create resources outside us-east-1 and eu-west-1" — enforces data residency.
+- "No account may disable CloudTrail" — protects your audit trail.
+- "Development accounts may not access production data" — enforces environment separation.
 
-**Key HIPAA requirements:**
-- **Access controls**: Only authorized people can access patient data
-- **Encryption**: Patient data must be encrypted in storage and transmission
-- **Audit trails**: Log who accesses patient data and when
-- **Business Associate Agreements**: Third parties must also comply
-- **Training**: Staff must be trained on HIPAA requirements
+SCPs are the policy mechanism that makes multi-account governance actually enforceable.
 
-#### **2. Industry Standards and Certifications**
+### Resource tagging
 
-##### **SOC (Service Organization Control) Reports**
-**What they are:** Independent audits that verify a company's internal controls and security practices.
+Tags are key-value pairs you attach to AWS resources. Example: `Environment: Production`, `Department: Engineering`, `Project: RevenuePortal`.
 
-**Real-world analogy:** **Restaurant Health Inspection**
-```
-Health Inspector Evaluation:
-├── SOC 1 = Financial Controls Check
-│   ├── "Do you properly track money and inventory?"
-│   ├── "Are your financial records accurate?"
-│   └── "Do you have proper cash handling procedures?"
-├── SOC 2 = Operational Controls Check  
-│   ├── "Is your kitchen clean and sanitary?"
-│   ├── "Do you store food at proper temperatures?"
-│   ├── "Are employees following safety procedures?"
-│   └── "Do you have pest control measures?"
-└── SOC 3 = Public Summary Report
-    ├── "This restaurant passed health inspection"
-    ├── "Safe for public dining"
-    └── "Meets all health department standards"
-```
+Tags enable:
+- **Cost allocation**: See how much each team, project, or environment is spending.
+- **Automation**: Scripts that target "all Development servers" without hardcoding resource IDs.
+- **Access control**: IAM policies that restrict access based on tags (only resources tagged `Owner: YourTeam`).
+- **Compliance**: AWS Config rules that flag untagged resources.
 
-**AWS SOC compliance:**
-- **SOC 1**: Financial controls for AWS services
-- **SOC 2**: Security, availability, processing integrity, confidentiality
-- **SOC 3**: Public summary of SOC 2 compliance
-
-##### **ISO 27001**
-**What it is:** International standard for information security management systems.
-
-**Real-world analogy:** **Quality Management System for Manufacturing**
-```
-ISO Quality System Requirements:
-├── Documentation: "Write down all your processes"
-│   └── ISO 27001: "Document all security policies and procedures"
-├── Implementation: "Follow your documented processes"
-│   └── ISO 27001: "Implement your security controls consistently"
-├── Monitoring: "Check that processes are working"
-│   └── ISO 27001: "Monitor security controls for effectiveness"
-├── Review: "Regularly evaluate and improve processes"
-│   └── ISO 27001: "Regularly review and update security measures"
-└── Certification: "Independent audit confirms compliance"
-    └── ISO 27001: "Third-party certification of security management"
-```
-
-### **AWS Compliance Resources**
-
-#### **AWS Compliance Center**
-**What it is:** Central location for AWS compliance documentation and resources.
-
-**Real-world analogy:** **Legal Department Resource Library**
-```
-Legal Resource Library:
-├── Compliance Documentation:
-│   ├── Current laws and regulations
-│   ├── Company policy documents
-│   ├── Legal precedents and case studies
-│   └── Regulatory guidance documents
-├── Audit Reports:
-│   ├── Third-party audit results
-│   ├── Certification documents
-│   ├── Compliance verification reports
-│   └── Independent assessment findings
-├── Templates and Tools:
-│   ├── Contract templates
-│   ├── Compliance checklists
-│   ├── Risk assessment forms
-│   └── Policy development guides
-└── Expert Guidance:
-    ├── Legal expert consultations
-    ├── Regulatory update briefings
-    ├── Compliance training materials
-    └── Best practice recommendations
-```
-
-#### **AWS Artifact**
-**What it is:** Self-service portal for accessing AWS compliance reports and agreements.
-
-**Real-world analogy:** **Company Document Portal for Vendors**
-```
-Vendor Document Portal:
-├── Available Documents:
-│   ├── "Click to download our ISO certification"
-│   ├── "Access our latest financial audit report"
-│   ├── "View our safety compliance certificates"
-│   └── "Get our data security assessment results"
-├── Legal Agreements:
-│   ├── "Download standard vendor agreement template"
-│   ├── "Access non-disclosure agreement forms"
-│   ├── "Get data processing agreement templates"
-│   └── "View liability and insurance terms"
-├── Self-Service Access:
-│   ├── Available 24/7 without contacting sales
-│   ├── Immediate download after identity verification
-│   ├── Regular updates when new reports available
-│   └── Historical versions archived for reference
-└── Audit Trail:
-    ├── Track which documents were accessed
-    ├── Record when agreements were signed
-    ├── Maintain compliance evidence trail
-    └── Provide proof of due diligence
-```
+Consistent tagging is the prerequisite for cost visibility and resource management at scale.
 
 ---
 
-## 🔍 **Putting It All Together: Real-World Scenarios**
+## Compliance
 
-### **Scenario 1: Healthcare Startup**
-**Company:** New telemedicine platform for remote patient consultations
+Compliance means meeting specific regulatory or industry requirements that apply to your industry and customers.
 
-**Compliance Requirements:**
-- **HIPAA**: Patient health information protection
-- **State medical licensing**: Telehealth practice regulations
-- **GDPR**: European patients' data rights
+### Common compliance standards
 
-**Security Implementation:**
-```
-Patient Data Protection Strategy:
-├── Data Encryption:
-│   ├── Encrypt patient records in RDS database
-│   ├── Use HTTPS for all web communications
-│   ├── Encrypt video calls during consultations
-│   └── Encrypt backup files in S3
-├── Access Controls:
-│   ├── Multi-factor authentication for all medical staff
-│   ├── Role-based permissions (doctors vs nurses vs admin)
-│   ├── Automatic session timeouts for security
-│   └── Regular access reviews and updates
-├── Audit and Monitoring:
-│   ├── CloudTrail logs all account activities
-│   ├── CloudWatch monitors system performance
-│   ├── AWS Config tracks configuration changes
-│   └── Regular security assessments and penetration testing
-└── Compliance Documentation:
-    ├── HIPAA Business Associate Agreement with AWS
-    ├── Data processing agreements for GDPR
-    ├── Security policies and procedures documentation
-    └── Employee training records and certifications
-```
+**GDPR (General Data Protection Regulation)** — EU law governing personal data of EU residents. Key requirements: explicit consent before collecting data, right to access their own data, right to request deletion, 72-hour breach notification, appropriate security measures. Applies to any company handling EU resident data, regardless of where the company is located.
 
-**Governance Structure:**
-```
-Organizational Controls:
-├── AWS Organizations Setup:
-│   ├── Production account (patient data)
-│   ├── Development account (test data only)
-│   ├── Shared services account (monitoring, logging)
-│   └── Security account (identity management)
-├── Policy Enforcement:
-│   ├── SCPs prevent production access from development
-│   ├── Required encryption for all data storage
-│   ├── Mandatory MFA for all user accounts
-│   └── Approved services only (healthcare-focused)
-├── Cost Management:
-│   ├── Budgets set for each account and department
-│   ├── Cost allocation tags for different projects
-│   ├── Regular cost optimization reviews
-│   └── Reserved instances for predictable workloads
-└── Compliance Monitoring:
-    ├── AWS Config rules for HIPAA compliance
-    ├── Automated security assessments
-    ├── Regular compliance audits and reviews
-    └── Incident response procedures
-```
+**HIPAA (Health Insurance Portability and Accountability Act)** — US law protecting healthcare information. Requires encryption, access controls, audit logging, and a Business Associate Agreement with any service provider (including AWS) that handles protected health information.
 
-### **Scenario 2: Financial Services Company**
-**Company:** Online investment platform for retail investors
+**PCI DSS (Payment Card Industry Data Security Standard)** — Industry standard for any company processing payment card data. Requires network segmentation, encryption, access controls, regular vulnerability scanning, and log monitoring.
 
-**Compliance Requirements:**
-- **SOX (Sarbanes-Oxley)**: Financial reporting integrity
-- **SEC regulations**: Investment advisor compliance  
-- **PCI DSS**: Payment card data protection
-- **FINRA**: Financial industry regulatory authority
+**SOC 1, SOC 2, SOC 3** — Service Organization Control reports, independent audits of internal controls. SOC 2 covers security, availability, processing integrity, confidentiality, and privacy. Commonly required in B2B contracts. SOC 3 is the public summary version.
 
-**Security Implementation:**
-```
-Financial Data Protection Strategy:
-├── Multi-Layer Security:
-│   ├── WAF protection against web application attacks
-│   ├── DDoS protection for high availability
-│   ├── Network segmentation with private subnets
-│   └── Intrusion detection and prevention systems
-├── Strong Authentication:
-│   ├── Multi-factor authentication required for all users
-│   ├── Hardware security keys for high-privilege accounts
-│   ├── Regular password rotation policies
-│   └── Biometric authentication for mobile apps
-├── Data Protection:
-│   ├── Customer-managed encryption keys for sensitive data
-│   ├── Separate encryption for different data types
-│   ├── Secure data deletion procedures
-│   └── Data loss prevention controls
-└── Continuous Monitoring:
-    ├── Real-time fraud detection systems
-    ├── Automated threat response procedures
-    ├── Security information and event management (SIEM)
-    └── Regular penetration testing and vulnerability assessments
-```
+**ISO 27001** — International standard for information security management systems. Covers policies, controls, and ongoing improvement processes.
 
-### **Scenario 3: Global E-commerce Platform**
-**Company:** Online marketplace serving customers worldwide
+### AWS's role in compliance
 
-**Compliance Requirements:**
-- **GDPR**: European customer data protection
-- **CCPA**: California consumer privacy act
-- **PCI DSS**: Payment processing security
-- **Various national data protection laws**
+AWS itself holds many compliance certifications. AWS data centers and infrastructure are HIPAA-eligible, SOC 2 certified, PCI DSS certified, ISO 27001 certified, and more.
 
-**Governance and Compliance Strategy:**
-```
-Global Compliance Management:
-├── Data Residency:
-│   ├── EU customer data stored in European AWS regions
-│   ├── US customer data stored in US AWS regions
-│   ├── Data transfer agreements for cross-border processing
-│   └── Local data protection officer appointments
-├── Privacy by Design:
-│   ├── Privacy impact assessments for new features
-│   ├── Data minimization principles in system design
-│   ├── Automatic data retention and deletion policies
-│   └── Customer consent management systems
-├── Security Controls:
-│   ├── Zero-trust network architecture
-│   ├── End-to-end encryption for payment processing
-│   ├── Regular security audits and certifications
-│   └── Incident response and breach notification procedures
-└── Operational Excellence:
-    ├── Automated compliance monitoring and reporting
-    ├── Regular employee training on privacy and security
-    ├── Vendor management and third-party risk assessment
-    └── Continuous improvement based on audit findings
-```
+**This does not mean your workload is automatically compliant.**
+
+AWS's certifications cover the infrastructure layer. Your workload — your application configuration, your encryption settings, your access controls — must separately meet those requirements. AWS gives you the compliant foundation; you build a compliant application on top of it.
+
+### AWS Artifact
+
+AWS Artifact is a self-service portal where you can access AWS's compliance reports and certifications on demand. You can download:
+- SOC 1, SOC 2, and SOC 3 reports
+- PCI DSS attestations
+- ISO certifications
+- HIPAA eligibility documentation
+
+When your customers or auditors ask "Can you prove your infrastructure provider is compliant?" — you pull the relevant report from Artifact and share it.
+
+Artifact also hosts agreements you may need to sign — such as the Business Associate Agreement for HIPAA.
+
+### AWS Compliance Center
+
+The Compliance Center provides documentation and resources about how AWS meets specific regulatory requirements. If you need to understand how AWS handles data residency, privacy regulations in a specific country, or a particular compliance framework, this is where to look.
 
 ---
 
-## 📊 **Security, Governance, and Compliance Framework**
+## Exam focus
 
-### **The Three Pillars Working Together**
-
-```
-                    BUSINESS SUCCESS
-                          ↑
-              ┌─────────────────────────────┐
-              │                             │
-      ┌───────▼───────┐               ┌─────▼─────┐
-      │   SECURITY    │◄──────────────►│GOVERNANCE │
-      │               │               │           │
-      │ • Protect     │               │ • Control │  
-      │ • Monitor     │               │ • Manage  │
-      │ • Respond     │               │ • Oversee │
-      └───────┬───────┘               └─────┬─────┘
-              │                             │
-              └─────────────┬───────────────┘
-                            ▼
-                    ┌───────────────┐
-                    │  COMPLIANCE   │
-                    │               │
-                    │ • Follow      │
-                    │ • Document    │
-                    │ • Prove       │
-                    └───────────────┘
-```
-
-### **Integration Points**
-
-#### **Security Enables Compliance**
-- Encryption requirements → Technical security controls
-- Access controls → Identity and access management
-- Audit trails → Logging and monitoring systems
-- Incident response → Security operations procedures
-
-#### **Governance Ensures Security**
-- Security policies → Consistent security implementation
-- Resource management → Proper security tool deployment
-- Cost control → Sustainable security investments
-- Risk management → Proactive security measures
-
-#### **Compliance Validates Both**
-- Audit requirements → Verify security controls work
-- Documentation standards → Prove governance processes exist
-- Regular assessments → Continuous improvement feedback
-- External validation → Independent verification of claims
+| Topic | What to know |
+|-------|-------------|
+| Encryption at rest vs. in transit | At rest = stored data; in transit = moving data. Both require you to enable them. |
+| Customer-managed vs. AWS-managed keys | Customer-managed = you control rotation and access; AWS-managed = simpler, AWS handles lifecycle. |
+| Security Groups vs. NACLs | Security Groups = stateful, instance-level; NACLs = stateless, subnet-level. |
+| CloudTrail | Records all API calls — the audit log for your account. |
+| CloudWatch | Metrics, alarms, logs — monitors operational health. |
+| AWS Config | Tracks resource configuration history; flags compliance violations. |
+| AWS Organizations | Manages multiple accounts; enables consolidated billing and policy enforcement. |
+| SCPs | Set maximum permission boundaries for accounts; prevent but don't grant access. |
+| AWS Artifact | Self-service portal for AWS compliance reports and agreements. |
+| HIPAA/GDPR/PCI DSS | Know what industry each covers; know that AWS being certified does not make your workload compliant. |
 
 ---
 
-## 🎯 **Study Guide for Exam Success**
+## Practice questions
 
-### **Key Concepts to Master**
+**Q1.** A security team needs to investigate a suspected unauthorized access to their AWS account three weeks ago. Which service gives them a record of API actions taken at that time?
 
-#### **Security Fundamentals**
-- **Encryption states**: Data at rest, in transit, in use
-- **Key management**: Customer-managed vs AWS-managed keys
-- **Network security**: VPCs, security groups, NACLs, WAF
-- **Monitoring**: CloudTrail, CloudWatch, Config
+A) Amazon CloudWatch  
+B) AWS Config  
+C) AWS CloudTrail  
+D) AWS Trusted Advisor
 
-#### **Governance Essentials**
-- **AWS Organizations**: Multi-account management
-- **Service Control Policies**: What they prevent (not permit)
-- **Cost management**: Budgets, Cost Explorer, tagging
-- **Resource organization**: Consistent tagging strategies
-
-#### **Compliance Basics**
-- **Shared responsibility**: What compliance tasks belong to whom
-- **Common standards**: GDPR, HIPAA, SOX, PCI DSS
-- **AWS resources**: Compliance Center, Artifact
-- **Documentation**: Importance of policies and procedures
-
-### **Exam Question Patterns**
-
-#### **Pattern 1: Security Control Selection**
-**Question:** "A company needs to encrypt sensitive data stored in S3. What should they use?"
-**Answer:** S3 server-side encryption (AWS-managed or customer-managed keys)
-
-#### **Pattern 2: Monitoring and Logging**
-**Question:** "How can a company track all API calls made in their AWS account?"
-**Answer:** Enable AWS CloudTrail
-
-#### **Pattern 3: Compliance Requirements**
-**Question:** "A healthcare company needs to meet HIPAA requirements. What must they do?"
-**Answer:** Enable encryption, implement access controls, enable audit logging, sign BAA with AWS
-
-#### **Pattern 4: Governance Implementation**
-**Question:** "How can a company prevent any account in their organization from launching expensive instances?"
-**Answer:** Use Service Control Policies (SCPs) in AWS Organizations
+**Answer: C** — CloudTrail records all API calls with timestamps, identities, and outcomes. CloudWatch monitors performance metrics. Config tracks resource configurations. Trusted Advisor provides recommendations.
 
 ---
 
-## 💡 **Best Practices Summary**
+**Q2.** A company's database is behind a web application. The security team wants to ensure the database cannot be reached from the internet even if the web server is compromised. What architectural approach achieves this?
 
-### **Security Best Practices**
-1. **Enable encryption everywhere**: Data at rest, in transit, and in use
-2. **Implement least privilege**: Give minimum permissions necessary
-3. **Monitor everything**: Enable CloudTrail, CloudWatch, and Config
-4. **Automate security**: Use AWS security services instead of manual processes
-5. **Plan for incidents**: Have response procedures ready
+A) Apply a Security Group to the database that allows all traffic  
+B) Place the database in a private subnet with no route to the internet  
+C) Enable encryption on the database  
+D) Install WAF on the database
 
-### **Governance Best Practices**
-1. **Use multiple accounts**: Separate production, development, and shared services
-2. **Implement consistent tagging**: Enable cost allocation and resource management
-3. **Set up budgets and alerts**: Monitor spending proactively
-4. **Document policies**: Write down your governance procedures
-5. **Regular reviews**: Assess and improve governance practices
-
-### **Compliance Best Practices**
-1. **Understand requirements**: Know what regulations apply to your business
-2. **Use AWS compliance resources**: Leverage Compliance Center and Artifact
-3. **Document everything**: Maintain evidence of compliance efforts
-4. **Regular assessments**: Test and validate your compliance implementation
-5. **Stay current**: Keep up with changing regulations and requirements
+**Answer: B** — Private subnets have no internet route. Even if the web server is compromised, the attacker cannot reach the database from the internet directly. Encryption protects data at rest but doesn't prevent network access. WAF operates at the application layer, not at the network architecture level.
 
 ---
 
-## 🔗 **Next Steps**
+**Q3.** A large company wants to ensure that no development account in their AWS organization can create resources in EU regions, to comply with a data residency policy. What is the correct mechanism?
 
-### **Continue Your Security Journey**
-**Next Recommended Reading:**
-- [Task 2.3: AWS Access Management Capabilities](./Task%20Statement%202.3-Identify%20AWS%20access%20management%20capabilities.md)
+A) Apply IAM deny policies to every user in every development account  
+B) Use a Service Control Policy that denies resource creation in EU regions, applied to the Development OU  
+C) Create a NACL that blocks EU region traffic  
+D) Configure CloudTrail to block EU region API calls
 
-### **Additional Resources**
-- [Task 2.1: Shared Responsibility Model](./Task%20Statement%202.1-Understand%20the%20AWS%20shared%20responsibility%20model.md)
-- [Domain 2 Overview](./README.md)
-
----
-
-## ⭐ **Key Takeaways**
-
-### **Remember These Core Concepts:**
-1. **Security, governance, and compliance work together** - they're not separate concerns
-2. **Encryption is your friend** - use it for data at rest, in transit, and in use
-3. **Monitor everything** - you can't protect what you can't see
-4. **Document and organize** - good governance makes security and compliance easier
-5. **Compliance is ongoing** - it's not a one-time checkbox, it's a continuous process
-
-### **Success Mantra:**
-*"Secure by design, governed by policy, compliant by evidence."*
+**Answer: B** — SCPs applied to an Organizational Unit affect all accounts in that OU without requiring changes to individual users or accounts. IAM policies in each account would require constant maintenance. NACLs control network traffic within a VPC, not account-level permissions. CloudTrail records actions but doesn't block them.
 
 ---
 
-*🎯 **Learning Checkpoint**: You now understand how to secure cloud environments, implement proper governance, and meet compliance requirements. These concepts form the foundation for implementing specific security controls and access management systems.*
+**Q4.** A healthcare company is using AWS RDS to store patient records. An IT manager says "We're HIPAA compliant because AWS is HIPAA-eligible." What's wrong with this statement?
 
-*🔒 **Security Mindset**: Always think about the three questions: "Is it secure?", "Is it properly governed?", and "Does it meet our compliance requirements?" These three perspectives will guide you toward comprehensive cloud security.*
+A) Nothing — AWS eligibility covers all customer workloads  
+B) AWS HIPAA eligibility covers the infrastructure; the company must still configure encryption, access controls, and audit logging, and sign a Business Associate Agreement  
+C) AWS does not support HIPAA compliance at all  
+D) HIPAA compliance is only required for storing data, not for compute
+
+**Answer: B** — AWS provides a HIPAA-eligible foundation, but the customer is responsible for configuring their workload to meet HIPAA requirements: encrypting PHI, controlling access, enabling audit logging, and executing a BAA with AWS.
+
+---
+
+**Next:** [Task 2.3 — Access Management Capabilities](./Task%20Statement%202.3-Identify%20AWS%20access%20management%20capabilities.md)

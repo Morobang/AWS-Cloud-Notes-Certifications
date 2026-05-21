@@ -1,777 +1,194 @@
 # Task Statement 2.1: Understand the AWS Shared Responsibility Model
 
-## 🎯 **Learning Objective**
-**Master the AWS Shared Responsibility Model** - understand exactly who (AWS or you) is responsible for each aspect of cloud security, and how this changes based on different AWS services.
+## What you'll learn
+- Who is responsible for which security tasks — AWS or you
+- How that responsibility changes based on which AWS services you use
+- The common mistakes people make when they first work with AWS security
 
 ---
 
-## 🏠 **Understanding Through Real-World Analogies**
+## The core concept
 
-### **The Apartment Complex Analogy**
-The AWS Shared Responsibility Model is like living in an apartment complex:
+The **AWS Shared Responsibility Model** answers one question: if something goes wrong, whose job was it to prevent it?
 
-#### **Building Management (AWS) Responsibilities:**
-```
-What the apartment complex provides and maintains:
-├── Building Security
-│   ├── Secure building entrance with keypad/doorman
-│   ├── Security cameras in hallways and parking
-│   └── Background checks on maintenance staff
-├── Infrastructure  
-│   ├── Working elevators and stairwells
-│   ├── Electrical and plumbing systems
-│   ├── HVAC (heating and cooling)
-│   └── Fire safety systems and sprinklers
-├── Facility Maintenance
-│   ├── Roof repairs and structural maintenance  
-│   ├── Hallway cleaning and lighting
-│   ├── Parking lot maintenance
-│   └── Garbage collection systems
-└── Compliance
-    ├── Building permits and inspections
-    ├── Fire department safety compliance
-    └── Meeting local building codes
-```
+The answer is always one of two things:
 
-#### **Tenant (Your) Responsibilities:**
-```
-What you're responsible for in your apartment:
-├── Your Unit Security
-│   ├── Lock your apartment door
-│   ├── Don't give keys to unauthorized people
-│   ├── Secure your valuables inside your unit
-│   └── Report suspicious activity
-├── Your Property
-│   ├── Your furniture and belongings
-│   ├── Your personal documents and information
-│   ├── Care for your appliances
-│   └── Keep your unit clean and undamaged
-├── Following Rules
-│   ├── Follow building policies and lease agreement
-│   ├── Use facilities appropriately
-│   ├── Don't disrupt other tenants
-│   └── Notify management of maintenance issues
-└── Your Guests
-    ├── Control who you let into your apartment
-    ├── Ensure your guests follow building rules
-    └── Take responsibility for guest behavior
-```
+**AWS is responsible for "security OF the cloud"** — the physical infrastructure, the hardware, the data centers, the networking, and the underlying software that runs AWS services. You never touch this layer. You can't configure it, and you can't break it.
 
-**Key insight:** You can't just assume the building management will protect everything - you still need to lock your door and secure your belongings!
+**You are responsible for "security IN the cloud"** — everything you put into AWS: your data, your applications, your access controls, your encryption settings, your network configuration.
+
+The apartment building analogy that actually works: the building owner secures the entrance, maintains the elevators, handles the fire suppression system, and vets maintenance staff. You lock your apartment door, secure your valuables, and control who you give your keys to. The building owner being responsible for the hallways doesn't mean you can leave your apartment unlocked.
 
 ---
 
-## 🔒 **The AWS Shared Responsibility Model Explained**
+## What AWS always handles
 
-### **What is the Shared Responsibility Model?**
-**Definition:** A security and compliance framework that clearly defines which security tasks are AWS's responsibility and which are the customer's responsibility.
+No matter which AWS services you use, AWS is always responsible for:
 
-**Why it exists:**
-- **Prevents gaps**: Ensures no security task falls through the cracks
-- **Clarifies expectations**: Everyone knows exactly what they're responsible for
-- **Enables better security**: Both parties can focus on their areas of expertise
-- **Reduces confusion**: Clear guidelines for who to contact when issues arise
-
-### **The Two Main Categories**
-
-#### **AWS: "Security OF the Cloud"**
-AWS is responsible for protecting the infrastructure that runs all services offered in the AWS Cloud.
-
-**What this includes:**
-```
-AWS's Infrastructure Responsibilities:
-├── Physical Security
-│   ├── Data center physical access controls
-│   ├── Environmental controls (temperature, humidity)
-│   ├── Fire suppression and power backup systems
-│   └── Hardware disposal and destruction
-├── Infrastructure Software
-│   ├── Host operating system patching
-│   ├── Network infrastructure configuration
-│   ├── Hypervisor (virtualization layer) management
-│   └── Service software updates and patches
-├── Network Controls
-│   ├── Network segregation between customers
-│   ├── DDoS protection at infrastructure level
-│   ├── Port scanning protection
-│   └── Network packet filtering
-└── Hardware/Software Maintenance
-    ├── Server hardware maintenance and replacement
-    ├── Network equipment maintenance
-    ├── Storage system management
-    └── Database software patching (for managed services)
-```
-
-**Real-world analogy:** Like a hotel managing the building structure, utilities, and basic safety systems that all guests rely on.
-
-#### **Customer: "Security IN the Cloud"**
-Customers are responsible for security tasks that relate to their specific use of AWS services.
-
-**What this includes:**
-```
-Your Security Responsibilities:
-├── Data Protection
-│   ├── Data encryption (at rest and in transit)
-│   ├── Data classification and handling
-│   ├── Data backup and disaster recovery
-│   └── Data retention and deletion policies
-├── Identity & Access Management
-│   ├── User account management
-│   ├── Multi-factor authentication setup
-│   ├── Permission and role assignments
-│   └── Access key rotation and security
-├── Operating System & Applications
-│   ├── Operating system updates and patches
-│   ├── Application security configurations
-│   ├── Anti-virus and anti-malware software
-│   └── Application firewall configurations
-├── Network Configuration
-│   ├── Security group configurations
-│   ├── Network Access Control Lists (NACLs)
-│   ├── VPC (Virtual Private Cloud) setup
-│   └── Subnet configurations
-└── Compliance
-    ├── Meeting industry-specific regulations
-    ├── Configuring audit logging
-    ├── Implementing required security controls
-    └── Regular security assessments
-```
-
-**Real-world analogy:** Like a hotel guest being responsible for locking their room door, securing their valuables, and following hotel policies.
+- **Physical security of data centers** — guards, cameras, biometric access, unmarked buildings. AWS data center locations are not publicly disclosed.
+- **Hardware** — servers, networking gear, storage hardware. When hardware fails, AWS replaces it. You never see this happen.
+- **Hypervisor and virtualization** — the software layer that creates virtual machines and ensures your EC2 instances are isolated from other customers' instances.
+- **Global network infrastructure** — the fiber, routers, and switches connecting AWS regions and availability zones.
+- **Host operating system patching** — for managed services (RDS, Lambda, ElastiCache, etc.), AWS patches and maintains the underlying operating systems.
 
 ---
 
-## 📊 **How Responsibility Changes by Service Type**
+## What you always handle
 
-### **The Service Spectrum**
-Different AWS services require different levels of customer responsibility:
+No matter which AWS services you use, you are always responsible for:
 
-```
-More AWS Responsibility ←→ More Customer Responsibility
-        |                           |
-   SaaS-like           IaaS-like Services
-   Services           (Infrastructure)
-        |                           |
-   (Less work          (More control,
-    for you)            more work)
-```
-
-### **1. Infrastructure as a Service (IaaS) - Most Customer Responsibility**
-
-#### **Example: Amazon EC2 (Virtual Servers)**
-**Think of this like:** Renting a raw apartment - you get the space, but you provide and manage everything inside.
-
-**AWS Responsibilities:**
-- Physical server hardware
-- Hypervisor (virtualization software)
-- Network infrastructure
-- Physical data center security
-
-**Your Responsibilities:**
-- Operating system installation and updates
-- Application installation and configuration
-- Data encryption
-- Network firewall configuration
-- Access management
-- Security patches
-- Anti-virus software
-
-**Real-world comparison:**
-```
-Traditional Server (Your Own Building):
-You're responsible for: Building, server hardware, OS, applications, data
-                      [═══════════════════════════════════════════]
-
-AWS EC2 (Rented Server Space):
-AWS responsible for: [████████████] Building, hardware, hypervisor
-You responsible for:                [═════════════════════════] OS, applications, data
-```
-
-### **2. Platform as a Service (PaaS) - Shared Responsibility**
-
-#### **Example: Amazon RDS (Managed Database)**
-**Think of this like:** Renting a furnished apartment - furniture (database software) is provided and maintained, but you manage your belongings (data).
-
-**AWS Responsibilities:**
-- Database software installation and patching
-- Operating system maintenance
-- Hardware management
-- Backup infrastructure
-- Automatic failover
-
-**Your Responsibilities:**
-- Database access controls
-- Data encryption
-- User account management
-- Query optimization
-- Database-level security configurations
-
-**Real-world comparison:**
-```
-Self-Managed Database:
-You're responsible for: [═══════════════════════════════════════════]
-                       Hardware, OS, DB software, data, backups
-
-AWS RDS Managed Database:
-AWS responsible for: [████████████████████████] Hardware, OS, DB software, backups
-You responsible for:                            [═══════════] Data, access controls, encryption
-```
-
-### **3. Software as a Service (SaaS) - Least Customer Responsibility**
-
-#### **Example: Amazon WorkMail (Email Service)**
-**Think of this like:** Using a hotel's business center - the hotel provides and maintains the computers and software, you just use them for your work.
-
-**AWS Responsibilities:**
-- Email server software and maintenance
-- Anti-spam and anti-virus protection
-- Infrastructure scaling
-- Software updates
-- Data backup
-
-**Your Responsibilities:**
-- User account management
-- Email content security
-- Access policies
-- Data classification
-
-**Real-world comparison:**
-```
-Self-Hosted Email:
-You're responsible for: [═══════════════════════════════════════════]
-                       Mail servers, software, maintenance, security
-
-AWS WorkMail:
-AWS responsible for: [██████████████████████████████████] Servers, software, maintenance
-You responsible for:                                     [═══] User management, content
-```
+- **Identity and Access Management (IAM)** — creating users, assigning permissions, enabling MFA, rotating credentials. AWS gives you the tools; you do the configuration.
+- **Data protection** — choosing whether to encrypt your data at rest and in transit. Encryption options exist, but you must turn them on.
+- **Network configuration** — setting security group rules, configuring VPC subnets, controlling what traffic can reach your resources.
+- **Application security** — if you write code that runs on AWS, that code's security is your responsibility. AWS doesn't audit your application for SQL injection vulnerabilities.
+- **Compliance implementation** — AWS infrastructure can be HIPAA-eligible, but you must configure your workload to meet HIPAA requirements. AWS being compliant doesn't make your application compliant.
 
 ---
 
-## 🔧 **Practical Examples by AWS Service**
+## How responsibility shifts by service type
 
-### **Amazon S3 (Simple Storage Service)**
-**Service Type:** Platform as a Service (PaaS)
+This is where it gets nuanced — and where the exam tests you.
 
-**AWS Handles:**
-- Storage infrastructure
-- Data durability (11 9's = 99.999999999%)
-- Infrastructure scaling
-- Physical security of data centers
-- Service availability
+The more AWS manages a service, the more AWS takes on. The more control you have, the more you're responsible for.
 
-**You Handle:**
-- **Bucket permissions** - who can access your storage buckets
-- **Data encryption settings** - choosing encryption options
-- **Access logging** - tracking who accesses your data
-- **Data classification** - marking sensitive vs. public data
-- **Backup policies** - deciding what to backup and when
+### IaaS — Infrastructure as a Service (Example: Amazon EC2)
 
-**Real-world scenario:**
-```
-Scenario: Company storing customer photos in S3
-├── AWS ensures: Photos don't get lost due to hardware failure
-├── AWS ensures: Data center is physically secure
-├── You ensure: Only authorized employees can access the photos  
-├── You ensure: Customer photos are encrypted
-└── You ensure: Access to photos is logged for compliance
-```
+EC2 gives you a virtual server. You control everything above the hardware — the operating system, the applications, the data.
 
-### **Amazon EC2 (Elastic Compute Cloud)**
-**Service Type:** Infrastructure as a Service (IaaS)
+| Layer | Responsible party |
+|-------|------------------|
+| Physical hardware and data center | AWS |
+| Hypervisor (virtualization) | AWS |
+| Guest operating system | **You** |
+| Application installation and patching | **You** |
+| Security software (antivirus, etc.) | **You** |
+| Network firewall rules (security groups) | **You** |
+| Data encryption | **You** |
+| IAM and access control | **You** |
 
-**AWS Handles:**
-- Physical server hardware
-- Hypervisor security
-- Network infrastructure
-- Physical data center access
+When your EC2 instance gets compromised because the OS wasn't patched — that's on you, not AWS.
 
-**You Handle:**
-- **Operating system updates** - keeping Windows/Linux updated
-- **Security software** - installing antivirus, endpoint protection
-- **Application security** - securing your web applications
-- **Network configuration** - setting up firewalls and access rules
-- **Data encryption** - encrypting files and databases
-- **User access management** - controlling who can log into servers
+### PaaS — Platform as a Service (Example: Amazon RDS)
 
-**Real-world scenario:**
-```
-Scenario: Company running e-commerce website on EC2
-├── AWS ensures: Physical servers are secure and maintained
-├── AWS ensures: Network infrastructure is protected
-├── You ensure: Web server software is updated and secure
-├── You ensure: Customer data in databases is encrypted
-├── You ensure: Only authorized staff can access the servers
-└── You ensure: Firewall rules block malicious traffic
-```
+RDS manages the database engine for you. You interact with the database; AWS handles the underlying OS and database software.
 
-### **AWS Lambda (Serverless Functions)**
-**Service Type:** Platform as a Service (PaaS)
+| Layer | Responsible party |
+|-------|------------------|
+| Physical hardware and data center | AWS |
+| Hypervisor | AWS |
+| Host operating system | AWS |
+| Database engine patching | AWS |
+| Automated backups | AWS |
+| Database access controls | **You** |
+| Data encryption settings | **You** |
+| Database user accounts and permissions | **You** |
+| What data you store | **You** |
 
-**AWS Handles:**
-- Server provisioning and management
-- Runtime environment patching
-- Infrastructure scaling
-- Runtime security
+You don't have SSH access to the underlying OS. You just connect to the database. AWS handles the rest.
 
-**You Handle:**
-- **Function code security** - writing secure application code
-- **Access permissions** - controlling what the function can access
-- **Environment variables** - securing configuration data
-- **Input validation** - checking data coming into your function
+### SaaS-like — Fully Managed Services (Example: Amazon S3, AWS Lambda)
 
-**Real-world scenario:**
-```
-Scenario: Function that processes customer orders
-├── AWS ensures: The servers running your function are secure
-├── AWS ensures: The runtime environment (Python, Node.js) is patched
-├── You ensure: Your order processing code handles data securely
-├── You ensure: Function only has permissions it needs
-└── You ensure: Customer data is validated and encrypted
-```
+For S3, AWS manages the storage infrastructure entirely. You put objects in, you get objects out. For Lambda, you provide function code — AWS provides and manages all the execution infrastructure.
+
+| Layer | Responsible party |
+|-------|------------------|
+| Physical hardware and infrastructure | AWS |
+| Storage/compute software and runtime | AWS |
+| Service availability and durability | AWS |
+| Bucket/function access permissions | **You** |
+| Data encryption (encryption is optional but available) | **You** |
+| What data you store and what code you run | **You** |
+
+The fact that S3 offers 99.999999999% durability doesn't mean your bucket's permissions are correctly configured. Public S3 buckets that expose customer data are one of the most common AWS security incidents — and they're entirely the customer's fault, not AWS's.
 
 ---
 
-## 🚨 **Common Responsibility Confusion Points**
+## The responsibility matrix
 
-### **1. Data Encryption**
-**Confusion:** "Isn't AWS responsible for keeping my data secure?"
+| Security task | EC2 | RDS | S3 | Lambda |
+|--------------|-----|-----|-----|--------|
+| Physical data center security | AWS | AWS | AWS | AWS |
+| Hypervisor / virtualization | AWS | AWS | AWS | AWS |
+| Host OS patching | **You** | AWS | AWS | AWS |
+| Database / runtime patching | **You** | AWS | N/A | AWS |
+| Network firewall settings | **You** | **You** | **You** | AWS |
+| Data encryption | **You** | **You** | **You** | **You** |
+| IAM and access control | **You** | **You** | **You** | **You** |
+| Application security | **You** | **You** | N/A | **You** |
 
-**Reality Check:**
-- **AWS responsibility**: Providing encryption options and tools
-- **Your responsibility**: Actually turning on and configuring encryption
-
-**Analogy:** Hotel provides a safe in your room, but you have to:
-- Choose to use it
-- Set the combination
-- Decide what to put in it
-
-### **2. Operating System Updates**
-**Confusion:** "I thought managed services meant AWS handles everything?"
-
-**Reality Check:**
-- **For managed services (RDS, ElastiCache)**: AWS handles OS updates
-- **For infrastructure services (EC2)**: You handle OS updates
-- **Rule of thumb**: If you can access the operating system, you're responsible for it
-
-### **3. Access Management**
-**Confusion:** "AWS has security, so I don't need to worry about access control?"
-
-**Reality Check:**
-- **AWS responsibility**: Providing access management tools (IAM)  
-- **Your responsibility**: Actually configuring who can access what
-
-**Analogy:** Building management provides key cards, but you decide:
-- Who gets keys to your office
-- What rooms each person can access  
-- When to revoke access for ex-employees
-
-### **4. Compliance**
-**Confusion:** "AWS is compliant, so my applications are automatically compliant too?"
-
-**Reality Check:**
-- **AWS responsibility**: AWS infrastructure meets compliance standards
-- **Your responsibility**: Configuring your applications to meet compliance requirements
-
-**Example:** For HIPAA compliance:
-- **AWS provides**: HIPAA-eligible services and infrastructure
-- **You must**: Enable encryption, set up audit logging, implement access controls, sign Business Associate Agreement
+The one constant: **data and access management are always your responsibility** regardless of service type.
 
 ---
 
-## 🛠️ **The Shared Responsibility Matrix**
+## Common misconceptions
 
-### **By Service Category**
+**"AWS handles all security."**
+Wrong. AWS handles infrastructure security. You must configure your applications, encrypt your data, and set up proper access controls. A poorly configured AWS environment is insecure regardless of what AWS does.
 
-| Security Component | EC2 (IaaS) | RDS (PaaS) | S3 (PaaS) | Lambda (PaaS) |
-|-------------------|------------|------------|-----------|---------------|
-| **Physical Security** | AWS | AWS | AWS | AWS |
-| **Host OS Patching** | Customer | AWS | AWS | AWS |
-| **Guest OS Patching** | Customer | N/A | N/A | N/A |
-| **Application Patching** | Customer | Customer | N/A | Customer |
-| **Network Configuration** | Customer | AWS/Customer | Customer | AWS |
-| **Firewall Settings** | Customer | Customer | Customer | AWS |
-| **Data Encryption** | Customer | Customer | Customer | Customer |
-| **Access Management** | Customer | Customer | Customer | Customer |
+**"Managed services mean I have no security responsibility."**
+Wrong. RDS manages the database engine; you still control who can connect to the database and whether data is encrypted. "Managed" means AWS handles operations, not that security is automatic.
 
-**Legend:**
-- **AWS**: AWS handles this completely
-- **Customer**: You handle this completely  
-- **AWS/Customer**: Shared between both
-- **N/A**: Not applicable for this service
+**"My application is compliant because AWS is compliant."**
+Wrong. AWS holds many compliance certifications (HIPAA, SOC 2, PCI DSS, ISO 27001). But those certifications cover AWS's infrastructure. Your application running on that infrastructure still needs to be configured to meet compliance requirements — you must enable encryption, configure audit logging, implement access controls, and sign the appropriate agreements (like a HIPAA Business Associate Agreement with AWS).
 
 ---
 
-## 📋 **Security Responsibility Checklist**
+## Decision rule for the exam
 
-### **For ANY AWS Service, You're ALWAYS Responsible For:**
-```
-✓ Identity and Access Management (IAM)
-  ├── Creating and managing user accounts
-  ├── Setting up appropriate permissions
-  ├── Enabling multi-factor authentication
-  └── Regularly reviewing and updating access
+When a question asks who is responsible for a security task, ask:
 
-✓ Data Protection
-  ├── Choosing appropriate encryption settings
-  ├── Classifying data sensitivity levels
-  ├── Implementing backup strategies
-  └── Ensuring proper data handling procedures
+1. **Can the customer configure or change this?** If yes → customer's responsibility.
+2. **Is this about physical infrastructure or underlying AWS software?** If yes → AWS's responsibility.
+3. **What service type?** More managed (RDS, Lambda, S3) → AWS handles more. Less managed (EC2) → customer handles more.
 
-✓ Network Security Configuration
-  ├── Security group rules (firewall settings)
-  ├── Network Access Control Lists (NACLs)
-  ├── VPC configuration and subnets
-  └── SSL/TLS certificate management
-
-✓ Compliance Implementation
-  ├── Understanding applicable regulations
-  ├── Configuring required security controls
-  ├── Enabling appropriate logging and monitoring
-  └── Regular compliance assessments
-```
-
-### **For Infrastructure Services (EC2), You're ALSO Responsible For:**
-```
-✓ Operating System Security
-  ├── Installing security updates and patches
-  ├── Configuring OS-level security settings
-  ├── Installing and managing antivirus software
-  └── Managing system users and permissions
-
-✓ Application Security
-  ├── Keeping applications updated
-  ├── Configuring application security settings
-  ├── Managing application user accounts
-  └── Implementing secure coding practices
-
-✓ Host-Based Firewalls
-  ├── Configuring firewall rules on the server
-  ├── Managing intrusion detection systems
-  ├── Monitoring system logs for security events
-  └── Implementing endpoint protection
-```
+The rule of thumb: if you can SSH into it, patch it, or configure it — it's yours.
 
 ---
 
-## 🎯 **Decision Framework: "Who's Responsible?"**
+## Practice questions
 
-When you encounter a security task, ask these questions:
+**Q1.** A company running their website on Amazon EC2 gets hacked through an unpatched operating system vulnerability. Who is responsible?
 
-### **Question 1: Can I directly control or configure this?**
-- **YES** → Probably your responsibility
-- **NO** → Probably AWS's responsibility
+A) AWS, because they manage EC2 infrastructure  
+B) The customer, because OS patching on EC2 is the customer's responsibility  
+C) Both equally, because EC2 is a shared service  
+D) AWS, because they should automatically patch EC2 instances
 
-**Examples:**
-- Can you change database software version? **NO** (in RDS) → AWS responsibility
-- Can you configure user permissions? **YES** → Your responsibility
-
-### **Question 2: Does this relate to AWS infrastructure or my data/applications?**
-- **AWS Infrastructure** → AWS responsibility
-- **Your Data/Applications** → Your responsibility
-
-**Examples:**
-- Physical data center security → AWS responsibility
-- Encrypting your customer data → Your responsibility
-
-### **Question 3: What service type am I using?**
-- **More managed (SaaS-like)** → More AWS responsibility
-- **Less managed (IaaS-like)** → More your responsibility
-
-**Examples:**
-- WorkMail (managed email) → AWS handles most security
-- EC2 (virtual servers) → You handle most security
+**Answer: B** — EC2 is IaaS. You control and are responsible for the guest operating system, including applying security patches.
 
 ---
 
-## 🔍 **Real-World Scenarios and Solutions**
+**Q2.** Which of the following is AWS always responsible for, regardless of which service a customer uses?
 
-### **Scenario 1: Small Business Website**
-**Setup:** Company website running on EC2 with customer data in RDS database
+A) Encrypting customer data stored in S3  
+B) Configuring security group rules for EC2 instances  
+C) Patching the physical hardware and hypervisor  
+D) Setting up multi-factor authentication for IAM users
 
-**Security Incident:** Website gets hacked and customer data is exposed
-
-**Responsibility Analysis:**
-```
-What went wrong and who's responsible:
-
-Physical server compromise?
-├── If: AWS data center was breached → AWS responsible
-└── If: Application vulnerability exploited → Customer responsible
-
-Operating system compromise?  
-├── If: Hypervisor vulnerability → AWS responsible
-└── If: Unpatched OS on EC2 → Customer responsible
-
-Database access compromise?
-├── If: RDS service vulnerability → AWS responsible  
-├── If: Weak database passwords → Customer responsible
-└── If: Missing encryption → Customer responsible
-
-Application code vulnerability?
-└── Application security flaws → Customer responsible
-```
-
-**Prevention Steps (Customer Responsibilities):**
-1. **Keep EC2 operating system updated** with security patches
-2. **Configure security groups** to limit access to necessary ports only
-3. **Enable RDS encryption** for customer data protection
-4. **Use strong database passwords** and rotate them regularly
-5. **Implement application-level security** (input validation, secure coding)
-6. **Enable CloudTrail logging** to track all account activities
-
-### **Scenario 2: Healthcare Application**
-**Setup:** Patient data stored in S3, application running on Lambda functions
-
-**Compliance Requirement:** Must meet HIPAA requirements for patient data protection
-
-**Responsibility Breakdown:**
-```
-HIPAA Compliance Requirements:
-
-AWS Responsibilities:
-├── Provide HIPAA-eligible services (S3, Lambda)
-├── Sign Business Associate Agreement (BAA)
-├── Maintain infrastructure security controls
-└── Provide audit reports for AWS infrastructure
-
-Customer Responsibilities:  
-├── Enable S3 encryption for patient data
-├── Configure appropriate access controls and permissions
-├── Implement audit logging (CloudTrail, S3 access logs)
-├── Ensure Lambda functions handle patient data securely
-├── Create data backup and retention policies
-├── Train staff on HIPAA requirements
-└── Conduct regular security assessments
-```
-
-**Key Point:** AWS provides the tools and infrastructure for HIPAA compliance, but you must actually implement and configure the required security controls.
-
-### **Scenario 3: Financial Services Application**
-**Setup:** Trading application with high-frequency data processing
-
-**Regulatory Requirement:** Must meet SOX (Sarbanes-Oxley) financial reporting requirements
-
-**Security Implementation:**
-```
-SOX Compliance Implementation:
-
-Data Integrity Controls:
-├── AWS provides: Reliable, durable storage infrastructure
-├── Customer implements: Data validation, change management processes
-├── Customer implements: Audit trails for all data changes
-└── Customer implements: Segregation of duties in application access
-
-Access Controls:
-├── AWS provides: IAM service and MFA capabilities
-├── Customer implements: Role-based access control
-├── Customer implements: Regular access reviews and certifications
-└── Customer implements: Strong authentication requirements
-
-Financial Data Protection:
-├── AWS provides: Encryption services and secure infrastructure  
-├── Customer implements: Data encryption at rest and in transit
-├── Customer implements: Secure key management practices
-└── Customer implements: Data loss prevention controls
-```
+**Answer: C** — Physical infrastructure and hypervisor security are always AWS's responsibility. The other options are always the customer's responsibility.
 
 ---
 
-## 📊 **Understanding Through Visual Models**
+**Q3.** A customer uses Amazon RDS for their database. What security tasks are they still responsible for?
 
-### **The Shared Responsibility Stack**
-```
-                     YOUR APPLICATIONS AND DATA
-                    ┌─────────────────────────────┐
-                    │     Your Responsibility     │
-                    │ ┌─────────────────────────┐ │
-                    │ │  Data & Configuration   │ │
-                    │ │  Identity & Access Mgmt │ │
-                    │ │  Application Security   │ │
-                    │ │  OS & Network Config    │ │ ← Varies by service
-                    │ └─────────────────────────┘ │
-                    └─────────────────────────────┘
-                             ┌─────────┐
-                             │ Shared  │
-                             └─────────┘
-                    ┌─────────────────────────────┐
-                    │     AWS Responsibility      │
-                    │ ┌─────────────────────────┐ │
-                    │ │   Physical Security     │ │
-                    │ │   Infrastructure        │ │
-                    │ │   Network Controls      │ │
-                    │ │   Host OS & Hypervisor  │ │
-                    │ └─────────────────────────┘ │
-                    └─────────────────────────────┘
-                       AWS GLOBAL INFRASTRUCTURE
-```
+A) Patching the database engine and operating system  
+B) Managing physical server hardware and data center security  
+C) Configuring database access controls and enabling data encryption  
+D) Maintaining the automatic backup infrastructure
 
-### **The Responsibility Gradient**
-```
-Customer Control & Responsibility
-        ↑
-        │
-High    │  ┌──────────┐
-        │  │   EC2    │  ← You manage OS, apps, data
-        │  │  (IaaS)  │
-        │  └──────────┘
-        │
-Medium  │  ┌──────────┐
-        │  │   RDS    │  ← AWS manages OS, you manage data
-        │  │  (PaaS)  │
-        │  └──────────┘
-        │
-Low     │  ┌──────────┐
-        │  │WorkMail  │  ← AWS manages most, you manage users
-        │  │  (SaaS)  │
-        │  └──────────┘
-        │
-        └─────────────────────────────→
-                                 AWS Management & Responsibility
-```
+**Answer: C** — With RDS, AWS handles OS and database engine patching, hardware, and backup infrastructure. The customer is still responsible for access controls and encryption settings.
 
 ---
 
-## ⚠️ **Common Mistakes and How to Avoid Them**
+**Q4.** A healthcare company wants to store patient data in AWS and claims it's automatically HIPAA-compliant because AWS holds a HIPAA compliance certification. Is this correct?
 
-### **Mistake 1: "AWS Handles All Security"**
-**Wrong Assumption:** "Since AWS is secure, I don't need to worry about security."
+A) Yes — AWS's compliance certifications cover all customer workloads  
+B) No — AWS provides HIPAA-eligible infrastructure, but the customer must configure their workload to meet HIPAA requirements  
+C) Yes — as long as the data is stored in AWS, HIPAA requirements are automatically met  
+D) No — AWS is not HIPAA-certified at all
 
-**Reality Check:** AWS secures the infrastructure, but you must secure your applications and data.
-
-**How to Avoid:**
-- Always ask: "What security tasks are MY responsibility?"
-- Review AWS security best practices for each service you use
-- Implement security controls for your specific applications and data
-
-### **Mistake 2: "I'm Responsible for Everything"**
-**Wrong Assumption:** "I need to secure everything from the physical hardware up."
-
-**Reality Check:** AWS handles infrastructure security so you can focus on application and data security.
-
-**How to Avoid:**
-- Understand what AWS already provides (don't duplicate effort)
-- Focus your security efforts on areas you actually control
-- Leverage AWS security services instead of building everything yourself
-
-### **Mistake 3: "Managed Services Mean No Security Work"**
-**Wrong Assumption:** "RDS is managed, so AWS handles all database security."
-
-**Reality Check:** AWS manages the database software and infrastructure, but you still control access, encryption, and data protection.
-
-**How to Avoid:**
-- Understand that "managed" doesn't mean "fully automated security"
-- Learn what security configurations you still need to handle
-- Don't assume default settings are appropriate for your security needs
-
-### **Mistake 4: "Security Responsibility Never Changes"**
-**Wrong Assumption:** "The shared responsibility model is the same for all services."
-
-**Reality Check:** Your responsibilities change significantly based on which AWS services you use and how you use them.
-
-**How to Avoid:**
-- Review the shared responsibility model for each new AWS service
-- Understand how service combinations affect your responsibilities  
-- Regularly reassess responsibilities as you add or change services
+**Answer: B** — AWS's compliance certifications cover the infrastructure layer. The customer must still configure encryption, access controls, and audit logging, and must sign a Business Associate Agreement with AWS.
 
 ---
 
-## 📚 **Study Guide for Exam Success**
-
-### **Key Points to Memorize**
-
-#### **AWS ALWAYS Responsible For:**
-- Physical security of data centers
-- Hardware maintenance and replacement
-- Network infrastructure security
-- Host operating system patching (except EC2)
-- Hypervisor security
-
-#### **Customer ALWAYS Responsible For:**
-- Identity and Access Management (IAM)
-- Data encryption and protection
-- Network configuration (security groups, NACLs)
-- Application-level security
-- Compliance implementation
-
-#### **Depends on Service Type:**
-- Operating system patching (Customer for EC2, AWS for managed services)
-- Application patching (Customer for custom apps, AWS for managed apps)
-- Network controls (varies by service complexity)
-
-### **Exam Question Patterns**
-
-#### **Pattern 1: Responsibility Assignment**
-**Question:** "Who is responsible for patching the guest operating system on EC2 instances?"
-**Answer:** Customer (because you control the OS on EC2)
-
-#### **Pattern 2: Service Comparison**
-**Question:** "What's the difference in security responsibilities between EC2 and RDS?"
-**Answer:** EC2 = you patch OS; RDS = AWS patches DB software and OS
-
-#### **Pattern 3: Compliance Scenarios**
-**Question:** "For HIPAA compliance, what must the customer implement?"
-**Answer:** Encryption, access controls, audit logging (AWS provides the tools, customer implements the controls)
-
-#### **Pattern 4: Security Incident Analysis**
-**Question:** "A company's website was hacked through an unpatched vulnerability. Who is responsible?"
-**Answer:** Depends on where the vulnerability was - application (customer), OS on EC2 (customer), AWS infrastructure (AWS)
-
----
-
-## 🎯 **Real-World Application Tips**
-
-### **When Planning a New AWS Project**
-1. **List all AWS services** you plan to use
-2. **Review shared responsibility** for each service  
-3. **Create security checklist** of your responsibilities
-4. **Budget time and resources** for security tasks you must handle
-5. **Plan security training** for team members who will manage these responsibilities
-
-### **When Responding to Security Incidents**
-1. **Identify the affected component** (application, OS, AWS infrastructure)
-2. **Check the shared responsibility model** for that component
-3. **Contact appropriate party** (your team for customer responsibilities, AWS Support for AWS responsibilities)
-4. **Document lessons learned** to prevent similar incidents
-
-### **When Implementing Compliance Requirements**
-1. **Understand what AWS provides** (infrastructure compliance, audit reports)
-2. **Identify what you must implement** (encryption, access controls, logging)
-3. **Use AWS compliance resources** (whitepapers, compliance center)
-4. **Validate implementation** through security assessments and audits
-
----
-
-## 🔗 **Next Steps**
-
-### **Continue Your Security Journey**
-Now that you understand the shared responsibility model, you're ready to dive deeper into specific security concepts:
-
-**Next Recommended Reading:**
-- [Task 2.2: Security, Governance, and Compliance Concepts](./Task%20Statement%202.2-Understand%20AWS%20Cloud%20security,%20governance,%20and%20compliance%20concepts.md)
-
-### **Additional Resources**
-- [AWS Shared Responsibility Model Official Documentation](https://aws.amazon.com/compliance/shared-responsibility-model/)
-- [AWS Security Best Practices Whitepapers](https://aws.amazon.com/architecture/security-identity-compliance/)
-- [Domain 2 Overview](./README.md)
-
----
-
-## ⭐ **Key Takeaways**
-
-### **Remember These Core Concepts:**
-1. **Security is shared** - AWS secures the cloud infrastructure, you secure your data and applications
-2. **Your responsibility varies** by service type - more managed services mean less work for you
-3. **You're ALWAYS responsible** for IAM, data encryption, and network configuration
-4. **When in doubt, assume it's your responsibility** - it's better to over-secure than under-secure
-
-### **Success Mantra:**
-*"AWS gives me secure building blocks, but I must build securely with them."*
-
-**Think of AWS like a high-security apartment building** - they provide excellent infrastructure security, but you still need to lock your door, secure your valuables, and be careful who you give your keys to.
-
----
-
-*🎯 **Learning Checkpoint**: You now understand the fundamental principle of cloud security - shared responsibility. This knowledge forms the foundation for all other security concepts in AWS. Make sure you're comfortable with this model before moving on to specific security services and features.*
-
-*🔒 **Security Mindset**: Always ask "Is this my responsibility or AWS's?" when encountering any security-related task. This simple question will guide you toward the right solution and the right team to contact for help.*
+**Next:** [Task 2.2 — Security, Governance, and Compliance Concepts](./Task%20Statement%202.2-Understand%20AWS%20Cloud%20security,%20governance,%20and%20compliance%20concepts.md)
