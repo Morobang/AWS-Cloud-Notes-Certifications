@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Domain 1: Cloud Concepts — AWS Cloud Practitioner</title>
+  <style>
+    :root {
+      --aws-orange: #FF9900;
+      --aws-dark: #232F3E;
+      --aws-blue: #1A73E8;
+      --aws-teal: #00A591;
+      --text-primary: #1a1a2e;
+      --text-secondary: #4a4a6a;
+      --bg-page: #f5f6fa;
+      --bg-card: #ffffff;
+      --border: #e0e4f0;
+      --accent-light: #fff8ec;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg-page);
+      color: var(--text-primary);
+      line-height: 1.7;
+    }
+
+    /* ─── COVER ─── */
+    .cover {
+      background: linear-gradient(135deg, var(--aws-dark) 0%, #16213e 60%, #0f3460 100%);
+      color: #ffffff;
+      padding: 80px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 50%, rgba(255,153,0,0.12) 0%, transparent 60%);
+    }
+
+    .cover-badge {
+      display: inline-block;
+      background: rgba(255, 153, 0, 0.2);
+      border: 1px solid rgba(255,153,0,0.5);
+      color: var(--aws-orange);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+
+    .cover h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .cover h1 span {
+      color: var(--aws-orange);
+    }
+
+    .cover p {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.75);
+      max-width: 600px;
+      margin: 0 auto 36px;
+    }
+
+    .cover-stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--aws-orange);
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* ─── NAV ─── */
+    .chapter-nav {
+      background: var(--aws-dark);
+      padding: 0 40px;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .chapter-nav::-webkit-scrollbar { display: none; }
+
+    .nav-item {
+      color: rgba(255,255,255,0.55);
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 14px 18px;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .nav-item:hover {
+      color: #fff;
+      border-color: var(--aws-orange);
+    }
+
+    /* ─── LAYOUT ─── */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .section {
+      padding: 64px 0 48px;
+    }
+
+    .section-header {
+      margin-bottom: 40px;
+    }
+
+    .section-tag {
+      display: inline-block;
+      background: var(--accent-light);
+      border: 1px solid rgba(255,153,0,0.3);
+      color: var(--aws-orange);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+
+    .section-header h2 {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .section-header p {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      margin-top: 10px;
+      max-width: 640px;
+    }
+
+    /* ─── INTRO CARD ─── */
+    .intro-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--aws-orange);
+      border-radius: 12px;
+      padding: 32px 36px;
+      margin-bottom: 32px;
+    }
+
+    .intro-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .intro-card p {
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    .intro-card p + p {
+      margin-top: 12px;
+    }
+
+    /* ─── DOMAIN TABLE ─── */
+    .domain-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-card);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .domain-table thead {
+      background: var(--aws-dark);
+      color: #fff;
+    }
+
+    .domain-table thead th {
+      padding: 14px 20px;
+      text-align: left;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .domain-table tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+
+    .domain-table tbody tr:last-child { border-bottom: none; }
+    .domain-table tbody tr:hover { background: #f9fafb; }
+
+    .domain-table tbody td {
+      padding: 14px 20px;
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+    }
+
+    .domain-table tbody td:first-child {
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* ─── BENEFIT CARDS ─── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .benefit-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .benefit-card:hover {
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      transform: translateY(-2px);
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 16px;
+    }
+
+    .icon-orange { background: rgba(255,153,0,0.12); }
+    .icon-blue   { background: rgba(26,115,232,0.1); }
+    .icon-teal   { background: rgba(0,165,145,0.1); }
+    .icon-purple { background: rgba(123,82,173,0.1); }
+
+    .benefit-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .benefit-card p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ─── PILLAR CARDS ─── */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .pillar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .pillar-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pillar-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--aws-dark);
+      color: var(--aws-orange);
+      font-size: 0.85rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .pillar-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .pillar-body {
+      padding: 0 20px 20px;
+    }
+
+    .pillar-tagline {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--aws-orange);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .pillar-body p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ─── MIGRATION 6 R'S ─── */
+    .migration-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .r-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .r-badge {
+      display: inline-block;
+      background: var(--aws-dark);
+      color: var(--aws-orange);
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+
+    .r-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .r-nickname {
+      font-size: 0.78rem;
+      color: var(--aws-orange);
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .r-card p {
+      font-size: 0.87rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .r-when {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      background: #f8f9ff;
+      border-radius: 6px;
+      padding: 8px 12px;
+      border-left: 3px solid var(--aws-orange);
+    }
+
+    .r-when strong {
+      color: var(--text-primary);
+    }
+
+    /* ─── ECONOMICS SECTION ─── */
+    .econ-compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 600px) {
+      .econ-compare { grid-template-columns: 1fr; }
+    }
+
+    .econ-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .econ-box.negative { border-top: 4px solid #e74c3c; }
+    .econ-box.positive { border-top: 4px solid var(--aws-teal); }
+
+    .econ-box h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .econ-box.negative h3 { color: #e74c3c; }
+    .econ-box.positive h3 { color: var(--aws-teal); }
+
+    .econ-item {
+      display: flex;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+    }
+
+    .econ-item:last-child { border-bottom: none; }
+
+    .econ-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 7px;
+    }
+
+    .dot-red { background: #e74c3c; }
+    .dot-green { background: var(--aws-teal); }
+
+    /* ─── CALLOUT BOXES ─── */
+    .callout {
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 24px 0;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .callout-info {
+      background: #eef4ff;
+      border-left: 4px solid var(--aws-blue);
+    }
+
+    .callout-warning {
+      background: #fff8ec;
+      border-left: 4px solid var(--aws-orange);
+    }
+
+    .callout-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .callout-body h4 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-primary);
+    }
+
+    .callout-body p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ─── DIVIDER ─── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0;
+    }
+
+    /* ─── PRACTICE QUESTIONS ─── */
+    .questions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .question-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .question-stem {
+      padding: 20px 24px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .question-options {
+      padding: 0 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .option {
+      display: flex;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      background: #f8f9ff;
+      border: 1px solid transparent;
+    }
+
+    .option.correct {
+      background: #edfaf5;
+      border-color: #2ecc71;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .option-letter {
+      font-weight: 700;
+      color: var(--aws-orange);
+      flex-shrink: 0;
+    }
+
+    .option.correct .option-letter { color: #27ae60; }
+
+    .question-explanation {
+      background: #f8f9ff;
+      border-top: 1px solid var(--border);
+      padding: 14px 24px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .question-explanation strong {
+      color: var(--text-primary);
+    }
+
+    /* ─── KEY TERMS ─── */
+    .terms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .term-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+
+    .term-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--aws-orange);
+      margin-bottom: 4px;
+    }
+
+    .term-def {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--aws-dark);
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      padding: 32px 24px;
+      font-size: 0.82rem;
+    }
+
+    footer strong { color: rgba(255,255,255,0.8); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 700px) {
+      .cover { padding: 60px 24px; }
+      .cover-stats { gap: 24px; }
+      .cards-grid, .pillars-grid, .migration-grid { grid-template-columns: 1fr; }
+      .chapter-nav { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ COVER ═══════════════════════════════════ -->
+<section class="cover">
+  <div class="cover-badge">AWS Cloud Practitioner — CLF-C02</div>
+  <h1>Domain 1: <span>Cloud Concepts</span></h1>
+  <p>Everything you need to understand what the cloud is, why it exists, how to build on it properly, and how the economics work.</p>
+  <div class="cover-stats">
+    <div class="stat">
+      <div class="stat-value">24%</div>
+      <div class="stat-label">of the exam</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">~16</div>
+      <div class="stat-label">exam questions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">4</div>
+      <div class="stat-label">task statements</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CHAPTER NAV ─── -->
+<nav class="chapter-nav">
+  <a class="nav-item" href="#overview">Overview</a>
+  <a class="nav-item" href="#benefits">1.1 Benefits</a>
+  <a class="nav-item" href="#design">1.2 Design Principles</a>
+  <a class="nav-item" href="#migration">1.3 Migration</a>
+  <a class="nav-item" href="#economics">1.4 Economics</a>
+  <a class="nav-item" href="#practice">Practice Questions</a>
+</nav>
+
+
+<!-- ═══════════════════════════ OVERVIEW ═══════════════════════════ -->
+<div id="overview">
+  <div class="container">
+    <div class="section">
+
+      <div class="section-header">
+        <div class="section-tag">Introduction</div>
+        <h2>What is "the cloud"?</h2>
+        <p>Before cloud computing, running a website meant buying servers, finding space for them, paying for electricity, and hiring someone to maintain them 24/7. Cloud computing changes that model entirely.</p>
+      </div>
+
+      <div class="intro-card">
+        <h3>The core idea</h3>
+        <p>Instead of owning computing infrastructure, you rent it from AWS — paying for what you actually use, scaling up when you need more, and scaling down when you don't.</p>
+        <p>The analogy that makes it click: you don't build a power plant to get electricity. You plug in, use what you need, and pay at the end of the month. AWS is the power plant for computing.</p>
+      </div>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:20px;">
+        <h2 style="font-size:1.3rem;">What this domain covers</h2>
+      </div>
+
+      <table class="domain-table">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Topic</th>
+            <th>The key question</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1.1</td>
+            <td>Benefits of the AWS Cloud</td>
+            <td>Why would a business choose cloud over owning servers?</td>
+          </tr>
+          <tr>
+            <td>1.2</td>
+            <td>Design Principles (Well-Architected)</td>
+            <td>How do you build cloud systems the right way?</td>
+          </tr>
+          <tr>
+            <td>1.3</td>
+            <td>Migration Benefits &amp; Strategies</td>
+            <td>How does a company move from traditional IT to cloud?</td>
+          </tr>
+          <tr>
+            <td>1.4</td>
+            <td>Cloud Economics</td>
+            <td>How does the money work, and how do you control costs?</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="section-header" style="margin-top:48px; margin-bottom:20px;">
+        <h2 style="font-size:1.3rem;">Key terms</h2>
+      </div>
+
+      <div class="terms-grid">
+        <div class="term-card">
+          <div class="term-name">Data Center</div>
+          <div class="term-def">A building full of servers. AWS has thousands worldwide.</div>
+        </div>
+        <div class="term-card">
+          <div class="term-name">Region</div>
+          <div class="term-def">A geographic area (US East, Europe, Asia Pacific) with AWS data centers. 30+ globally.</div>
+        </div>
+        <div class="term-card">
+          <div class="term-name">Availability Zone (AZ)</div>
+          <div class="term-def">A cluster of data centers within a region, physically separated for fault tolerance. Each region has 3+ AZs.</div>
+        </div>
+        <div class="term-card">
+          <div class="term-name">On-premises</div>
+          <div class="term-def">Keeping IT infrastructure in your own building. The traditional approach.</div>
+        </div>
+        <div class="term-card">
+          <div class="term-name">CapEx</div>
+          <div class="term-def">Capital Expenditure — buying hardware/software upfront. A large one-time cost.</div>
+        </div>
+        <div class="term-card">
+          <div class="term-name">OpEx</div>
+          <div class="term-def">Operating Expenditure — paying monthly for services. Cloud bills are OpEx.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════ TASK 1.1: BENEFITS ═══════════════════════════ -->
+<div id="benefits">
+  <div class="container">
+    <div class="section">
+
+      <div class="section-header">
+        <div class="section-tag">Task Statement 1.1</div>
+        <h2>Benefits of the AWS Cloud</h2>
+        <p>Four core problems AWS solves — and the benefits that come from solving them.</p>
+      </div>
+
+      <div class="intro-card">
+        <h3>The core value proposition</h3>
+        <p>AWS's value proposition comes down to four problems it solves: huge upfront costs, long wait times to get infrastructure, guessing future capacity needs, and excessive technical complexity. Without AWS, a startup wanting to launch an app either spends $50,000 on servers before knowing if the idea will work — or crashes when it goes viral. With AWS: start at $20/month, scale automatically to millions of users if needed, pay nothing extra if it fails.</p>
+      </div>
+
+      <div class="cards-grid">
+
+        <div class="benefit-card">
+          <div class="card-icon icon-orange">🌍</div>
+          <h3>Global Infrastructure</h3>
+          <p>AWS has data centers worldwide. Distance equals delay — serving users from a nearby region cuts load times from seconds to milliseconds. A European company can launch in Australia in 30 minutes instead of 6 months.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="card-icon icon-blue">⚡</div>
+          <h3>High Availability</h3>
+          <p>Applications spread across multiple Availability Zones keep working even when individual data centers fail. Automatic failover, no manual intervention. Most AWS services target 99.99% uptime — that's 53 minutes of downtime per year.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="card-icon icon-teal">📈</div>
+          <h3>Elasticity</h3>
+          <p>Computing resources automatically grow when demand spikes and shrink when it drops. A news site on 1 server normally can auto-scale to 50 servers during breaking news — then scale back. Pay for the surge only while it lasts.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="card-icon icon-purple">🚀</div>
+          <h3>Agility</h3>
+          <p>Test a new idea in 10 minutes for $100 instead of 6 months for $50,000. If it works, scale it up. If it doesn't, shut it down. Low cost of experimentation means more experiments, more learning, more wins.</p>
+        </div>
+
+      </div>
+
+      <div class="callout callout-info" style="margin-top:32px;">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <h4>Exam tip: Matching scenarios to benefits</h4>
+          <p>Serve users globally with fast performance → <strong>Global Infrastructure</strong>. Stay up despite data center failures → <strong>High Availability / Multiple AZs</strong>. Handle traffic spikes automatically → <strong>Elasticity</strong>. Test ideas quickly without large investment → <strong>Agility</strong>.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════ TASK 1.2: DESIGN PRINCIPLES ═══════════════════════════ -->
+<div id="design">
+  <div class="container">
+    <div class="section">
+
+      <div class="section-header">
+        <div class="section-tag">Task Statement 1.2</div>
+        <h2>The Well-Architected Framework</h2>
+        <p>AWS studied why cloud projects fail and built a framework to prevent those failures. Six pillars for building systems that work as intended.</p>
+      </div>
+
+      <div class="intro-card">
+        <h3>What the framework is for</h3>
+        <p>Systems get hacked when security isn't built in from the start. Costs explode when nobody monitors what's running. Systems crash when they aren't designed for failure. The Well-Architected Framework is a set of design principles to avoid these patterns — like a building code for cloud architecture.</p>
+      </div>
+
+      <div class="pillars-grid">
+
+        <div class="pillar-card">
+          <div class="pillar-header">
+            <div class="pillar-num">1</div>
+            <div class="pillar-title">Operational Excellence</div>
+          </div>
+          <div class="pillar-body">
+            <div class="pillar-tagline">"Run smoothly, improve constantly"</div>
+            <p>Monitor everything so you know about problems before users do. Automate operations so routine tasks happen without human intervention. Learn from every failure to prevent recurrence.</p>
+          </div>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-header">
+            <div class="pillar-num">2</div>
+            <div class="pillar-title">Security</div>
+          </div>
+          <div class="pillar-body">
+            <div class="pillar-tagline">"Protect everything, always"</div>
+            <p>Defense in depth: layer multiple security controls so if one fails, others protect you. Principle of least privilege: give users only the minimum access they need. Encrypt data at rest and in transit. Log everything with CloudTrail.</p>
+          </div>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-header">
+            <div class="pillar-num">3</div>
+            <div class="pillar-title">Reliability</div>
+          </div>
+          <div class="pillar-body">
+            <div class="pillar-tagline">"Keep working when things break"</div>
+            <p>Design for failure — assume every component will eventually fail and build around it. Deploy across multiple AZs. Automate recovery so failed components are replaced in seconds, not hours. Test your disaster recovery regularly.</p>
+          </div>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-header">
+            <div class="pillar-num">4</div>
+            <div class="pillar-title">Performance Efficiency</div>
+          </div>
+          <div class="pillar-body">
+            <div class="pillar-tagline">"Use resources effectively"</div>
+            <p>Right-size resources to match actual workload. Use managed services (RDS, DynamoDB) instead of self-managing. Cache frequently read data with ElastiCache. Use CloudFront CDN to serve content from the location nearest to each user.</p>
+          </div>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-header">
+            <div class="pillar-num">5</div>
+            <div class="pillar-title">Cost Optimization</div>
+          </div>
+          <div class="pillar-body">
+            <div class="pillar-tagline">"Spend wisely, eliminate waste"</div>
+            <p>Pay only for what you use — shut down idle resources. Match pricing models to workloads (On-Demand, Reserved, Spot). Use AWS Cost Explorer and Compute Optimizer to find savings. Review monthly — costs drift without vigilance.</p>
+          </div>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-header">
+            <div class="pillar-num">6</div>
+            <div class="pillar-title">Sustainability</div>
+          </div>
+          <div class="pillar-body">
+            <div class="pillar-tagline">"Minimize environmental impact"</div>
+            <p>Run only what you need — idle resources waste energy. Prefer managed and serverless services (shared infrastructure is more efficient). Choose regions with higher renewable energy where latency isn't a constraint.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="callout callout-warning" style="margin-top:32px;">
+        <div class="callout-icon">📝</div>
+        <div class="callout-body">
+          <h4>Exam: Matching problems to pillars</h4>
+          <p>System crashes under load → <strong>Reliability</strong>. Slow response times → <strong>Performance Efficiency</strong>. Unexpectedly high AWS bill → <strong>Cost Optimization</strong>. Data breach → <strong>Security</strong>. Missed alerts, manual fixes → <strong>Operational Excellence</strong>. Carbon footprint concerns → <strong>Sustainability</strong>.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════ TASK 1.3: MIGRATION ═══════════════════════════ -->
+<div id="migration">
+  <div class="container">
+    <div class="section">
+
+      <div class="section-header">
+        <div class="section-tag">Task Statement 1.3</div>
+        <h2>Migration Strategies</h2>
+        <p>Most companies don't start in the cloud. The question is how to get there — and not every application should be moved the same way.</p>
+      </div>
+
+      <div class="intro-card">
+        <h3>The AWS Cloud Adoption Framework (CAF)</h3>
+        <p>Migrations fail most often not because of technical problems, but because people, governance, and business alignment weren't addressed. The CAF organizes migration planning into 6 perspectives: <strong>Business</strong> (why migrate and what ROI?), <strong>People</strong> (training, role changes, change management), <strong>Governance</strong> (policies, cost controls, compliance), <strong>Platform</strong> (which services, what architecture?), <strong>Security</strong> (encryption, access controls, compliance), and <strong>Operations</strong> (monitoring, incident response, deployments).</p>
+      </div>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:20px;">
+        <h2 style="font-size:1.3rem;">The 6 R's of Migration</h2>
+        <p style="margin-top:8px; font-size:0.95rem; color:var(--text-secondary);">Not every application should be migrated the same way. Match the strategy to the application.</p>
+      </div>
+
+      <div class="migration-grid">
+
+        <div class="r-card">
+          <div class="r-badge">Rehost</div>
+          <h3>Lift and Shift</h3>
+          <div class="r-nickname">Move as-is, no changes</div>
+          <p>Move the application to an AWS server exactly as it is. Fastest migration option. Doesn't leverage cloud-native features yet, but gets you off on-premises hardware quickly.</p>
+          <div class="r-when"><strong>Use when:</strong> Fast migration is the priority; limited time for changes; first step before future optimization.</div>
+        </div>
+
+        <div class="r-card">
+          <div class="r-badge">Replatform</div>
+          <h3>Lift, Tinker, and Shift</h3>
+          <div class="r-nickname">Minor modifications for cloud benefits</div>
+          <p>Move the app with small changes to use AWS managed services. Example: switch from a self-managed MySQL server to Amazon RDS. AWS now handles backups, patching, and failover — minimal code changes required.</p>
+          <div class="r-when"><strong>Use when:</strong> You want cloud benefits without a full redesign. The practical middle ground.</div>
+        </div>
+
+        <div class="r-card">
+          <div class="r-badge">Repurchase</div>
+          <h3>Drop and Shop</h3>
+          <div class="r-nickname">Replace with SaaS</div>
+          <p>Replace the existing application with a cloud-native SaaS product. Example: replace on-premises Exchange email with Microsoft 365 — monthly subscription, zero infrastructure to manage.</p>
+          <div class="r-when"><strong>Use when:</strong> Good SaaS alternatives exist; existing software is outdated or expensive to maintain.</div>
+        </div>
+
+        <div class="r-card">
+          <div class="r-badge">Refactor</div>
+          <h3>Re-architect</h3>
+          <div class="r-nickname">Redesign for cloud-native</div>
+          <p>Completely redesign the application to take full advantage of cloud. Break a monolith into microservices, add auto-scaling, use serverless. Highest effort, highest long-term benefit.</p>
+          <div class="r-when"><strong>Use when:</strong> The application is strategically critical and the investment is justified.</div>
+        </div>
+
+        <div class="r-card">
+          <div class="r-badge">Retire</div>
+          <h3>Turn it off</h3>
+          <div class="r-nickname">Decommission unused systems</div>
+          <p>Turn off applications that are no longer needed. Most large organizations have 15–30% of applications that could be retired. Immediate cost savings, zero complexity tradeoff.</p>
+          <div class="r-when"><strong>Use when:</strong> Usage is near zero; functionality replaced by another system.</div>
+        </div>
+
+        <div class="r-card">
+          <div class="r-badge">Retain</div>
+          <h3>Keep on-premises for now</h3>
+          <div class="r-nickname">Not ready to migrate yet</div>
+          <p>Leave the application on-premises. Avoid high-risk migrations with complex hardware dependencies or compliance constraints. Revisit when the timing is right.</p>
+          <div class="r-when"><strong>Use when:</strong> Complex compliance, specialized hardware dependencies, or scheduled for replacement soon.</div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════ TASK 1.4: ECONOMICS ═══════════════════════════ -->
+<div id="economics">
+  <div class="container">
+    <div class="section">
+
+      <div class="section-header">
+        <div class="section-tag">Task Statement 1.4</div>
+        <h2>Cloud Economics</h2>
+        <p>How cloud computing fundamentally changes the way businesses spend money on technology.</p>
+      </div>
+
+      <div class="section-header" style="margin-top:0; margin-bottom:20px;">
+        <h2 style="font-size:1.3rem;">Fixed vs. Variable Costs</h2>
+      </div>
+
+      <div class="econ-compare">
+        <div class="econ-box negative">
+          <h3>Traditional IT (Fixed Costs)</h3>
+          <div class="econ-item"><div class="econ-dot dot-red"></div>Pay same amount regardless of usage</div>
+          <div class="econ-item"><div class="econ-dot dot-red"></div>Buy for worst-case peak demand</div>
+          <div class="econ-item"><div class="econ-dot dot-red"></div>Average server utilization: 5–15%</div>
+          <div class="econ-item"><div class="econ-dot dot-red"></div>High upfront capital investment (CapEx)</div>
+          <div class="econ-item"><div class="econ-dot dot-red"></div>Costs stay fixed when business slows</div>
+        </div>
+        <div class="econ-box positive">
+          <h3>Cloud Computing (Variable Costs)</h3>
+          <div class="econ-item"><div class="econ-dot dot-green"></div>Pay only for what you actually use</div>
+          <div class="econ-item"><div class="econ-dot dot-green"></div>Scale up when needed, down when not</div>
+          <div class="econ-item"><div class="econ-dot dot-green"></div>Pay for exactly the capacity you use</div>
+          <div class="econ-item"><div class="econ-dot dot-green"></div>Monthly operational expense (OpEx)</div>
+          <div class="econ-item"><div class="econ-dot dot-green"></div>Costs align with business activity</div>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:20px;">
+        <h2 style="font-size:1.3rem;">Hidden Costs of On-Premises IT</h2>
+      </div>
+
+      <div class="intro-card">
+        <h3>True Total Cost of Ownership (TCO)</h3>
+        <p>Companies comparing on-premises to cloud often only look at server purchase price vs. cloud monthly fees. This is misleading. On-premises IT has significant hidden costs: <strong>facilities</strong> (data center floor space, electricity, cooling, physical security), <strong>operations</strong> (maintenance contracts, backup systems, disaster recovery testing), <strong>labor overhead</strong> (employee benefits at 30–40% on top of salary, training, overtime during outages, recruiting costs), <strong>compliance</strong> (annual security audits, certifications, incident response), and <strong>opportunity costs</strong> (IT staff time spent on maintenance instead of building products).</p>
+        <p style="margin-top:12px;">Studies consistently show the real TCO for on-premises IT is <strong>2–3x higher</strong> than the visible hardware and software costs. AWS pricing includes all of these categories transparently in one bill.</p>
+      </div>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:20px;">
+        <h2 style="font-size:1.3rem;">Key Economic Concepts</h2>
+      </div>
+
+      <div class="cards-grid">
+
+        <div class="benefit-card">
+          <div class="card-icon icon-orange">📋</div>
+          <h3>Licensing Strategies</h3>
+          <p><strong>BYOL (Bring Your Own License):</strong> Use existing software licenses on AWS infrastructure. Pay AWS only for servers. Good when you have licenses with time remaining — no reason to pay twice.<br><br><strong>Included Licensing:</strong> License cost bundled into the AWS service price. Simpler management, AWS handles compliance, always on a supported version. Higher ongoing cost but zero licensing overhead.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="card-icon icon-blue">📐</div>
+          <h3>Rightsizing</h3>
+          <p>Match resource size to actual workload requirements — not too big (wasteful), not too small (performance problems). In the cloud: start conservative, monitor real usage with CloudWatch, then adjust. AWS Compute Optimizer analyzes your actual utilization and recommends the right instance type. Switching from an oversized to a right-sized instance can cut 40–50% of that instance's cost with no performance impact.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="card-icon icon-teal">🤖</div>
+          <h3>Benefits of Automation</h3>
+          <p>Automation reduces labor costs (provisioning takes minutes, not 8 hours), reduces errors (consistent automated deployments vs. human configuration mistakes), and enables cost control (schedule dev servers to shut down nights and weekends — 60%+ savings on those environments). When traffic spikes, automated scaling responds in 2 minutes; manual response takes 30–60 minutes and users experience the outage.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="card-icon icon-purple">📊</div>
+          <h3>Economies of Scale</h3>
+          <p>AWS buys millions of servers per year — 40–60% lower hardware costs than any individual company. AWS data centers achieve PUE of ~1.2 vs. typical corporate 2.0+. Thousands of specialists spread across millions of customers. 60–80% server utilization vs. 5–15% for individual companies. All of this translates to lower prices — AWS has cut pricing 100+ times since 2006.</p>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════ PRACTICE QUESTIONS ═══════════════════════════ -->
+<div id="practice">
+  <div class="container">
+    <div class="section">
+
+      <div class="section-header">
+        <div class="section-tag">Exam Preparation</div>
+        <h2>Practice Questions</h2>
+        <p>Covering all four task statements in Domain 1. For each question, identify the answer before checking the explanation.</p>
+      </div>
+
+      <div class="questions-list">
+
+        <div class="question-card">
+          <div class="question-stem">Q1. A startup wants to test a new mobile app idea but doesn't know if it will be successful. What is the primary benefit of using AWS in this scenario?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> AWS guarantees the app will succeed</div>
+            <div class="option correct"><span class="option-letter">B</span> AWS allows starting with minimal upfront investment and shutting down cheaply if unsuccessful</div>
+            <div class="option"><span class="option-letter">C</span> AWS provides the cheapest possible hosting for any workload</div>
+            <div class="option"><span class="option-letter">D</span> AWS automatically builds the mobile app infrastructure</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: B</strong> — Low upfront costs change the risk calculation for new ideas. Testing an idea on AWS costs $100, not $100,000. This is the agility benefit of the AWS cloud.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q2. A company's application crashes every time traffic increases, causing users to lose their work. Which Well-Architected pillar should they focus on?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Cost Optimization</div>
+            <div class="option"><span class="option-letter">B</span> Security</div>
+            <div class="option correct"><span class="option-letter">C</span> Reliability</div>
+            <div class="option"><span class="option-letter">D</span> Sustainability</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: C</strong> — Reliability addresses systems that fail to keep working under varying conditions. The fix involves designing for failure: multiple AZs, auto-scaling, and health checks that automatically replace failed components.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q3. A company has a 10-year-old CRM system that works well but requires significant maintenance. They want to reduce IT overhead. Which migration strategy is most appropriate?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Rehost — move it to AWS without changes</div>
+            <div class="option correct"><span class="option-letter">B</span> Repurchase — replace it with a cloud-based SaaS CRM</div>
+            <div class="option"><span class="option-letter">C</span> Refactor — completely redesign it as a cloud-native application</div>
+            <div class="option"><span class="option-letter">D</span> Retain — keep it on-premises permanently</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: B</strong> — Repurchase replaces the aging, high-maintenance system with a managed SaaS CRM (like Salesforce). All maintenance becomes the vendor's responsibility. Refactor would be overkill for a CRM with no competitive differentiation.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q4. A company currently pays $100,000/year for servers regardless of how much they use them. They want costs to align with actual business activity. Which cloud economic concept addresses this?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Economies of scale</div>
+            <div class="option correct"><span class="option-letter">B</span> Variable cost model replacing fixed costs</div>
+            <div class="option"><span class="option-letter">C</span> BYOL licensing strategy</div>
+            <div class="option"><span class="option-letter">D</span> Rightsizing</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: B</strong> — Moving from fixed costs (same regardless of usage) to variable costs (pay for actual usage) means the IT bill rises and falls with the business. Slow months cost less. Busy months cost more — but the business is also making more money.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q5. According to the Security pillar, what is the best approach for granting employees access to company cloud systems?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Give all employees full access to prevent bottlenecks</div>
+            <div class="option correct"><span class="option-letter">B</span> Grant only the minimum access each employee needs for their specific role</div>
+            <div class="option"><span class="option-letter">C</span> Only senior employees should have system access</div>
+            <div class="option"><span class="option-letter">D</span> Require a new IT request every time an employee needs access</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: B</strong> — The principle of least privilege limits the blast radius of any compromised account. If a marketing employee's credentials are stolen, the attacker can only reach marketing data — not financial systems or customer databases.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q6. Why can AWS offer database services at a lower cost than most companies could achieve running their own database servers?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> AWS uses lower-quality hardware to reduce costs</div>
+            <div class="option"><span class="option-letter">B</span> AWS charges less than cost to grow market share</div>
+            <div class="option correct"><span class="option-letter">C</span> AWS achieves economies of scale through volume purchasing, shared infrastructure, and operational efficiency</div>
+            <div class="option"><span class="option-letter">D</span> AWS managed databases have fewer features than self-managed ones</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: C</strong> — AWS buys hardware at 40–60% discounts individual companies can't get, runs servers at 60–80% utilization vs. 5–15% for individual companies, and spreads thousands of specialists across millions of customers. Every one of these advantages drives down unit cost.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q7. A migration planning team is identifying what new skills employees need and designing training programs. Which AWS CAF perspective does this represent?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Business</div>
+            <div class="option correct"><span class="option-letter">B</span> People</div>
+            <div class="option"><span class="option-letter">C</span> Governance</div>
+            <div class="option"><span class="option-letter">D</span> Operations</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: B</strong> — The People perspective addresses employee skills, role changes, training programs, and organizational change management. It's specifically about the human side of the migration, not the business case (Business), policies (Governance), or day-to-day system management (Operations).</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q8. A company's website normally handles 5,000 users but spikes to 500,000 during a major product launch. The website must handle the launch without crashes. Which AWS benefit is most directly relevant?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Global infrastructure and speed of deployment</div>
+            <div class="option"><span class="option-letter">B</span> High availability across multiple Availability Zones</div>
+            <div class="option correct"><span class="option-letter">C</span> Elasticity and automatic scaling</div>
+            <div class="option"><span class="option-letter">D</span> Economies of scale and lower pricing</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: C</strong> — The scenario describes variable demand with a 100x traffic spike. Elasticity handles this automatically — scaling up during the launch and back down afterward. High availability (B) is about surviving failures, not handling demand spikes.</div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<footer>
+  <strong>AWS Cloud Practitioner — Domain 1: Cloud Concepts</strong><br />
+  Based on the CLF-C02 exam guide &bull; Part of the AWS Cloud Notes &amp; Certifications study series
+</footer>
+
+</body>
+</html>
