@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Domain 3: Cloud Technology — AWS Cloud Practitioner</title>
+  <style>
+    :root {
+      --aws-orange: #FF9900;
+      --aws-dark: #232F3E;
+      --aws-blue: #1A73E8;
+      --aws-teal: #00A591;
+      --aws-red: #e74c3c;
+      --aws-purple: #7B52AD;
+      --text-primary: #1a1a2e;
+      --text-secondary: #4a4a6a;
+      --bg-page: #f5f6fa;
+      --bg-card: #ffffff;
+      --border: #e0e4f0;
+      --accent-light: #fff8ec;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg-page);
+      color: var(--text-primary);
+      line-height: 1.7;
+    }
+
+    /* ─── COVER ─── */
+    .cover {
+      background: linear-gradient(135deg, var(--aws-dark) 0%, #16213e 60%, #0f3460 100%);
+      color: #fff;
+      padding: 80px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 50%, rgba(255,153,0,0.12) 0%, transparent 60%);
+    }
+    .cover-badge {
+      display: inline-block;
+      background: rgba(255,153,0,0.2);
+      border: 1px solid rgba(255,153,0,0.5);
+      color: var(--aws-orange);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+    .cover h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 16px; }
+    .cover h1 span { color: var(--aws-orange); }
+    .cover p { font-size: 1.1rem; color: rgba(255,255,255,0.75); max-width: 600px; margin: 0 auto 36px; }
+    .cover-stats { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+    .stat { text-align: center; }
+    .stat-value { font-size: 2rem; font-weight: 800; color: var(--aws-orange); }
+    .stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ─── NAV ─── */
+    .chapter-nav {
+      background: var(--aws-dark);
+      padding: 0 40px;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .chapter-nav::-webkit-scrollbar { display: none; }
+    .nav-item {
+      color: rgba(255,255,255,0.55);
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 14px 16px;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .nav-item:hover { color: #fff; border-color: var(--aws-orange); }
+
+    /* ─── LAYOUT ─── */
+    .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 64px 0 48px; }
+    .section-header { margin-bottom: 40px; }
+    .section-tag {
+      display: inline-block;
+      background: var(--accent-light);
+      border: 1px solid rgba(255,153,0,0.3);
+      color: var(--aws-orange);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+    .section-header h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; }
+    .section-header p { color: var(--text-secondary); font-size: 1.05rem; margin-top: 10px; max-width: 640px; }
+
+    /* ─── INTRO CARD ─── */
+    .intro-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--aws-orange);
+      border-radius: 12px;
+      padding: 32px 36px;
+      margin-bottom: 32px;
+    }
+    .intro-card h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; }
+    .intro-card p { color: var(--text-secondary); line-height: 1.8; }
+    .intro-card p + p { margin-top: 12px; }
+
+    /* ─── DOMAIN TABLE ─── */
+    .domain-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+    .domain-table thead { background: var(--aws-dark); color: #fff; }
+    .domain-table thead th { padding: 14px 20px; text-align: left; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .domain-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    .domain-table tbody tr:last-child { border-bottom: none; }
+    .domain-table tbody tr:hover { background: #f9fafb; }
+    .domain-table tbody td { padding: 14px 20px; font-size: 0.92rem; color: var(--text-secondary); }
+    .domain-table tbody td:first-child { font-weight: 700; color: var(--text-primary); }
+
+    /* ─── CARDS ─── */
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .cards-grid-2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+
+    .service-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .service-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); transform: translateY(-2px); }
+
+    .card-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; margin-bottom: 14px;
+    }
+    .icon-orange { background: rgba(255,153,0,0.12); }
+    .icon-blue   { background: rgba(26,115,232,0.1); }
+    .icon-teal   { background: rgba(0,165,145,0.1); }
+    .icon-purple { background: rgba(123,82,173,0.1); }
+    .icon-red    { background: rgba(231,76,60,0.1); }
+
+    .card-subtitle { font-size: 0.72rem; font-weight: 700; color: var(--aws-orange); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .service-card h3 { font-size: 0.97rem; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+    .service-card p { font-size: 0.87rem; color: var(--text-secondary); line-height: 1.6; }
+
+    /* ─── PRICING TABLE ─── */
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; margin-bottom: 28px; }
+
+    .pricing-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .pricing-header {
+      padding: 14px 18px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .ph-orange { background: rgba(255,153,0,0.1); border-bottom: 1px solid rgba(255,153,0,0.2); }
+    .ph-blue   { background: rgba(26,115,232,0.08); border-bottom: 1px solid rgba(26,115,232,0.2); }
+    .ph-teal   { background: rgba(0,165,145,0.08); border-bottom: 1px solid rgba(0,165,145,0.2); }
+    .ph-red    { background: rgba(231,76,60,0.08); border-bottom: 1px solid rgba(231,76,60,0.2); }
+    .ph-dark   { background: rgba(35,47,62,0.08); border-bottom: 1px solid rgba(35,47,62,0.2); }
+
+    .pricing-title { font-size: 0.92rem; font-weight: 700; color: var(--text-primary); }
+    .pricing-discount { font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-left: auto; }
+    .disc-orange { background: rgba(255,153,0,0.15); color: #d97706; }
+    .disc-blue   { background: rgba(26,115,232,0.1); color: var(--aws-blue); }
+    .disc-teal   { background: rgba(0,165,145,0.1); color: var(--aws-teal); }
+    .disc-red    { background: rgba(231,76,60,0.1); color: var(--aws-red); }
+
+    .pricing-body { padding: 14px 18px; }
+    .pricing-body p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.55; }
+    .pricing-when { margin-top: 10px; font-size: 0.8rem; background: #f8f9ff; border-radius: 6px; padding: 8px 12px; border-left: 3px solid var(--aws-orange); color: var(--text-secondary); }
+    .pricing-when strong { color: var(--text-primary); }
+
+    /* ─── GEO INFRA ─── */
+    .infra-ladder {
+      display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px;
+    }
+    .infra-row {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+    }
+    .infra-badge {
+      background: var(--aws-dark);
+      color: var(--aws-orange);
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .infra-content h4 { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+    .infra-content p { font-size: 0.87rem; color: var(--text-secondary); line-height: 1.55; }
+
+    /* ─── GENERAL TABLES ─── */
+    .ref-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+    .ref-table thead { background: var(--aws-dark); color: #fff; }
+    .ref-table thead th { padding: 12px 18px; text-align: left; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .ref-table tbody tr { border-bottom: 1px solid var(--border); }
+    .ref-table tbody tr:last-child { border-bottom: none; }
+    .ref-table tbody tr:hover { background: #f9fafb; }
+    .ref-table tbody td { padding: 11px 18px; font-size: 0.88rem; color: var(--text-secondary); }
+    .ref-table tbody td:first-child { font-weight: 600; color: var(--text-primary); }
+
+    /* ─── S3 TIERS ─── */
+    .s3-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 28px; }
+    .s3-tier {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .s3-tier-name { font-size: 0.82rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+    .s3-tier-access { font-size: 0.75rem; font-weight: 600; color: var(--aws-orange); margin-bottom: 8px; }
+    .s3-tier-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; }
+
+    /* ─── AI CARDS ─── */
+    .ai-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 28px; }
+    .ai-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      display: flex;
+      gap: 14px;
+    }
+    .ai-icon {
+      width: 38px; height: 38px; border-radius: 9px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    .ai-body h4 { font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+    .ai-use { font-size: 0.75rem; color: var(--aws-orange); font-weight: 600; margin-bottom: 6px; }
+    .ai-body p { font-size: 0.83rem; color: var(--text-secondary); line-height: 1.5; }
+
+    /* ─── CALLOUTS ─── */
+    .callout {
+      border-radius: 10px; padding: 20px 24px; margin: 24px 0;
+      display: flex; gap: 16px; align-items: flex-start;
+    }
+    .callout-info { background: #eef4ff; border-left: 4px solid var(--aws-blue); }
+    .callout-warning { background: #fff8ec; border-left: 4px solid var(--aws-orange); }
+    .callout-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+    .callout-body h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary); }
+    .callout-body p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
+
+    /* ─── KEY TERMS ─── */
+    .terms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+    .term-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+    .term-name { font-size: 0.85rem; font-weight: 700; color: var(--aws-orange); margin-bottom: 4px; }
+    .term-def { font-size: 0.83rem; color: var(--text-secondary); line-height: 1.5; }
+
+    /* ─── DIVIDER ─── */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+    /* ─── PRACTICE QUESTIONS ─── */
+    .questions-list { display: flex; flex-direction: column; gap: 20px; }
+    .question-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .question-stem { padding: 20px 24px; font-size: 0.95rem; font-weight: 600; color: var(--text-primary); }
+    .question-options { padding: 0 24px 16px; display: flex; flex-direction: column; gap: 8px; }
+    .option {
+      display: flex; gap: 12px; padding: 10px 14px; border-radius: 8px;
+      font-size: 0.88rem; color: var(--text-secondary); background: #f8f9ff; border: 1px solid transparent;
+    }
+    .option.correct { background: #edfaf5; border-color: #2ecc71; color: var(--text-primary); font-weight: 600; }
+    .option-letter { font-weight: 700; color: var(--aws-orange); flex-shrink: 0; }
+    .option.correct .option-letter { color: #27ae60; }
+    .question-explanation { background: #f8f9ff; border-top: 1px solid var(--border); padding: 14px 24px; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+    .question-explanation strong { color: var(--text-primary); }
+
+    /* ─── FOOTER ─── */
+    footer { background: var(--aws-dark); color: rgba(255,255,255,0.5); text-align: center; padding: 32px 24px; font-size: 0.82rem; }
+    footer strong { color: rgba(255,255,255,0.8); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 700px) {
+      .cover { padding: 60px 24px; }
+      .cover-stats { gap: 24px; }
+      .cards-grid, .cards-grid-2, .ai-grid, .s3-grid, .pricing-grid { grid-template-columns: 1fr; }
+      .chapter-nav { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ COVER ═══════════════════════════════════ -->
+<section class="cover">
+  <div class="cover-badge">AWS Cloud Practitioner — CLF-C02</div>
+  <h1>Domain 3: <span>Cloud Technology</span></h1>
+  <p>Compute, databases, networking, storage, AI/ML, and analytics — the full catalog of AWS services you need to know for the exam.</p>
+  <div class="cover-stats">
+    <div class="stat">
+      <div class="stat-value">34%</div>
+      <div class="stat-label">of the exam</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">~23</div>
+      <div class="stat-label">exam questions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">8</div>
+      <div class="stat-label">task statements</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CHAPTER NAV ─── -->
+<nav class="chapter-nav">
+  <a class="nav-item" href="#overview">Overview</a>
+  <a class="nav-item" href="#deploy">3.1 Deploy &amp; Operate</a>
+  <a class="nav-item" href="#infra">3.2 Global Infrastructure</a>
+  <a class="nav-item" href="#compute">3.3 Compute</a>
+  <a class="nav-item" href="#databases">3.4 Databases</a>
+  <a class="nav-item" href="#network">3.5 Networking</a>
+  <a class="nav-item" href="#storage">3.6 Storage</a>
+  <a class="nav-item" href="#aiml">3.7 AI/ML &amp; Analytics</a>
+  <a class="nav-item" href="#other">3.8 Other Services</a>
+  <a class="nav-item" href="#practice">Practice Questions</a>
+</nav>
+
+
+<!-- ═══════════════════════════ OVERVIEW ═══════════════════════════ -->
+<div id="overview">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Introduction</div>
+        <h2>The biggest domain — pick the right service</h2>
+        <p>Domain 3 is 34% of the exam. Questions typically describe a scenario and ask which service fits. The strategy is service recognition: know what each service does, what it's best for, and when not to use it.</p>
+      </div>
+      <table class="domain-table">
+        <thead>
+          <tr><th>Task</th><th>Topic</th><th>Key question</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>3.1</td><td>Deploying and operating</td><td>Console, CLI, SDK, IaC, Beanstalk, deployment models</td></tr>
+          <tr><td>3.2</td><td>Global infrastructure</td><td>Regions, AZs, Edge Locations, CloudFront, Local Zones</td></tr>
+          <tr><td>3.3</td><td>Compute services</td><td>EC2, Lambda, ECS/EKS/Fargate, pricing models</td></tr>
+          <tr><td>3.4</td><td>Database services</td><td>RDS, Aurora, DynamoDB, ElastiCache, Redshift</td></tr>
+          <tr><td>3.5</td><td>Network services</td><td>ELB, Route 53, CloudFront, Direct Connect, VPN</td></tr>
+          <tr><td>3.6</td><td>Storage services</td><td>S3 storage classes, EBS, EFS, Snow Family</td></tr>
+          <tr><td>3.7</td><td>AI/ML and analytics</td><td>Rekognition, Comprehend, Athena, Kinesis, QuickSight</td></tr>
+          <tr><td>3.8</td><td>Other in-scope services</td><td>SNS, SQS, CI/CD tools, migration, WorkSpaces, Systems Manager</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════ 3.1 DEPLOY & OPERATE ═══════════════════════════ -->
+<div id="deploy">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Task 3.1</div>
+        <h2>Deploying and Operating in AWS</h2>
+        <p>How you interact with AWS, how you define infrastructure as code, and what deployment model fits different workloads.</p>
+      </div>
+
+      <div class="cards-grid" style="margin-bottom:32px;">
+        <div class="service-card">
+          <div class="card-icon icon-orange">&#128438;</div>
+          <div class="card-subtitle">Web UI</div>
+          <h3>AWS Management Console</h3>
+          <p>Point-and-click GUI at aws.amazon.com. Good for exploring services, one-time tasks, viewing dashboards. Not ideal for repetitive work — hard to reproduce and automate.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-icon icon-blue">&#62;</div>
+          <div class="card-subtitle">Terminal commands</div>
+          <h3>AWS CLI</h3>
+          <p>Command-line interface for controlling AWS from a terminal. Ideal for scripting, automation, and piping output into other tools. How operations engineers work day-to-day.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-icon icon-teal">&#128187;</div>
+          <div class="card-subtitle">In-code API access</div>
+          <h3>AWS SDKs</h3>
+          <p>Libraries for Python, JavaScript, Java, .NET, Go, and more. Let your application call AWS APIs directly. Used when an app needs to upload files to S3, query DynamoDB, or invoke Lambda.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-icon icon-purple">&#128196;</div>
+          <div class="card-subtitle">Infrastructure as Code</div>
+          <h3>AWS CloudFormation</h3>
+          <p>Define infrastructure in JSON/YAML templates and deploy reproducible stacks automatically. Version-controlled, repeatable, consistent. A stack is a collection of AWS resources managed as a unit.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-icon icon-orange">&#128640;</div>
+          <div class="card-subtitle">Managed app platform</div>
+          <h3>Elastic Beanstalk</h3>
+          <p>Upload code; AWS provisions EC2 instances, load balancers, and auto-scaling. Good for traditional web apps (Python, Node.js, Java, PHP, Docker) without managing servers directly.</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-bottom: 18px;"><h2 style="font-size:1.2rem;">Deployment models</h2></div>
+      <div class="cards-grid" style="margin-bottom:32px;">
+        <div class="service-card">
+          <div class="card-subtitle">All in AWS</div>
+          <h3>Cloud</h3>
+          <p>Everything runs in AWS. No on-premises infrastructure. Maximum cloud benefits. Used by startups and cloud-native applications.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Split between AWS and on-premises</div>
+          <h3>Hybrid</h3>
+          <p>Some resources in AWS, some on-premises. Most common for established companies migrating to cloud. Requires VPN or Direct Connect connectivity.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Stay in your data center</div>
+          <h3>On-premises</h3>
+          <p>Everything in the company's own data centers. AWS Outposts brings AWS hardware on-premises for compliance or latency requirements while keeping the AWS tooling experience.</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-bottom: 18px;"><h2 style="font-size:1.2rem;">Connectivity options</h2></div>
+      <table class="ref-table">
+        <thead><tr><th>Option</th><th>What it is</th><th>Use when</th></tr></thead>
+        <tbody>
+          <tr><td>Public Internet</td><td>Default path for AWS API calls and console access</td><td>Standard connectivity; variable performance</td></tr>
+          <tr><td>Site-to-Site VPN</td><td>Encrypted IPsec tunnel from on-premises to VPC</td><td>Quick setup, office network ↔ AWS, moderate bandwidth</td></tr>
+          <tr><td>Client VPN</td><td>Individual devices connect to a VPC over internet</td><td>Remote workers needing private VPC access</td></tr>
+          <tr><td>AWS Direct Connect</td><td>Dedicated private fiber from data center to AWS</td><td>Consistent bandwidth, high data volume, latency-sensitive apps</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════ 3.2 GLOBAL INFRASTRUCTURE ═══════════════════════════ -->
+<div id="infra">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Task 3.2</div>
+        <h2>AWS Global Infrastructure</h2>
+        <p>AWS organizes its physical infrastructure into Regions, Availability Zones, and Edge Locations — each serving a different purpose in building highly available, low-latency architectures.</p>
+      </div>
+
+      <div class="infra-ladder">
+        <div class="infra-row">
+          <div class="infra-badge">Region</div>
+          <div class="infra-content">
+            <h4>Geographic area with 2+ Availability Zones</h4>
+            <p>Fully independent — data doesn't leave a Region without your explicit action. Choose based on compliance, user proximity, service availability, and price. Over 30 Regions worldwide.</p>
+          </div>
+        </div>
+        <div class="infra-row">
+          <div class="infra-badge">AZ</div>
+          <div class="infra-content">
+            <h4>One or more isolated data centers within a Region</h4>
+            <p>Separate power, cooling, and physical location (miles apart). High-bandwidth, low-latency fiber between AZs in the same Region. Multi-AZ deployments survive single AZ failure. This is how you achieve high availability.</p>
+          </div>
+        </div>
+        <div class="infra-row">
+          <div class="infra-badge">Edge</div>
+          <div class="infra-content">
+            <h4>400+ global points of presence for CloudFront and Route 53</h4>
+            <p>Far more than Regions or AZs. Positioned close to end users in major cities worldwide. Content is cached here — users get data from the nearest edge instead of traveling to the origin Region.</p>
+          </div>
+        </div>
+        <div class="infra-row">
+          <div class="infra-badge">Local Zone</div>
+          <div class="infra-content">
+            <h4>Compute closer to specific metropolitan areas</h4>
+            <p>Extensions of Regions placed in large cities. Single-digit millisecond latency for applications serving users in a specific metro. Used for media rendering, gaming, real-time apps.</p>
+          </div>
+        </div>
+        <div class="infra-row">
+          <div class="infra-badge">Wavelength</div>
+          <div class="infra-content">
+            <h4>AWS compute inside 5G telecom networks</h4>
+            <p>Ultra-low latency for 5G mobile devices. AWS services embedded in carrier networks. Used for autonomous vehicles, AR/VR, real-time mobile applications.</p>
+          </div>
+        </div>
+        <div class="infra-row">
+          <div class="infra-badge">Outposts</div>
+          <div class="infra-content">
+            <h4>AWS hardware racks in your own data center</h4>
+            <p>Run native AWS services on-premises using the same APIs and tools as in the cloud. For workloads with compliance or latency requirements that must stay on-premises.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">&#9432;</div>
+        <div class="callout-body">
+          <h4>Region selection: the priority order</h4>
+          <p><strong>1. Compliance/data residency</strong> — overrides everything else. If regulations require data in a specific country, it goes there. <strong>2. Latency</strong> — deploy near your users. <strong>3. Service availability</strong> — not all services exist in all Regions. <strong>4. Pricing</strong> — same service costs vary by Region; usually a secondary factor.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════ 3.3 COMPUTE ═══════════════════════════ -->
+<div id="compute">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Task 3.3</div>
+        <h2>Compute Services</h2>
+        <p>From full virtual servers to serverless functions — AWS offers multiple ways to run code depending on how much control and responsibility you want.</p>
+      </div>
+
+      <div class="cards-grid" style="margin-bottom:36px;">
+        <div class="service-card">
+          <div class="card-icon icon-orange">&#128421;</div>
+          <div class="card-subtitle">Virtual servers</div>
+          <h3>Amazon EC2</h3>
+          <p>Full virtual server — you control the OS, software, and configuration. Best for long-running apps, legacy lift-and-shift, or anything needing specific OS configuration. Instance types: General Purpose, Compute, Memory, Storage, GPU Optimized.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-icon icon-teal">&#955;</div>
+          <div class="card-subtitle">Serverless functions</div>
+          <h3>AWS Lambda</h3>
+          <p>Write a function; AWS runs it when triggered (S3 upload, HTTP request, schedule, queue message). No servers to manage. Scales automatically. Pay per millisecond of execution. Max 15-minute timeout.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-icon icon-blue">&#9635;</div>
+          <div class="card-subtitle">Managed containers</div>
+          <h3>Amazon ECS / EKS</h3>
+          <p><strong>ECS</strong>: AWS's container orchestration for Docker. <strong>EKS</strong>: Managed Kubernetes — if you already use K8s, EKS lets you run it on AWS without managing the control plane. Both work with EC2 or Fargate.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-icon icon-purple">&#127981;</div>
+          <div class="card-subtitle">Serverless containers</div>
+          <h3>AWS Fargate</h3>
+          <p>Run containers without managing EC2 instances. Define container specs; Fargate handles the infrastructure. Works with both ECS and EKS. The serverless option for containers.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-icon icon-orange">&#128640;</div>
+          <div class="card-subtitle">Managed app platform</div>
+          <h3>Elastic Beanstalk</h3>
+          <p>Upload code; AWS manages EC2, load balancing, and auto-scaling. Best for traditional web applications when you want platform management without choosing each service individually.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-icon icon-teal">&#9635;</div>
+          <div class="card-subtitle">Parallel batch jobs</div>
+          <h3>AWS Batch</h3>
+          <p>Manages and runs large numbers of batch computing jobs. You define the jobs; Batch handles provisioning, queuing, and execution. For scientific simulations, genomics, financial risk models.</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-bottom: 18px;"><h2 style="font-size:1.2rem;">EC2 pricing models</h2></div>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-header ph-orange">
+            <div class="pricing-title">On-Demand</div>
+            <div class="pricing-discount disc-orange">No commitment</div>
+          </div>
+          <div class="pricing-body">
+            <p>Pay by the hour or second. Start and stop anytime. Most expensive per hour.</p>
+            <div class="pricing-when"><strong>Use when:</strong> Unpredictable workloads, short-term projects, development environments</div>
+          </div>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-header ph-blue">
+            <div class="pricing-title">Reserved Instances</div>
+            <div class="pricing-discount disc-blue">Up to 72% off</div>
+          </div>
+          <div class="pricing-body">
+            <p>Commit to 1 or 3 years for a specific instance type in a Region. Standard or Convertible options.</p>
+            <div class="pricing-when"><strong>Use when:</strong> Steady-state workloads running continuously — production databases, stable web apps</div>
+          </div>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-header ph-teal">
+            <div class="pricing-title">Savings Plans</div>
+            <div class="pricing-discount disc-teal">Up to 66% off</div>
+          </div>
+          <div class="pricing-body">
+            <p>Commit to a $/hour spending amount. Applies to EC2, Lambda, and Fargate. More flexible than RIs.</p>
+            <div class="pricing-when"><strong>Use when:</strong> You want RI-level discounts but need flexibility to change instance types</div>
+          </div>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-header ph-red">
+            <div class="pricing-title">Spot Instances</div>
+            <div class="pricing-discount disc-red">Up to 90% off</div>
+          </div>
+          <div class="pricing-body">
+            <p>Unused AWS capacity. Can be interrupted with 2 minutes notice. Lowest cost.</p>
+            <div class="pricing-when"><strong>Use when:</strong> Batch processing, video rendering, CI/CD — workloads that can handle interruption</div>
+          </div>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-header ph-dark">
+            <div class="pricing-title">Dedicated Hosts</div>
+            <div class="pricing-discount" style="background:#eee; color:#666;">Physical server</div>
+          </div>
+          <div class="pricing-body">
+            <p>Physical server dedicated to your use. Most expensive. Required for certain BYOL licenses.</p>
+            <div class="pricing-when"><strong>Use when:</strong> Compliance requires dedicated hardware, or BYOL software licensed per physical core</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════ 3.4 DATABASES ═══════════════════════════ -->
+<div id="databases">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Task 3.4</div>
+        <h2>Database Services</h2>
+        <p>AWS provides purpose-built database services for relational data, high-scale NoSQL, in-memory caching, analytics warehousing, and specialized use cases.</p>
+      </div>
+
+      <div class="cards-grid" style="margin-bottom: 28px;">
+        <div class="service-card">
+          <div class="card-subtitle">Managed relational</div>
+          <h3>Amazon RDS</h3>
+          <p>Runs MySQL, PostgreSQL, MariaDB, Oracle, SQL Server. AWS handles OS patching, automated backups, Multi-AZ replication, and failover. You manage schema, queries, and users.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">High-performance relational</div>
+          <h3>Amazon Aurora</h3>
+          <p>AWS-built engine compatible with MySQL and PostgreSQL. Up to 5x faster than MySQL. Stores 6 copies across 3 AZs automatically. Aurora Serverless scales to zero when idle.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Serverless NoSQL</div>
+          <h3>Amazon DynamoDB</h3>
+          <p>Key-value and document store. Serverless — no instances to manage. Single-digit millisecond latency at any scale. Global Tables replicate across Regions automatically.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">In-memory cache</div>
+          <h3>Amazon ElastiCache</h3>
+          <p>Managed Redis or Memcached. Cache frequently-read data in memory for microsecond latency. Dramatically reduces database load for high-read workloads.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Data warehouse (OLAP)</div>
+          <h3>Amazon Redshift</h3>
+          <p>Columnar storage optimized for analytical queries over massive datasets. For business intelligence, historical analysis, and OLAP workloads. Not for transactional applications.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Graph database</div>
+          <h3>Amazon Neptune</h3>
+          <p>Optimized for highly connected data — relationships are as important as the data itself. Social networks, fraud detection, recommendation engines, knowledge graphs.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-warning">
+        <div class="callout-icon">&#9888;</div>
+        <div class="callout-body">
+          <h4>OLTP vs OLAP — know the difference</h4>
+          <p><strong>OLTP</strong> (transactional) — many small, fast operations. Customer places order, record inserted. Use RDS or DynamoDB. <strong>OLAP</strong> (analytical) — complex queries aggregating large historical data. "Sales by region last year?" Use Redshift. Using the wrong database for the wrong workload is a common exam scenario.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════ 3.5 NETWORKING ═══════════════════════════ -->
+<div id="network">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Task 3.5</div>
+        <h2>Network Services</h2>
+        <p>How traffic reaches your application, how you route it intelligently, and how you connect your on-premises network to AWS.</p>
+      </div>
+
+      <div class="cards-grid" style="margin-bottom:28px;">
+        <div class="service-card">
+          <div class="card-subtitle">DNS and traffic routing</div>
+          <h3>Amazon Route 53</h3>
+          <p>Managed DNS with health checks and routing policies. <strong>Latency routing</strong> sends users to the lowest-latency Region. <strong>Failover routing</strong> redirects to backup when primary is unhealthy. <strong>Weighted routing</strong> splits traffic by percentage.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">HTTP/HTTPS load balancing</div>
+          <h3>Application Load Balancer</h3>
+          <p>Layer 7 load balancer. Routes requests by URL path, hostname, headers. One ALB can route /api to one service and /images to another. The standard choice for web applications and microservices.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">High-performance TCP/UDP</div>
+          <h3>Network Load Balancer</h3>
+          <p>Layer 4 load balancer. Millions of requests/second with ultra-low latency. No HTTP routing rules. For gaming, financial trading, real-time systems requiring maximum throughput.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Global CDN</div>
+          <h3>Amazon CloudFront</h3>
+          <p>Caches content at 400+ Edge Locations worldwide. Users get data from nearby edge nodes instead of your origin Region. Integrates with WAF and Shield for edge security. Provides HTTPS via ACM certificates.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Managed API</div>
+          <h3>AWS API Gateway</h3>
+          <p>Create, secure, and monitor REST and WebSocket APIs. Routes requests to Lambda, EC2, or other backends. Handles authentication, throttling, caching. The front door for serverless applications.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Multi-VPC hub</div>
+          <h3>AWS Transit Gateway</h3>
+          <p>Central hub connecting multiple VPCs, VPNs, and Direct Connect. Hub-and-spoke model. Each network connects once to Transit Gateway instead of building a mesh of individual peering connections.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Dedicated private connection</div>
+          <h3>AWS Direct Connect</h3>
+          <p>Private fiber from your data center to AWS. No internet. Consistent, predictable bandwidth. For high-volume data transfer and latency-sensitive hybrid applications. Takes weeks to provision.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Global routing optimization</div>
+          <h3>AWS Global Accelerator</h3>
+          <p>Routes user traffic through the AWS global backbone network (not the public internet). Provides static IPs. Better for dynamic content, non-HTTP protocols, and consistent global performance.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════ 3.6 STORAGE ═══════════════════════════ -->
+<div id="storage">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Task 3.6</div>
+        <h2>Storage Services</h2>
+        <p>Object storage, block storage, file systems, archival, and physical data transfer — each optimized for different access patterns and cost profiles.</p>
+      </div>
+
+      <div class="cards-grid" style="margin-bottom:28px;">
+        <div class="service-card">
+          <div class="card-subtitle">Object storage</div>
+          <h3>Amazon S3</h3>
+          <p>Store any file type in globally-named buckets. 11 nines of durability (replicated across 3 AZs). Unlimited capacity. Lifecycle policies move objects between tiers automatically based on age. Static website hosting included.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Block storage for EC2</div>
+          <h3>Amazon EBS</h3>
+          <p>Persistent disk volumes attached to EC2 instances. Data survives instance restarts. Snapshots to S3 for backups. One volume per instance (generally). SSD types for performance; HDD types for throughput/cost.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Shared file system</div>
+          <h3>Amazon EFS</h3>
+          <p>NFS file system mountable by multiple Linux EC2 instances simultaneously. Elastic — grows and shrinks automatically. For shared content, web server farms, ML training data accessed by many instances.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Windows file server</div>
+          <h3>Amazon FSx</h3>
+          <p><strong>FSx for Windows</strong>: SMB protocol, AD-integrated. <strong>FSx for Lustre</strong>: High-performance parallel file system for HPC and ML, integrates with S3. Managed Windows/Lustre without the operational overhead.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Physical data transfer</div>
+          <h3>AWS Snow Family</h3>
+          <p>Physical devices for moving large datasets to/from AWS when internet transfer is impractical. <strong>Snowcone</strong>: 8–14 TB, ruggedized. <strong>Snowball Edge</strong>: ~80–210 TB. <strong>Snowmobile</strong>: 100 PB truck. Use for &gt;10 TB migrations.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Hybrid cloud storage</div>
+          <h3>AWS Storage Gateway</h3>
+          <p>On-premises applications see local NFS/SMB/iSCSI storage; behind the scenes, data is stored in S3 or Glacier. Bridge for extending on-premises storage to the cloud and migrating backups.</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-bottom:18px;"><h2 style="font-size:1.2rem;">S3 storage class tiers</h2></div>
+      <div class="s3-grid">
+        <div class="s3-tier">
+          <div class="s3-tier-name">S3 Standard</div>
+          <div class="s3-tier-access">Frequent access</div>
+          <div class="s3-tier-desc">Default tier. Millisecond access. Replicated across 3 AZs. Highest cost.</div>
+        </div>
+        <div class="s3-tier">
+          <div class="s3-tier-name">Intelligent-Tiering</div>
+          <div class="s3-tier-access">Unknown / changing</div>
+          <div class="s3-tier-desc">Auto-moves objects between tiers. Small monitoring fee. No retrieval fees.</div>
+        </div>
+        <div class="s3-tier">
+          <div class="s3-tier-name">Standard-IA</div>
+          <div class="s3-tier-access">Infrequent access</div>
+          <div class="s3-tier-desc">Millisecond access. Lower storage cost + retrieval fee. Min 30-day storage.</div>
+        </div>
+        <div class="s3-tier">
+          <div class="s3-tier-name">One Zone-IA</div>
+          <div class="s3-tier-access">Infrequent, non-critical</div>
+          <div class="s3-tier-desc">Single AZ only. Cheaper than Standard-IA. Risk of data loss if AZ fails.</div>
+        </div>
+        <div class="s3-tier">
+          <div class="s3-tier-name">Glacier Instant</div>
+          <div class="s3-tier-access">Rare, fast retrieval</div>
+          <div class="s3-tier-desc">Millisecond access at Glacier pricing. For quarterly-accessed archives.</div>
+        </div>
+        <div class="s3-tier">
+          <div class="s3-tier-name">Glacier Flexible</div>
+          <div class="s3-tier-access">Archive</div>
+          <div class="s3-tier-desc">Minutes to hours retrieval. Low cost. Good for backup archives.</div>
+        </div>
+        <div class="s3-tier">
+          <div class="s3-tier-name">Glacier Deep Archive</div>
+          <div class="s3-tier-access">Long-term archive</div>
+          <div class="s3-tier-desc">12-hour retrieval. Lowest cost in AWS. Regulatory archives, 7-year retention.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════ 3.7 AI/ML & ANALYTICS ═══════════════════════════ -->
+<div id="aiml">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Task 3.7</div>
+        <h2>AI/ML and Analytics Services</h2>
+        <p>Pre-built AI capabilities and data processing tools. For most AI services, you call an API — no ML expertise required. For custom models, use SageMaker.</p>
+      </div>
+
+      <div class="section-header" style="margin-bottom:18px;"><h2 style="font-size:1.2rem;">AI and Machine Learning</h2></div>
+      <div class="ai-grid">
+        <div class="ai-card">
+          <div class="ai-icon icon-purple">&#128300;</div>
+          <div class="ai-body">
+            <h4>Amazon SageMaker</h4>
+            <div class="ai-use">Build custom ML models</div>
+            <p>End-to-end platform for training and deploying custom ML models on your own data. For when pre-built services don't fit.</p>
+          </div>
+        </div>
+        <div class="ai-card">
+          <div class="ai-icon icon-blue">&#128247;</div>
+          <div class="ai-body">
+            <h4>Amazon Rekognition</h4>
+            <div class="ai-use">Image and video analysis</div>
+            <p>Object detection, facial analysis, text in images, content moderation, celebrity recognition, activity detection.</p>
+          </div>
+        </div>
+        <div class="ai-card">
+          <div class="ai-icon icon-orange">&#128196;</div>
+          <div class="ai-body">
+            <h4>Amazon Comprehend</h4>
+            <div class="ai-use">Text analysis (NLP)</div>
+            <p>Sentiment analysis, entity extraction, key phrases, language detection, PII detection. Analyze customer feedback at scale.</p>
+          </div>
+        </div>
+        <div class="ai-card">
+          <div class="ai-icon icon-teal">&#127760;</div>
+          <div class="ai-body">
+            <h4>Amazon Translate</h4>
+            <div class="ai-use">Language translation</div>
+            <p>Real-time machine translation between 75+ languages. For multilingual apps and content localization.</p>
+          </div>
+        </div>
+        <div class="ai-card">
+          <div class="ai-icon icon-orange">&#128172;</div>
+          <div class="ai-body">
+            <h4>Amazon Lex</h4>
+            <div class="ai-use">Conversational AI / Chatbots</div>
+            <p>Build chatbots and voice interfaces using the same technology as Alexa. Understands natural language intent and manages conversation flow.</p>
+          </div>
+        </div>
+        <div class="ai-card">
+          <div class="ai-icon icon-purple">&#128266;</div>
+          <div class="ai-body">
+            <h4>Amazon Polly</h4>
+            <div class="ai-use">Text to speech</div>
+            <p>Converts text to lifelike speech audio. For voice-enabled apps, accessibility features, audio content.</p>
+          </div>
+        </div>
+        <div class="ai-card">
+          <div class="ai-icon icon-blue">&#127908;</div>
+          <div class="ai-body">
+            <h4>Amazon Transcribe</h4>
+            <div class="ai-use">Speech to text</div>
+            <p>Converts audio/video to text transcript. Speaker identification, custom vocabulary, live transcription. For call analysis, captions, meeting notes.</p>
+          </div>
+        </div>
+        <div class="ai-card">
+          <div class="ai-icon icon-teal">&#128451;</div>
+          <div class="ai-body">
+            <h4>Amazon Textract</h4>
+            <div class="ai-use">Extract data from documents</div>
+            <p>OCR plus structure extraction — reads form fields, tables, and handwriting from scanned PDFs and images. Automates invoice and form processing.</p>
+          </div>
+        </div>
+        <div class="ai-card">
+          <div class="ai-icon icon-orange">&#128202;</div>
+          <div class="ai-body">
+            <h4>Amazon Forecast</h4>
+            <div class="ai-use">Time-series forecasting</div>
+            <p>Predicts future values from historical data. Demand forecasting, inventory planning, financial projections.</p>
+          </div>
+        </div>
+        <div class="ai-card">
+          <div class="ai-icon icon-blue">&#128270;</div>
+          <div class="ai-body">
+            <h4>Amazon Kendra</h4>
+            <div class="ai-use">Enterprise document search</div>
+            <p>ML-powered search that returns direct answers from documents, not just a list of links. For internal knowledge bases and policy search.</p>
+          </div>
+        </div>
+        <div class="ai-card">
+          <div class="ai-icon icon-purple">&#128717;</div>
+          <div class="ai-body">
+            <h4>Amazon Personalize</h4>
+            <div class="ai-use">Recommendations</div>
+            <p>Real-time personalized recommendations from user behavior data. "Customers who bought this…" product suggestions, personalized content feeds.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:18px;"><h2 style="font-size:1.2rem;">Analytics Services</h2></div>
+      <div class="cards-grid" style="margin-bottom:28px;">
+        <div class="service-card">
+          <div class="card-subtitle">Query S3 with SQL</div>
+          <h3>Amazon Athena</h3>
+          <p>Serverless SQL queries directly against data in S3. No ETL, no database loading, no cluster. Pay per query. Best for ad-hoc analysis of log files and datasets already stored in S3.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">ETL pipelines</div>
+          <h3>AWS Glue</h3>
+          <p>Serverless ETL service. Crawlers catalog your data sources automatically. Jobs transform and move data between S3, Redshift, and RDS. Includes a central Data Catalog used by Athena and Redshift.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Real-time data streaming</div>
+          <h3>Amazon Kinesis</h3>
+          <p>Ingest and process data streams in real time — milliseconds of latency. <strong>Data Streams</strong>: ingest and store. <strong>Firehose</strong>: load to S3/Redshift without code. <strong>Analytics</strong>: SQL on live streams.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">BI dashboards</div>
+          <h3>Amazon QuickSight</h3>
+          <p>Business intelligence visualization tool. Connects to Redshift, RDS, S3, Athena, and third-party sources. Creates interactive dashboards and charts for business stakeholders.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Big data / Hadoop / Spark</div>
+          <h3>Amazon EMR</h3>
+          <p>Managed big data platform for Hadoop, Spark, Hive, and Presto. For large-scale ETL, ML on big data, or migrating existing Spark/Hadoop workloads to AWS.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Data lake setup</div>
+          <h3>AWS Lake Formation</h3>
+          <p>Automates building and securing a data lake on S3. Handles data ingestion, cataloging, security policies, and access controls. Reduces weeks of setup to days.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════ 3.8 OTHER SERVICES ═══════════════════════════ -->
+<div id="other">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Task 3.8</div>
+        <h2>Other In-Scope Services</h2>
+        <p>Application integration, developer/CI-CD tools, migration, end-user computing, and management services that round out the Domain 3 service coverage.</p>
+      </div>
+
+      <div class="section-header" style="margin-bottom:18px;"><h2 style="font-size:1.2rem;">Application integration (messaging &amp; events)</h2></div>
+      <div class="cards-grid" style="margin-bottom:32px;">
+        <div class="service-card">
+          <div class="card-subtitle">Pub/Sub notifications</div>
+          <h3>Amazon SNS</h3>
+          <p>Publish a message to a topic; all subscribers receive it simultaneously. Fan-out — one event triggers email, SMS, Lambda, SQS, and HTTP endpoints at the same time. One-to-many.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Message queue</div>
+          <h3>Amazon SQS</h3>
+          <p>Managed message queue for async decoupling. Messages wait until a consumer is ready. Absorbs traffic spikes and prevents message loss if downstream services are slow or temporarily down. One-to-one.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Event bus</div>
+          <h3>Amazon EventBridge</h3>
+          <p>Routes events from AWS services, SaaS apps, and your own applications to targets based on rules. Unlike SNS, it can filter by event content — route only specific event types to specific targets.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Visual workflow orchestration</div>
+          <h3>AWS Step Functions</h3>
+          <p>Coordinate multi-step processes as state machines. Each step calls a Lambda function or AWS service. Built-in error handling and retry logic. For order fulfillment, document processing, and approval workflows.</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-bottom:18px;"><h2 style="font-size:1.2rem;">Developer tools — CI/CD pipeline</h2></div>
+      <table class="ref-table" style="margin-bottom:32px;">
+        <thead><tr><th>Service</th><th>Role in the pipeline</th></tr></thead>
+        <tbody>
+          <tr><td>AWS CodeCommit</td><td>Managed private Git repository for source code storage</td></tr>
+          <tr><td>AWS CodeBuild</td><td>Managed build service — compiles code, runs tests, produces artifacts</td></tr>
+          <tr><td>AWS CodeDeploy</td><td>Automates deployments to EC2, Lambda, and ECS; handles rollbacks</td></tr>
+          <tr><td>AWS CodePipeline</td><td>Orchestrates the full workflow: commit → build → test → deploy</td></tr>
+        </tbody>
+      </table>
+
+      <div class="section-header" style="margin-bottom:18px;"><h2 style="font-size:1.2rem;">Migration services</h2></div>
+      <div class="cards-grid" style="margin-bottom:32px;">
+        <div class="service-card">
+          <div class="card-subtitle">Database migration</div>
+          <h3>AWS DMS</h3>
+          <p>Migrates databases to AWS with minimal downtime. Source database stays live during replication. Supports same-engine and cross-engine migrations (Oracle to PostgreSQL, etc.).</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Server migration (lift &amp; shift)</div>
+          <h3>AWS Application Migration Service</h3>
+          <p>Continuously replicates on-premises servers to AWS in the background. Cutover launches EC2 instances with minimal downtime. The standard path for lift-and-shift server migrations.</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-bottom:18px;"><h2 style="font-size:1.2rem;">End-user computing &amp; management</h2></div>
+      <div class="cards-grid">
+        <div class="service-card">
+          <div class="card-subtitle">Virtual desktops</div>
+          <h3>Amazon WorkSpaces</h3>
+          <p>Full Windows or Linux cloud desktops accessible from any device. Data stays in AWS. For remote workers, call center agents, and compliance scenarios requiring data not to leave AWS.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Application streaming</div>
+          <h3>Amazon AppStream 2.0</h3>
+          <p>Stream individual desktop applications (not full desktops) to any browser. For partners or contractors who need access to one specific app without a full virtual desktop.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Fleet management</div>
+          <h3>AWS Systems Manager</h3>
+          <p>Manage EC2 fleets: patch automation, Session Manager (SSH without open ports), Run Command (scripts across many instances), Parameter Store (config values). Operational tool for infrastructure management.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Multi-account governance</div>
+          <h3>AWS Control Tower</h3>
+          <p>Automates setup of a well-architected multi-account "landing zone." Pre-configures Accounts, guardrails, and logging following AWS best practices. Start your multi-account environment correctly from day one.</p>
+        </div>
+        <div class="service-card">
+          <div class="card-subtitle">Cloud contact center</div>
+          <h3>Amazon Connect</h3>
+          <p>Cloud-based call center service. Define call flows, manage agents, record calls. Integrates with Lex for IVR chatbots and Comprehend/Transcribe for call sentiment analysis.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr class="divider" />
+
+
+<!-- ═══════════════════════════ PRACTICE QUESTIONS ═══════════════════════════ -->
+<div id="practice">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Exam Prep</div>
+        <h2>Practice Questions</h2>
+        <p>Service selection scenarios — the most common format across Domain 3 questions.</p>
+      </div>
+
+      <div class="questions-list">
+
+        <!-- Q1 -->
+        <div class="question-card">
+          <div class="question-stem">Q1. A startup runs its production web application on EC2 On-Demand instances. After 12 months, their traffic patterns are stable and consistent. What change reduces compute costs most significantly?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Switch to Spot Instances</div>
+            <div class="option correct"><span class="option-letter">B</span> Purchase 1-year Reserved Instances for the production workload</div>
+            <div class="option"><span class="option-letter">C</span> Move the application to AWS Lambda</div>
+            <div class="option"><span class="option-letter">D</span> Enable Auto Scaling to reduce the number of instances</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: B.</strong> Stable, predictable traffic is the ideal use case for Reserved Instances — up to 72% discount over On-Demand for a 1-year commitment. Spot Instances can be interrupted with 2-minute notice, making them unsuitable for customer-facing production workloads. Lambda works for event-driven functions, not persistent web servers. Auto Scaling adjusts capacity to demand but doesn't change the pricing model.</div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="question-card">
+          <div class="question-stem">Q2. A company serves users across North America, Europe, and Asia-Pacific. Static content (images, CSS, JS) is stored in S3 in us-east-1. Users in Europe and Asia report slow page loads. What is the most effective solution?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Move the S3 bucket to eu-central-1 to be more central</div>
+            <div class="option"><span class="option-letter">B</span> Enable S3 Cross-Region Replication to all regions</div>
+            <div class="option correct"><span class="option-letter">C</span> Distribute content using Amazon CloudFront</div>
+            <div class="option"><span class="option-letter">D</span> Use a larger EC2 instance to serve the content faster</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: C.</strong> CloudFront caches static content at 400+ Edge Locations worldwide. Users in Europe and Asia retrieve content from nearby edge nodes instead of making a cross-ocean round trip to us-east-1. Option A helps Europe but hurts Asia. Option B copies data to Regions, not Edge Locations, and requires routing logic. EC2 instance size doesn't address network distance latency.</div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="question-card">
+          <div class="question-stem">Q3. An application receives image uploads from users and needs to automatically check each upload for inappropriate content before displaying it. The check should happen without running a server 24/7. What architecture fits?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> EC2 instance that polls S3 for new uploads every minute</div>
+            <div class="option correct"><span class="option-letter">B</span> S3 triggers a Lambda function on each upload; Lambda calls Amazon Rekognition to analyze the image</div>
+            <div class="option"><span class="option-letter">C</span> Elastic Beanstalk application that processes uploads</div>
+            <div class="option"><span class="option-letter">D</span> Amazon ECS cluster running a content moderation service</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: B.</strong> S3 events trigger Lambda functions automatically — no polling, no always-on server. Lambda calls Rekognition's content moderation API and takes action based on the result. This is a classic event-driven serverless pattern. EC2 and ECS require running servers. Beanstalk manages server infrastructure and adds complexity for this simple event-driven task.</div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="question-card">
+          <div class="question-stem">Q4. A company's DynamoDB database serves a product catalog that gets 2 million reads per day. 80% of reads are for the same 200 top products. Database costs are high. What reduces cost while maintaining low latency?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Move the product catalog to Amazon Redshift</div>
+            <div class="option"><span class="option-letter">B</span> Use Amazon S3 to store product data instead</div>
+            <div class="option correct"><span class="option-letter">C</span> Add Amazon ElastiCache in front of DynamoDB to cache the top products</div>
+            <div class="option"><span class="option-letter">D</span> Enable DynamoDB auto-scaling</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: C.</strong> Caching the top 200 products in ElastiCache means 80% of reads never hit DynamoDB — dramatically reducing read capacity units consumed and therefore cost. Microsecond cache hits are faster than DynamoDB's single-digit millisecond responses. Redshift is for analytical workloads, not product catalog lookups. S3 is not a database. Auto-scaling helps with capacity management but doesn't reduce per-request costs.</div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="question-card">
+          <div class="question-stem">Q5. A data analyst needs to run occasional SQL queries against 2 years of application log data stored in S3 as compressed JSON files. They want to query without provisioning any database or ETL pipeline. Which service is most appropriate?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Amazon Redshift</div>
+            <div class="option"><span class="option-letter">B</span> Amazon RDS</div>
+            <div class="option correct"><span class="option-letter">C</span> Amazon Athena</div>
+            <div class="option"><span class="option-letter">D</span> AWS Glue</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: C.</strong> Athena is serverless SQL for data already in S3. No cluster, no ETL, no data loading — point it at the S3 prefix and query immediately. Pay per query. Redshift requires loading data into a cluster. RDS is a transactional database — requires schema definition and data loading. Glue builds ETL pipelines; it's a tool for moving and transforming data, not for querying.</div>
+        </div>
+
+        <!-- Q6 -->
+        <div class="question-card">
+          <div class="question-stem">Q6. A company collects 500,000 IoT sensor readings per minute and needs to detect anomalies within 3 seconds of data arrival. Which service processes this in real time?</div>
+          <div class="question-options">
+            <div class="option correct"><span class="option-letter">A</span> Amazon Kinesis Data Streams</div>
+            <div class="option"><span class="option-letter">B</span> Amazon Athena</div>
+            <div class="option"><span class="option-letter">C</span> AWS Glue</div>
+            <div class="option"><span class="option-letter">D</span> Amazon QuickSight</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: A.</strong> Kinesis ingests and processes streaming data in real time — milliseconds to seconds of latency. Kinesis Data Analytics can run SQL against the live stream for anomaly detection. Athena and Glue process data in batches — unsuitable for sub-3-second requirements. QuickSight is a visualization tool, not a stream processing service.</div>
+        </div>
+
+        <!-- Q7 -->
+        <div class="question-card">
+          <div class="question-stem">Q7. A company has 800 TB of archive data on physical tape that they want to move to AWS. They also need to continue writing new archive data to what appears to be a tape library (their backup software can't be changed). What combination of services addresses this?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Direct Connect to upload the archive; EFS for ongoing writes</div>
+            <div class="option correct"><span class="option-letter">B</span> Snowball Edge to migrate the existing 800 TB; Storage Gateway Tape Gateway for ongoing backup software integration</div>
+            <div class="option"><span class="option-letter">C</span> S3 Transfer Acceleration for both migration and ongoing writes</div>
+            <div class="option"><span class="option-letter">D</span> S3 for migration; EBS for ongoing writes</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: B.</strong> Snowball Edge handles the physical 800 TB migration — faster and more practical than internet transfer. Storage Gateway's Tape Gateway presents virtual tape drives to the backup software over the network; the software writes to "tapes" normally, but data goes to S3 and Glacier. This is precisely what Tape Gateway is designed for — transparent cloud backup without changing backup software.</div>
+        </div>
+
+        <!-- Q8 -->
+        <div class="question-card">
+          <div class="question-stem">Q8. A company wants to automatically analyze customer support call recordings to detect customer sentiment and identify which product issues are most commonly mentioned. Which two services would work together for this?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Amazon Polly and Amazon Kendra</div>
+            <div class="option correct"><span class="option-letter">B</span> Amazon Transcribe and Amazon Comprehend</div>
+            <div class="option"><span class="option-letter">C</span> Amazon Lex and Amazon Rekognition</div>
+            <div class="option"><span class="option-letter">D</span> Amazon Textract and Amazon Translate</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: B.</strong> Transcribe converts audio recordings to text transcripts. Comprehend analyzes the text for sentiment (positive/negative/neutral) and entity extraction (which products are mentioned). Polly generates speech from text (opposite direction). Kendra is document search. Lex builds chatbots; Rekognition analyzes images. Textract reads printed documents; Translate changes language — none of these fit audio + sentiment analysis.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<footer>
+  <strong>AWS Cloud Practitioner — CLF-C02</strong> &nbsp;|&nbsp; Domain 3: Cloud Technology and Services &nbsp;|&nbsp; 34% of the exam (~23 questions)
+  <br><br>
+  Next: <strong>Domain 4 — Billing, Pricing, and Support</strong>
+</footer>
+
+</body>
+</html>
