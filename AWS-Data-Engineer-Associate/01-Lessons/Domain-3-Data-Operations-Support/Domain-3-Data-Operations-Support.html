@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Domain 3: Data Operations &amp; Support — AWS Data Engineer Associate</title>
+  <style>
+    :root {
+      --aws-orange: #FF9900;
+      --aws-dark: #232F3E;
+      --aws-blue: #1A73E8;
+      --aws-teal: #00A591;
+      --text-primary: #1a1a2e;
+      --text-secondary: #4a4a6a;
+      --bg-page: #f5f6fa;
+      --bg-card: #ffffff;
+      --border: #e0e4f0;
+      --accent-light: #fff8ec;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: var(--bg-page); color: var(--text-primary); line-height: 1.7; }
+
+    .cover { background: linear-gradient(135deg, var(--aws-dark) 0%, #16213e 60%, #0f3460 100%); color: #fff; padding: 80px 40px; text-align: center; position: relative; overflow: hidden; }
+    .cover::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 50%, rgba(255,153,0,0.12) 0%, transparent 60%); }
+    .cover-badge { display: inline-block; background: rgba(255,153,0,0.2); border: 1px solid rgba(255,153,0,0.5); color: var(--aws-orange); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 6px 16px; border-radius: 20px; margin-bottom: 24px; }
+    .cover h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 16px; }
+    .cover h1 span { color: var(--aws-orange); }
+    .cover p { font-size: 1.1rem; color: rgba(255,255,255,0.75); max-width: 600px; margin: 0 auto 36px; }
+    .cover-stats { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+    .stat { text-align: center; }
+    .stat-value { font-size: 2rem; font-weight: 800; color: var(--aws-orange); }
+    .stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    .chapter-nav { background: var(--aws-dark); padding: 0 40px; display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
+    .chapter-nav::-webkit-scrollbar { display: none; }
+    .nav-item { color: rgba(255,255,255,0.55); font-size: 0.82rem; font-weight: 600; text-decoration: none; padding: 14px 18px; white-space: nowrap; border-bottom: 3px solid transparent; transition: color 0.2s, border-color 0.2s; }
+    .nav-item:hover { color: #fff; border-color: var(--aws-orange); }
+
+    .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 64px 0 48px; }
+    .section-header { margin-bottom: 40px; }
+    .section-tag { display: inline-block; background: var(--accent-light); border: 1px solid rgba(255,153,0,0.3); color: var(--aws-orange); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 12px; border-radius: 12px; margin-bottom: 12px; }
+    .section-header h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; }
+    .section-header p { color: var(--text-secondary); font-size: 1.05rem; margin-top: 10px; max-width: 640px; }
+
+    .intro-card { background: var(--bg-card); border: 1px solid var(--border); border-left: 4px solid var(--aws-orange); border-radius: 12px; padding: 32px 36px; margin-bottom: 32px; }
+    .intro-card h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; }
+    .intro-card p { color: var(--text-secondary); line-height: 1.8; }
+    .intro-card p + p { margin-top: 12px; }
+
+    .domain-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+    .domain-table thead { background: var(--aws-dark); color: #fff; }
+    .domain-table thead th { padding: 14px 20px; text-align: left; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .domain-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    .domain-table tbody tr:last-child { border-bottom: none; }
+    .domain-table tbody tr:hover { background: #f9fafb; }
+    .domain-table tbody td { padding: 14px 20px; font-size: 0.92rem; color: var(--text-secondary); }
+    .domain-table tbody td:first-child { font-weight: 700; color: var(--text-primary); }
+
+    .compare-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 24px; }
+    .compare-table thead { background: var(--aws-dark); color: #fff; }
+    .compare-table thead th { padding: 12px 16px; text-align: left; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .compare-table tbody tr { border-bottom: 1px solid var(--border); }
+    .compare-table tbody tr:last-child { border-bottom: none; }
+    .compare-table tbody tr:hover { background: #f9fafb; }
+    .compare-table tbody td { padding: 12px 16px; font-size: 0.88rem; color: var(--text-secondary); vertical-align: top; }
+    .compare-table tbody td:first-child { font-weight: 700; color: var(--text-primary); white-space: nowrap; }
+
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .benefit-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; transition: box-shadow 0.2s, transform 0.2s; }
+    .benefit-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .card-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 16px; }
+    .icon-orange { background: rgba(255,153,0,0.12); }
+    .icon-blue { background: rgba(26,115,232,0.1); }
+    .icon-teal { background: rgba(0,165,145,0.1); }
+    .icon-purple { background: rgba(123,82,173,0.1); }
+    .benefit-card h3 { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+    .benefit-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
+
+    .callout { border-radius: 10px; padding: 20px 24px; margin: 24px 0; display: flex; gap: 16px; align-items: flex-start; }
+    .callout-info { background: #eef4ff; border-left: 4px solid var(--aws-blue); }
+    .callout-warning { background: #fff8ec; border-left: 4px solid var(--aws-orange); }
+    .callout-success { background: #edfaf5; border-left: 4px solid var(--aws-teal); }
+    .callout-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+    .callout-body h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary); }
+    .callout-body p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
+
+    .code-block { background: #1e1e2e; border-radius: 10px; padding: 20px 24px; margin: 16px 0; overflow-x: auto; }
+    .code-block code { font-family: "Cascadia Code", "Fira Code", "Courier New", monospace; font-size: 0.82rem; color: #cdd6f4; line-height: 1.8; white-space: pre; }
+    .code-block .comment { color: #6c7086; }
+    .code-block .string { color: #a6e3a1; }
+    .code-block .keyword { color: #cba6f7; }
+
+    .terms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+    .term-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+    .term-name { font-size: 0.88rem; font-weight: 700; color: var(--aws-orange); margin-bottom: 4px; }
+    .term-def { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
+
+    .questions-list { display: flex; flex-direction: column; gap: 20px; }
+    .question-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .question-stem { padding: 20px 24px; font-size: 0.95rem; font-weight: 600; color: var(--text-primary); }
+    .question-options { padding: 0 24px 16px; display: flex; flex-direction: column; gap: 8px; }
+    .option { display: flex; gap: 12px; padding: 10px 14px; border-radius: 8px; font-size: 0.88rem; color: var(--text-secondary); background: #f8f9ff; border: 1px solid transparent; }
+    .option.correct { background: #edfaf5; border-color: #2ecc71; color: var(--text-primary); font-weight: 600; }
+    .option-letter { font-weight: 700; color: var(--aws-orange); flex-shrink: 0; }
+    .option.correct .option-letter { color: #27ae60; }
+    .question-explanation { background: #f8f9ff; border-top: 1px solid var(--border); padding: 14px 24px; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+    .question-explanation strong { color: var(--text-primary); }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+    footer { background: var(--aws-dark); color: rgba(255,255,255,0.5); text-align: center; padding: 32px 24px; font-size: 0.82rem; }
+    footer strong { color: rgba(255,255,255,0.8); }
+
+    @media (max-width: 700px) {
+      .cover { padding: 60px 24px; }
+      .cover-stats { gap: 24px; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .chapter-nav { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- COVER -->
+<section class="cover">
+  <div class="cover-badge">AWS Data Engineer Associate — DEA-C01</div>
+  <h1>Domain 3: <span>Data Operations &amp; Support</span></h1>
+  <p>Automating data pipelines with CI/CD and event-driven triggers, querying and visualizing data, and monitoring and maintaining production pipelines.</p>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-value">22%</div><div class="stat-label">of the exam</div></div>
+    <div class="stat"><div class="stat-value">~14</div><div class="stat-label">exam questions</div></div>
+    <div class="stat"><div class="stat-value">3</div><div class="stat-label">task statements</div></div>
+  </div>
+</section>
+
+<nav class="chapter-nav">
+  <a class="nav-item" href="#overview">Overview</a>
+  <a class="nav-item" href="#automate">3.1 Automate Processing</a>
+  <a class="nav-item" href="#analyze">3.2 Analyze Data</a>
+  <a class="nav-item" href="#maintain">3.3 Maintain Pipelines</a>
+  <a class="nav-item" href="#practice">Practice Questions</a>
+</nav>
+
+
+<!-- OVERVIEW -->
+<div id="overview">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Introduction</div>
+        <h2>Keeping Data Pipelines Running</h2>
+        <p>Domain 3 covers the operational side of data engineering: automation, analytics, and ongoing maintenance of production data systems.</p>
+      </div>
+
+      <div class="intro-card">
+        <h3>Operations is the hardest part of data engineering</h3>
+        <p>Building a pipeline once is straightforward. Running it reliably at scale — with automated deployments, proper monitoring, cost controls, and fast incident response — is where most engineering effort goes. Domain 3 tests your ability to automate data processing (CI/CD, IaC, event-driven triggers), query and visualize data (Athena, QuickSight, Flink), and maintain production pipelines (CloudWatch, DLQs, cost optimization, data quality).</p>
+      </div>
+
+      <table class="domain-table">
+        <thead>
+          <tr><th>Task</th><th>Topic</th><th>Key services</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>3.1</td><td>Automate Data Processing</td><td>CodePipeline, CodeBuild, CloudFormation, CDK, EventBridge, Lambda, AWS Batch, AWS SAM</td></tr>
+          <tr><td>3.2</td><td>Analyze Data and Create Visualizations</td><td>Amazon Athena, QuickSight, Amazon Managed Flink, Redshift Spectrum, EMR notebooks</td></tr>
+          <tr><td>3.3</td><td>Maintain and Monitor Data Pipelines</td><td>CloudWatch, CloudTrail, DLQs, Glue Data Quality, cost optimization (Athena, Glue, EMR, Kinesis)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="section-header" style="margin-top:48px; margin-bottom:20px;">
+        <h2 style="font-size:1.3rem;">Key concepts to master</h2>
+      </div>
+      <div class="terms-grid">
+        <div class="term-card"><div class="term-name">Event-driven automation</div><div class="term-def">S3 events, EventBridge schedules/rules, and SNS/SQS trigger pipeline steps without polling.</div></div>
+        <div class="term-card"><div class="term-name">IteratorAge</div><div class="term-def">Most important Kinesis metric: age of oldest unprocessed record. Growing IteratorAge = consumer can't keep up.</div></div>
+        <div class="term-card"><div class="term-name">Dead Letter Queue (DLQ)</div><div class="term-def">SQS queue or SNS topic that receives messages that fail after max retry attempts. Prevents data loss.</div></div>
+        <div class="term-card"><div class="term-name">Glue Job Bookmarks</div><div class="term-def">Track which S3 files/DynamoDB records have been processed. Re-running a job only processes new data.</div></div>
+        <div class="term-card"><div class="term-name">SPICE</div><div class="term-def">QuickSight's in-memory engine. Import data for sub-second dashboard performance. Separate from direct query.</div></div>
+        <div class="term-card"><div class="term-name">Tumbling window</div><div class="term-def">Fixed-size, non-overlapping time window in streaming. Every record belongs to exactly one window.</div></div>
+        <div class="term-card"><div class="term-name">Watermark</div><div class="term-def">Flink mechanism for handling late-arriving records. Defines how long to wait before closing a window.</div></div>
+        <div class="term-card"><div class="term-name">Workgroup (Athena)</div><div class="term-def">Isolate users/teams, enforce scan limits (cost control), and separate query results per team.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- TASK 3.1 -->
+<div id="automate">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Task Statement 3.1</div>
+        <h2>Automate Data Processing</h2>
+        <p>CI/CD pipelines for data, infrastructure as code, event-driven triggers, and compute options for batch jobs.</p>
+      </div>
+
+      <div class="intro-card">
+        <h3>Data pipelines need the same rigor as application code</h3>
+        <p>Data pipelines break silently — a schema change upstream doesn't throw an exception; it produces corrupted output. Treating pipeline code as first-class software (version control, automated testing, IaC deployment) is the foundation of operational excellence in data engineering.</p>
+      </div>
+
+      <div class="section-header" style="margin-bottom:16px;"><h2 style="font-size:1.3rem;">CI/CD for Data Pipelines</h2></div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>Service</th><th>Role in data pipeline CI/CD</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>AWS CodeCommit / GitHub</td><td>Source control for Glue scripts, CDK stacks, Lambda functions, CloudFormation templates</td></tr>
+          <tr><td>AWS CodeBuild</td><td>Run unit tests on Glue PySpark scripts (pytest + moto for S3 mocking), lint, package artifacts</td></tr>
+          <tr><td>AWS CodePipeline</td><td>Orchestrate Source → Build → Test → Deploy stages. Triggered on git push.</td></tr>
+          <tr><td>AWS CloudFormation</td><td>Deploy Glue jobs, Kinesis streams, Lambda functions, EventBridge rules as infrastructure stacks</td></tr>
+          <tr><td>AWS CDK</td><td>Define CloudFormation stacks in Python/TypeScript. Higher-level than raw CloudFormation YAML.</td></tr>
+          <tr><td>AWS SAM</td><td>Simplified CloudFormation for Lambda + API Gateway + EventBridge. Good for serverless data pipelines.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:16px;"><h2 style="font-size:1.3rem;">Event-Driven Triggers</h2></div>
+
+      <div class="cards-grid">
+        <div class="benefit-card">
+          <div class="card-icon icon-orange">📅</div>
+          <h3>EventBridge Scheduler</h3>
+          <p>Cron or rate-based scheduling for pipelines. Replaces Lambda cron functions. Can invoke Step Functions, Lambda, Glue, Batch, or any API call as a target. Supports one-time scheduled events. Cost: per schedule invocation.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-blue">🪣</div>
+          <h3>S3 Event Notifications</h3>
+          <p>S3 triggers on object creation, deletion, or restore. Route to Lambda (for immediate processing), SQS (for queued processing), SNS (for fan-out), or EventBridge (for complex routing). Use EventBridge for cross-account routing or Step Functions start.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-teal">🔗</div>
+          <h3>Glue Triggers</h3>
+          <p>Within a Glue Workflow: schedule triggers (cron), on-demand triggers (manual), and conditional triggers (start next job when previous job SUCCEEDED). Glue Workflows orchestrate Glue-only pipelines; use Step Functions for cross-service orchestration.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-purple">📨</div>
+          <h3>DMS and CDC Events</h3>
+          <p>DMS task state changes publish to EventBridge. Build automation: when a full-load task completes, EventBridge triggers Step Functions to start the incremental CDC phase. No polling required.</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:16px;"><h2 style="font-size:1.3rem;">Compute Options for Batch Processing</h2></div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>Service</th><th>Max duration</th><th>Use case</th><th>Scaling</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>AWS Lambda</td><td>15 minutes</td><td>Lightweight transformation, event routing, S3 trigger processing</td><td>Auto (1000 concurrent default)</td></tr>
+          <tr><td>AWS Glue (ETL)</td><td>48 hours (job timeout)</td><td>Spark ETL on structured/semi-structured data in S3 or Glue catalog</td><td>Auto (DPU-based)</td></tr>
+          <tr><td>AWS Batch</td><td>No limit</td><td>Docker-containerized jobs, multi-hour/day computations, ML training, simulation</td><td>EC2/Fargate per job queue</td></tr>
+          <tr><td>Amazon EMR</td><td>No limit (cluster lifetime)</td><td>Full Hadoop ecosystem (Spark, Hive, Presto), large-scale data processing</td><td>Manual or Managed Scaling</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-warning">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <h4>AWS Batch vs Lambda for long-running jobs</h4>
+          <p>Lambda's 15-minute maximum is a hard limit. If a processing job can take hours (e.g., large-file compression, video transcoding, model training), use <strong>AWS Batch</strong>. Batch runs arbitrary Docker containers on EC2 or Fargate with no time limit. It also supports <strong>array jobs</strong> — submit one job definition that fans out to hundreds of parallel job attempts, each processing a different input (e.g., one file per day of the year = 365 parallel jobs).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- TASK 3.2 -->
+<div id="analyze">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Task Statement 3.2</div>
+        <h2>Analyze Data and Create Visualizations</h2>
+        <p>Interactive SQL queries with Athena, streaming analytics with Managed Flink, and business dashboards with QuickSight.</p>
+      </div>
+
+      <div class="section-header" style="margin-bottom:16px;"><h2 style="font-size:1.3rem;">Amazon Athena — Serverless SQL on S3</h2></div>
+
+      <div class="cards-grid">
+        <div class="benefit-card">
+          <div class="card-icon icon-orange">💰</div>
+          <h3>Cost Optimization</h3>
+          <p>Athena charges $5 per TB scanned. Use <strong>Parquet or ORC</strong> (columnar — only scans needed columns), <strong>Hive-style partitioning</strong> (year=/month=/day= — only scans matching partitions), and <strong>ZSTD compression</strong>. Together: 90%+ cost reduction vs raw CSV/JSON.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-blue">🏢</div>
+          <h3>Workgroups</h3>
+          <p>Separate query contexts per team or environment. Set <strong>per-query scan limits</strong> (stop query if it would scan &gt;10GB). Set <strong>per-workgroup data usage limits</strong> (SNS alert if team scans &gt;1TB/day). Control result locations in S3. Use for cost governance across teams.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-teal">📂</div>
+          <h3>CTAS and Views</h3>
+          <p><code>CREATE TABLE AS SELECT</code> writes query results back to S3 as a new partitioned Parquet table. Use CTAS to pre-aggregate data for fast dashboards. Views are logical (no data stored) — evaluated at query time. Use for access control (grant on view, not base table).</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-purple">🔗</div>
+          <h3>Federated Query</h3>
+          <p>Lambda-based connectors query data outside S3: RDS, DynamoDB, Redshift, DocumentDB, CloudWatch Logs. Join a DynamoDB enrichment table to S3 data lake in a single Athena SQL query. Results spill to S3 if they exceed memory.</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:16px;"><h2 style="font-size:1.3rem;">Amazon Managed Flink — Streaming Analytics</h2></div>
+
+      <div class="intro-card">
+        <h3>When Lambda isn't enough for streaming</h3>
+        <p>Lambda processes Kinesis records independently — it has no memory between invocations, so it can't aggregate "count of events in the last 5 minutes." <strong>Amazon Managed Flink</strong> (formerly Kinesis Data Analytics for Apache Flink) is the service for <strong>stateful streaming</strong>: windowed aggregations, stream-to-stream joins, session tracking, and anomaly detection over time. State is checkpointed to S3 for fault tolerance.</p>
+      </div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>Window type</th><th>Behavior</th><th>Example</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Tumbling</td><td>Fixed size, non-overlapping. Each event belongs to exactly one window.</td><td>Count orders per 1-minute window: 12:00–12:01, 12:01–12:02, ...</td></tr>
+          <tr><td>Sliding</td><td>Fixed size, overlapping. Events can belong to multiple windows.</td><td>Moving average: sum of last 5 minutes, updated every 1 minute.</td></tr>
+          <tr><td>Session</td><td>Dynamic size. Window closes after inactivity gap.</td><td>User session: group clicks with no more than 30 minutes between events.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <h4>Watermarks handle late data</h4>
+          <p>In real-world streams, records arrive out of order (network delays). A watermark tells Flink: "allow up to 10 seconds of late arrival before closing a window." Records arriving after the watermark passes are either dropped or routed to a side output for separate handling. Without watermarks, Flink would either wait forever (correctness) or close windows early (incompleteness).</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:16px;"><h2 style="font-size:1.3rem;">Amazon QuickSight — Business Intelligence</h2></div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>Feature</th><th>SPICE</th><th>Direct Query</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Where data lives</td><td>In-memory in QuickSight (imported copy)</td><td>At the source (Athena, Redshift, RDS)</td></tr>
+          <tr><td>Query speed</td><td>Sub-second (in-memory)</td><td>Depends on source (seconds to minutes)</td></tr>
+          <tr><td>Data freshness</td><td>As of last refresh (scheduled or manual)</td><td>Always current at query time</td></tr>
+          <tr><td>Cost</td><td>Charged for SPICE capacity used</td><td>Charged per query at the source (e.g., Athena per TB)</td></tr>
+          <tr><td>Best for</td><td>Dashboards with many concurrent viewers, faster response needed</td><td>Ad-hoc analysis, always-current data, large datasets that won't fit in SPICE</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- TASK 3.3 -->
+<div id="maintain">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Task Statement 3.3</div>
+        <h2>Maintain and Monitor Data Pipelines</h2>
+        <p>CloudWatch metrics and alarms, dead letter queues, data quality rules, and cost optimization strategies for each service.</p>
+      </div>
+
+      <div class="section-header" style="margin-bottom:16px;"><h2 style="font-size:1.3rem;">Key CloudWatch Metrics by Service</h2></div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>Service</th><th>Critical metric</th><th>What it means / action</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Kinesis Data Streams</td><td>GetRecords.IteratorAgeMilliseconds</td><td>Age of oldest unread record. If growing → consumers can't keep up → add consumers or split shards.</td></tr>
+          <tr><td>Kinesis Data Streams</td><td>WriteProvisionedThroughputExceeded</td><td>Producers hitting shard write limit (1MB/s or 1000 records/s per shard) → reshard or use enhanced fan-out.</td></tr>
+          <tr><td>AWS Glue</td><td>glue.driver.jvm.heap.usage</td><td>JVM heap memory usage. If &gt;80% → job may OOM → increase DPU worker type (G.1X → G.2X).</td></tr>
+          <tr><td>AWS Glue</td><td>glue.driver.aggregate.numFailedTasks</td><td>Number of failed Spark tasks. High value → data skew, bad records, or resource issue.</td></tr>
+          <tr><td>Amazon EMR</td><td>HDFSUtilization</td><td>% of HDFS storage used. If &gt;80% → add core nodes or move data to S3 (EMRFS).</td></tr>
+          <tr><td>Amazon EMR</td><td>YARNMemoryAvailablePercentage</td><td>Available cluster memory. Near 0% → jobs queuing → add task nodes (Spot) for burst capacity.</td></tr>
+          <tr><td>AWS Lambda</td><td>Throttles</td><td>Lambda at concurrency limit → increase reserved concurrency or request limit increase.</td></tr>
+          <tr><td>AWS Lambda</td><td>Duration + Errors</td><td>P99 Duration approaching 15-min limit → refactor or move to Batch. Error rate → check DLQ.</td></tr>
+          <tr><td>AWS DMS</td><td>CDCLatencySource</td><td>Lag between source changes and DMS reading them. High → DMS instance undersized.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-warning">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <h4>IteratorAgeMilliseconds is the most tested Kinesis metric</h4>
+          <p>On the exam, if a Kinesis consumer is falling behind (records are hours old by the time they're processed), the root cause is almost always one of: (1) not enough shards (throughput bottleneck) — fix: reshard; (2) consumer processing too slowly — fix: add more consumer instances using Enhanced Fan-Out; (3) Lambda reserved concurrency too low — fix: increase. The metric that tells you this is happening is <strong>IteratorAgeMilliseconds growing over time</strong>.</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:16px;"><h2 style="font-size:1.3rem;">Dead Letter Queues and Error Handling</h2></div>
+
+      <div class="cards-grid">
+        <div class="benefit-card">
+          <div class="card-icon icon-orange">📮</div>
+          <h3>Lambda DLQ</h3>
+          <p>For <strong>async invocations</strong> (S3 events, SNS), Lambda retries twice by default. After 3 attempts, routes to a configured DLQ (SQS) or destination (EventBridge, Lambda, SQS, SNS). Configure <code>DestinationConfig</code> with <code>OnFailure</code> and <code>OnSuccess</code> separately.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-blue">📥</div>
+          <h3>SQS + Lambda DLQ</h3>
+          <p>For <strong>SQS event source mappings</strong>, configure both: an SQS queue DLQ (for messages Lambda never processes) and a Lambda DLQ (for processing errors). SQS visibility timeout should be &gt;6× Lambda timeout to avoid duplicate processing during retries.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-teal">🌊</div>
+          <h3>Kinesis Error Handling</h3>
+          <p>Lambda Kinesis ESM retries failed records until they expire (24h or 7 days depending on retention). Use <code>BisectOnFunctionError: true</code> to split a failing batch in half and isolate the bad record. Configure <code>DestinationConfig</code> to route poisoned records to SQS DLQ rather than blocking the entire shard.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-purple">🔍</div>
+          <h3>Glue Data Quality</h3>
+          <p>DQDL rules (Data Quality Definition Language) validate data inline during Glue jobs. Rules like <code>IsComplete "customer_id"</code>, <code>RowCount &gt; 1000</code>, <code>ColumnValues "amount" between 0 and 1000000</code>. Configure action on failure: <code>FAIL_JOB</code> (stop pipeline), <code>WARN</code> (continue with alert), or <code>QUARANTINE</code> (route bad records to separate S3 path).</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:16px;"><h2 style="font-size:1.3rem;">Cost Optimization by Service</h2></div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>Service</th><th>Cost driver</th><th>Optimization</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Athena</td><td>TB scanned per query</td><td>Convert to Parquet/ORC, add Hive partitions, use CTAS to pre-aggregate, set workgroup scan limits</td></tr>
+          <tr><td>AWS Glue</td><td>DPU-hours consumed</td><td>Enable Job Bookmarks (skip reprocessing), use pushdown predicates (filter at source), right-size DPU type</td></tr>
+          <tr><td>Amazon EMR</td><td>EC2 instance hours</td><td>Use Spot Instances for task nodes (can be interrupted, tasks retry), auto-terminate cluster when idle, use Managed Scaling</td></tr>
+          <tr><td>Kinesis Data Streams</td><td>Shard hours + PUT payload units</td><td>Right-size shards (don't over-provision), use aggregation (Kinesis Producer Library), consider Firehose for delivery-only use cases</td></tr>
+          <tr><td>Redshift</td><td>Node hours</td><td>Pause cluster during off-hours, use Redshift Serverless for variable workloads, archive cold data to S3 + Spectrum</td></tr>
+          <tr><td>S3</td><td>Storage GB + requests</td><td>S3 Lifecycle rules for tiering (Standard → IA → Glacier), Intelligent-Tiering for unpredictable access, delete incomplete multipart uploads</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- PRACTICE QUESTIONS -->
+<div id="practice">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Practice Questions</div>
+        <h2>Domain 3 Exam Practice</h2>
+        <p>These questions reflect the style and difficulty of actual DEA-C01 exam questions. The correct answer is highlighted in green.</p>
+      </div>
+
+      <div class="questions-list">
+
+        <div class="question-card">
+          <div class="question-stem">Q1. A Kinesis Data Streams consumer is processing records from a stream with 4 shards. The CloudWatch metric GetRecords.IteratorAgeMilliseconds has been growing steadily over the past 24 hours and is now at 2 hours. What is the most likely cause and recommended fix?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> The stream's data retention period is too short; increase it to 7 days</div>
+            <div class="option"><span class="option-letter">B</span> The producer is sending records with incorrect partition keys; redistribute keys evenly</div>
+            <div class="option correct"><span class="option-letter">C</span> The consumer cannot process records fast enough; add more consumer instances or split shards</div>
+            <div class="option"><span class="option-letter">D</span> The CloudWatch metric is a false alarm; IteratorAge fluctuates normally</div>
+          </div>
+          <div class="question-explanation"><strong>C is correct.</strong> IteratorAgeMilliseconds measures the age of the oldest record a consumer hasn't processed yet. A steadily growing value means the consumer is falling behind — it processes records slower than new records arrive. Fix: add more consumer instances (Enhanced Fan-Out gives each consumer its own read throughput), or split shards if you're also hitting write limits. Retention period doesn't affect processing speed.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q2. A Glue ETL job processing 500GB of data is failing with an OutOfMemoryError. The job currently uses the G.1X worker type with 10 workers. What is the correct fix?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Increase the number of workers from 10 to 50</div>
+            <div class="option correct"><span class="option-letter">B</span> Change the worker type from G.1X to G.2X</div>
+            <div class="option"><span class="option-letter">C</span> Enable Glue Auto Scaling to automatically add workers</div>
+            <div class="option"><span class="option-letter">D</span> Split the input data into smaller files before running the job</div>
+          </div>
+          <div class="question-explanation"><strong>B is correct.</strong> An OOM error indicates insufficient memory per executor, not insufficient parallelism. G.1X workers have 16GB memory; G.2X workers have 32GB. Doubling the per-worker memory directly addresses the OOM. Adding more workers (A) doesn't help because the OOM is happening within a single executor on one partition. Auto Scaling adds workers, not memory per worker.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q3. A data engineer needs to monitor data pipeline record counts. When fewer than 1,000 records are processed in a Glue job run, the team should be alerted. Glue doesn't natively publish a "records processed" metric. What is the best approach?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Parse Glue job logs in CloudWatch Logs and create a metric filter on record count patterns</div>
+            <div class="option correct"><span class="option-letter">B</span> Publish a custom CloudWatch metric from within the Glue job using put_metric_data, then create an alarm on it</div>
+            <div class="option"><span class="option-letter">C</span> Use CloudTrail to capture Glue API calls and extract record counts</div>
+            <div class="option"><span class="option-letter">D</span> Enable Glue job profiling and monitor the profiling output in S3</div>
+          </div>
+          <div class="question-explanation"><strong>B is correct.</strong> Custom CloudWatch metrics allow you to publish any business-level metric from application code (boto3 <code>put_metric_data</code>). Add a call at the end of the Glue job to publish the record count, then create a CloudWatch Alarm that triggers when the metric drops below 1,000. CloudTrail tracks API calls, not data-level metrics. Log metric filters work but are more fragile (depends on exact log format).</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q4. A Lambda function processes messages from an SQS queue. Occasionally, malformed messages cause the Lambda function to throw an exception. After several retries, these messages need to be preserved for investigation rather than lost. What should be configured?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Set Lambda's reserved concurrency to 0 when errors occur</div>
+            <div class="option correct"><span class="option-letter">B</span> Configure a Dead Letter Queue on the SQS source queue with maxReceiveCount set to the desired retry count</div>
+            <div class="option"><span class="option-letter">C</span> Enable Lambda Destinations with an OnFailure target pointing to another Lambda</div>
+            <div class="option"><span class="option-letter">D</span> Use an SQS FIFO queue instead of a standard queue</div>
+          </div>
+          <div class="question-explanation"><strong>B is correct.</strong> For SQS → Lambda event source mappings, configure a Dead Letter Queue on the <strong>SQS queue</strong> (not Lambda), using <code>RedrivePolicy</code> with a <code>maxReceiveCount</code>. After the message is received (and returned to the queue after Lambda failure) that many times, SQS automatically moves it to the DLQ. Lambda Destinations (C) work for async invocations, not SQS ESM. FIFO guarantees ordering, not error handling.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q5. An Athena workgroup is being used by a data science team that frequently runs expensive queries against a large S3 data lake. The data engineering team needs to prevent any single query from scanning more than 50GB. How should this be configured?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Create an S3 bucket policy that limits reads to 50GB per request</div>
+            <div class="option"><span class="option-letter">B</span> Use AWS Cost Explorer to alert when Athena costs exceed a threshold</div>
+            <div class="option correct"><span class="option-letter">C</span> Configure a per-query data usage limit of 50GB on the Athena workgroup</div>
+            <div class="option"><span class="option-letter">D</span> Create an IAM policy that denies Athena queries scanning more than 50GB</div>
+          </div>
+          <div class="question-explanation"><strong>C is correct.</strong> Athena workgroups support per-query data usage controls: when a query would scan more than the configured limit, Athena cancels it before incurring the full cost. This is configured directly on the workgroup under "Data usage controls." S3 bucket policies can't limit read volume. Cost Explorer is reactive (after the fact). IAM doesn't have a "bytes scanned" condition.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q6. A real-time pipeline needs to calculate the count of user logins per 5-minute window, updated every minute. Which Amazon Managed Flink window type should be used?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Tumbling window of 5 minutes</div>
+            <div class="option correct"><span class="option-letter">B</span> Sliding window of size 5 minutes and slide of 1 minute</div>
+            <div class="option"><span class="option-letter">C</span> Session window with a 5-minute gap</div>
+            <div class="option"><span class="option-letter">D</span> Global window with a periodic trigger every minute</div>
+          </div>
+          <div class="question-explanation"><strong>B is correct.</strong> A sliding window with size=5 minutes and slide=1 minute produces a new result every minute, but each result covers the last 5 minutes of data. This creates overlapping windows: 00:00–05:00, 00:01–05:01, 00:02–05:02, etc. A tumbling 5-minute window would only produce results at 5-minute boundaries (non-overlapping). A session window closes based on inactivity, not time intervals.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q7. An EMR cluster's HDFS storage is at 92% utilization. The cluster is running a daily batch job that processes log files. What is the most effective immediate action?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Increase the master node instance size</div>
+            <div class="option correct"><span class="option-letter">B</span> Move intermediate and output data to Amazon S3 using EMRFS instead of HDFS</div>
+            <div class="option"><span class="option-letter">C</span> Compress all HDFS data using GZIP</div>
+            <div class="option"><span class="option-letter">D</span> Add more task nodes to the cluster</div>
+          </div>
+          <div class="question-explanation"><strong>B is correct.</strong> EMRFS (EMR File System) uses S3 as the underlying storage instead of HDFS. Moving data to S3 immediately frees HDFS space and is the standard best practice for EMR — S3 provides durable, unlimited storage at lower cost, while HDFS is typically only used for data that needs low-latency local disk access. Task nodes don't contribute HDFS storage (only core nodes do). Compression helps at the margins but doesn't solve 92% utilization.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q8. A QuickSight dashboard is used by 500 executives who all load the same sales summary report at the same time every Monday morning. The report queries a large Redshift table and is slow. What is the best way to ensure fast, consistent dashboard performance?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Scale up the Redshift cluster every Monday morning before 9 AM</div>
+            <div class="option correct"><span class="option-letter">B</span> Import the Redshift query results into QuickSight SPICE and schedule a weekly refresh</div>
+            <div class="option"><span class="option-letter">C</span> Create a Redshift materialized view and grant QuickSight access to it</div>
+            <div class="option"><span class="option-letter">D</span> Switch to Amazon Athena with the same data in S3 for cheaper queries</div>
+          </div>
+          <div class="question-explanation"><strong>B is correct.</strong> SPICE (Super-fast, Parallel, In-memory Calculation Engine) imports data once and serves dashboard queries from memory. 500 concurrent users hit SPICE, not Redshift — zero load on the data warehouse. Schedule a weekly SPICE refresh every Sunday night so Monday data is ready. Option C (materialized view) reduces Redshift compute but still requires 500 concurrent Redshift queries. Option A is operationally fragile and doesn't solve concurrent user load.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+<footer>
+  <strong>AWS Data Engineer Associate — DEA-C01</strong><br />
+  Domain 3: Data Operations &amp; Support &nbsp;·&nbsp; 22% of exam &nbsp;·&nbsp; ~14 questions
+</footer>
+
+</body>
+</html>

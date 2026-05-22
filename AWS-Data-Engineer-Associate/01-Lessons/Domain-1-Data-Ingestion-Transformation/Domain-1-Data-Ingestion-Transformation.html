@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Domain 1: Data Ingestion &amp; Transformation — AWS Data Engineer Associate</title>
+  <style>
+    :root {
+      --aws-orange: #FF9900;
+      --aws-dark: #232F3E;
+      --aws-blue: #1A73E8;
+      --aws-teal: #00A591;
+      --text-primary: #1a1a2e;
+      --text-secondary: #4a4a6a;
+      --bg-page: #f5f6fa;
+      --bg-card: #ffffff;
+      --border: #e0e4f0;
+      --accent-light: #fff8ec;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: var(--bg-page); color: var(--text-primary); line-height: 1.7; }
+
+    /* COVER */
+    .cover { background: linear-gradient(135deg, var(--aws-dark) 0%, #16213e 60%, #0f3460 100%); color: #fff; padding: 80px 40px; text-align: center; position: relative; overflow: hidden; }
+    .cover::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 50%, rgba(255,153,0,0.12) 0%, transparent 60%); }
+    .cover-badge { display: inline-block; background: rgba(255,153,0,0.2); border: 1px solid rgba(255,153,0,0.5); color: var(--aws-orange); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 6px 16px; border-radius: 20px; margin-bottom: 24px; }
+    .cover h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 16px; }
+    .cover h1 span { color: var(--aws-orange); }
+    .cover p { font-size: 1.1rem; color: rgba(255,255,255,0.75); max-width: 600px; margin: 0 auto 36px; }
+    .cover-stats { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+    .stat { text-align: center; }
+    .stat-value { font-size: 2rem; font-weight: 800; color: var(--aws-orange); }
+    .stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* NAV */
+    .chapter-nav { background: var(--aws-dark); padding: 0 40px; display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
+    .chapter-nav::-webkit-scrollbar { display: none; }
+    .nav-item { color: rgba(255,255,255,0.55); font-size: 0.82rem; font-weight: 600; text-decoration: none; padding: 14px 18px; white-space: nowrap; border-bottom: 3px solid transparent; transition: color 0.2s, border-color 0.2s; }
+    .nav-item:hover { color: #fff; border-color: var(--aws-orange); }
+
+    /* LAYOUT */
+    .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 64px 0 48px; }
+    .section-header { margin-bottom: 40px; }
+    .section-tag { display: inline-block; background: var(--accent-light); border: 1px solid rgba(255,153,0,0.3); color: var(--aws-orange); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 12px; border-radius: 12px; margin-bottom: 12px; }
+    .section-header h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; }
+    .section-header p { color: var(--text-secondary); font-size: 1.05rem; margin-top: 10px; max-width: 640px; }
+
+    /* INTRO CARD */
+    .intro-card { background: var(--bg-card); border: 1px solid var(--border); border-left: 4px solid var(--aws-orange); border-radius: 12px; padding: 32px 36px; margin-bottom: 32px; }
+    .intro-card h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; }
+    .intro-card p { color: var(--text-secondary); line-height: 1.8; }
+    .intro-card p + p { margin-top: 12px; }
+
+    /* DOMAIN TABLE */
+    .domain-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+    .domain-table thead { background: var(--aws-dark); color: #fff; }
+    .domain-table thead th { padding: 14px 20px; text-align: left; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .domain-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    .domain-table tbody tr:last-child { border-bottom: none; }
+    .domain-table tbody tr:hover { background: #f9fafb; }
+    .domain-table tbody td { padding: 14px 20px; font-size: 0.92rem; color: var(--text-secondary); }
+    .domain-table tbody td:first-child { font-weight: 700; color: var(--text-primary); }
+
+    /* COMPARISON TABLE */
+    .compare-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 24px; }
+    .compare-table thead { background: var(--aws-dark); color: #fff; }
+    .compare-table thead th { padding: 12px 16px; text-align: left; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .compare-table tbody tr { border-bottom: 1px solid var(--border); }
+    .compare-table tbody tr:last-child { border-bottom: none; }
+    .compare-table tbody tr:hover { background: #f9fafb; }
+    .compare-table tbody td { padding: 12px 16px; font-size: 0.88rem; color: var(--text-secondary); vertical-align: top; }
+    .compare-table tbody td:first-child { font-weight: 700; color: var(--text-primary); white-space: nowrap; }
+
+    /* CARDS */
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .benefit-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; transition: box-shadow 0.2s, transform 0.2s; }
+    .benefit-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .card-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 16px; }
+    .icon-orange { background: rgba(255,153,0,0.12); }
+    .icon-blue { background: rgba(26,115,232,0.1); }
+    .icon-teal { background: rgba(0,165,145,0.1); }
+    .icon-purple { background: rgba(123,82,173,0.1); }
+    .benefit-card h3 { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+    .benefit-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
+
+    /* SERVICE CARDS */
+    .service-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .service-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .service-header { background: var(--aws-dark); padding: 12px 16px; display: flex; align-items: center; gap: 10px; }
+    .service-badge { background: var(--aws-orange); color: var(--aws-dark); font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; padding: 3px 8px; border-radius: 4px; }
+    .service-name { color: #fff; font-size: 0.92rem; font-weight: 700; }
+    .service-body { padding: 16px; }
+    .service-body p { font-size: 0.87rem; color: var(--text-secondary); line-height: 1.6; }
+    .service-body ul { margin-top: 10px; padding-left: 18px; }
+    .service-body li { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.7; }
+
+    /* CALLOUTS */
+    .callout { border-radius: 10px; padding: 20px 24px; margin: 24px 0; display: flex; gap: 16px; align-items: flex-start; }
+    .callout-info { background: #eef4ff; border-left: 4px solid var(--aws-blue); }
+    .callout-warning { background: #fff8ec; border-left: 4px solid var(--aws-orange); }
+    .callout-success { background: #edfaf5; border-left: 4px solid var(--aws-teal); }
+    .callout-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+    .callout-body h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary); }
+    .callout-body p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
+
+    /* CODE BLOCK */
+    .code-block { background: #1e1e2e; border-radius: 10px; padding: 20px 24px; margin: 16px 0; overflow-x: auto; }
+    .code-block code { font-family: "Cascadia Code", "Fira Code", "Courier New", monospace; font-size: 0.82rem; color: #cdd6f4; line-height: 1.8; white-space: pre; }
+    .code-block .comment { color: #6c7086; }
+    .code-block .string { color: #a6e3a1; }
+    .code-block .keyword { color: #cba6f7; }
+
+    /* TERMS */
+    .terms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+    .term-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+    .term-name { font-size: 0.88rem; font-weight: 700; color: var(--aws-orange); margin-bottom: 4px; }
+    .term-def { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
+
+    /* PRACTICE QUESTIONS */
+    .questions-list { display: flex; flex-direction: column; gap: 20px; }
+    .question-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .question-stem { padding: 20px 24px; font-size: 0.95rem; font-weight: 600; color: var(--text-primary); }
+    .question-options { padding: 0 24px 16px; display: flex; flex-direction: column; gap: 8px; }
+    .option { display: flex; gap: 12px; padding: 10px 14px; border-radius: 8px; font-size: 0.88rem; color: var(--text-secondary); background: #f8f9ff; border: 1px solid transparent; }
+    .option.correct { background: #edfaf5; border-color: #2ecc71; color: var(--text-primary); font-weight: 600; }
+    .option-letter { font-weight: 700; color: var(--aws-orange); flex-shrink: 0; }
+    .option.correct .option-letter { color: #27ae60; }
+    .question-explanation { background: #f8f9ff; border-top: 1px solid var(--border); padding: 14px 24px; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+    .question-explanation strong { color: var(--text-primary); }
+
+    /* DIVIDER / FOOTER */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+    footer { background: var(--aws-dark); color: rgba(255,255,255,0.5); text-align: center; padding: 32px 24px; font-size: 0.82rem; }
+    footer strong { color: rgba(255,255,255,0.8); }
+
+    @media (max-width: 700px) {
+      .cover { padding: 60px 24px; }
+      .cover-stats { gap: 24px; }
+      .cards-grid, .service-grid { grid-template-columns: 1fr; }
+      .chapter-nav { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- COVER -->
+<section class="cover">
+  <div class="cover-badge">AWS Data Engineer Associate — DEA-C01</div>
+  <h1>Domain 1: <span>Data Ingestion &amp; Transformation</span></h1>
+  <p>Streaming vs batch ingestion, ETL with Glue and EMR, orchestrating multi-step pipelines, and choosing the right data formats.</p>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-value">34%</div><div class="stat-label">of the exam</div></div>
+    <div class="stat"><div class="stat-value">~22</div><div class="stat-label">exam questions</div></div>
+    <div class="stat"><div class="stat-value">3</div><div class="stat-label">task statements</div></div>
+  </div>
+</section>
+
+<nav class="chapter-nav">
+  <a class="nav-item" href="#overview">Overview</a>
+  <a class="nav-item" href="#ingestion">1.1 Data Ingestion</a>
+  <a class="nav-item" href="#transform">1.2 Transform &amp; Process</a>
+  <a class="nav-item" href="#orchestrate">1.3 Orchestrate Pipelines</a>
+  <a class="nav-item" href="#practice">Practice Questions</a>
+</nav>
+
+
+<!-- OVERVIEW -->
+<div id="overview">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Introduction</div>
+        <h2>The Data Engineering Pipeline</h2>
+        <p>Domain 1 is the largest domain — it covers how data gets into AWS, how it gets transformed, and how those steps are automated and orchestrated.</p>
+      </div>
+
+      <div class="intro-card">
+        <h3>The core data pipeline flow</h3>
+        <p>Every data engineering system follows the same fundamental pattern: data is <strong>ingested</strong> from sources (databases, streams, files), <strong>transformed</strong> into a clean and useful format, and <strong>loaded</strong> into a destination for analytics or application use. Domain 1 covers all three phases: choosing the right ingestion service (Kinesis vs MSK vs DMS), picking the right transformation engine (Glue vs EMR vs Lambda), and orchestrating the steps together (Step Functions vs MWAA).</p>
+      </div>
+
+      <table class="domain-table">
+        <thead>
+          <tr><th>Task</th><th>Topic</th><th>Key services</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1.1</td><td>Perform Data Ingestion</td><td>Kinesis Data Streams, Kinesis Firehose, MSK, DMS, DataSync, AppFlow, Transfer Family</td></tr>
+          <tr><td>1.2</td><td>Transform and Process Data</td><td>AWS Glue, Amazon EMR, Lambda, Glue DataBrew, data formats (Parquet, ORC, Avro)</td></tr>
+          <tr><td>1.3</td><td>Orchestrate Data Pipelines</td><td>Step Functions, Amazon MWAA, EventBridge, Glue Workflows</td></tr>
+        </tbody>
+      </table>
+
+      <div class="section-header" style="margin-top:48px; margin-bottom:20px;">
+        <h2 style="font-size:1.3rem;">Key concepts to master</h2>
+      </div>
+      <div class="terms-grid">
+        <div class="term-card"><div class="term-name">Batch ingestion</div><div class="term-def">Process data in bulk at scheduled intervals. Lower cost, higher latency. Used for nightly ETL jobs.</div></div>
+        <div class="term-card"><div class="term-name">Streaming ingestion</div><div class="term-def">Process records continuously as they arrive. Higher complexity, lower latency. Used for real-time analytics.</div></div>
+        <div class="term-card"><div class="term-name">ETL vs ELT</div><div class="term-def">ETL: transform before loading (Glue). ELT: load raw first, transform in the warehouse (Redshift, Athena).</div></div>
+        <div class="term-card"><div class="term-name">Medallion Architecture</div><div class="term-def">Bronze (raw) → Silver (cleaned) → Gold (business-ready). Standard data lake layering pattern.</div></div>
+        <div class="term-card"><div class="term-name">DPU</div><div class="term-def">Glue Data Processing Unit: 4 vCPU + 16 GB RAM. The billing and sizing unit for Glue jobs.</div></div>
+        <div class="term-card"><div class="term-name">Shard</div><div class="term-def">Kinesis Data Streams unit of capacity: 1 MB/s write, 2 MB/s read, 1,000 records/s.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+
+<!-- TASK 1.1: INGESTION -->
+<div id="ingestion">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Task Statement 1.1</div>
+        <h2>Perform Data Ingestion</h2>
+        <p>Choosing the right service to move data from where it's generated to where it needs to be processed.</p>
+      </div>
+
+      <div class="intro-card">
+        <h3>Streaming vs Batch: The fundamental choice</h3>
+        <p>Before choosing a service, determine whether the data needs to be processed continuously (streaming) or in scheduled runs (batch). <strong>Streaming</strong>: fraud detection, real-time dashboards, IoT sensor alerts — data must be acted on within seconds. <strong>Batch</strong>: nightly sales reports, end-of-month analytics, data warehouse loads — hourly or daily is acceptable. Most production data lakes use both patterns: streaming for real-time operational data, batch for bulk historical loads.</p>
+      </div>
+
+      <div class="section-header" style="margin-top: 8px; margin-bottom:20px;"><h2 style="font-size:1.3rem;">Streaming Ingestion Services</h2></div>
+
+      <table class="compare-table">
+        <thead><tr><th>Service</th><th>What it is</th><th>Retention</th><th>Choose when</th></tr></thead>
+        <tbody>
+          <tr><td>Kinesis Data Streams</td><td>Real-time streaming, write your own consumer</td><td>1 day – 365 days</td><td>Sub-second latency, custom consumer logic, multiple consumers</td></tr>
+          <tr><td>Kinesis Firehose</td><td>Managed delivery to S3/Redshift/OpenSearch</td><td>None (delivers then discards)</td><td>Simple delivery to a known destination, no consumer code needed</td></tr>
+          <tr><td>Amazon MSK</td><td>Managed Apache Kafka</td><td>Configurable (weeks/months)</td><td>Existing Kafka apps, Kafka ecosystem (Debezium, Kafka Connect), long retention</td></tr>
+          <tr><td>Managed Apache Flink</td><td>Stateful stream processing</td><td>N/A (processor, not broker)</td><td>Windowed aggregations, stateful processing, real-time analytics</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-warning">
+        <div class="callout-icon">📝</div>
+        <div class="callout-body">
+          <h4>Kinesis Data Streams vs Firehose — the most tested distinction</h4>
+          <p><strong>Streams</strong>: you write a consumer; sub-second latency; replay possible; multiple consumers per shard. <strong>Firehose</strong>: fully managed delivery; 60–900 second buffering; no replay; one destination. If the scenario mentions &lt;1 second latency or replay — it's Streams. If it says "load to S3 automatically with no code" — it's Firehose.</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:20px;"><h2 style="font-size:1.3rem;">Kinesis Data Streams — Key Mechanics</h2></div>
+
+      <div class="cards-grid">
+        <div class="benefit-card">
+          <div class="card-icon icon-orange">🔀</div>
+          <h3>Shards &amp; Partition Keys</h3>
+          <p>Each shard handles 1 MB/s writes and 2 MB/s reads. The partition key determines which shard a record goes to. High-cardinality keys (user ID, UUID) distribute traffic evenly. Low-cardinality keys (status = "active") create hot shards.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-blue">📊</div>
+          <h3>IteratorAge Metric</h3>
+          <p><code>GetRecords.IteratorAgeMilliseconds</code> measures consumer lag. If it's growing, consumers can't keep up. Fix: add more consumer instances or split shards. This is the most important Kinesis monitoring metric.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-teal">⚡</div>
+          <h3>Enhanced Fan-Out</h3>
+          <p>Dedicated 2 MB/s read throughput per consumer per shard. Standard GetRecords shares 2 MB/s across all consumers. Use Enhanced Fan-Out when you have multiple consumers that all need full throughput.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-purple">🔄</div>
+          <h3>Resharding</h3>
+          <p>SplitShard doubles capacity; MergeShards reduces it. Cannot exceed the 500 shard limit per account per region without a service limit increase. Hot shard? Identify the hot partition key first, then split.</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:20px;"><h2 style="font-size:1.3rem;">Batch Ingestion Services</h2></div>
+
+      <table class="compare-table">
+        <thead><tr><th>Service</th><th>What it transfers</th><th>Choose when</th></tr></thead>
+        <tbody>
+          <tr><td>AWS DMS</td><td>Database rows (with CDC for ongoing replication)</td><td>Migrate databases; replicate ongoing DB changes to analytics targets</td></tr>
+          <tr><td>AWS DataSync</td><td>Files and objects (NFS, SMB, HDFS, S3)</td><td>Move large file datasets from on-premises to S3; ongoing file sync</td></tr>
+          <tr><td>AWS Snow Family</td><td>Any data via physical device</td><td>Petabyte-scale transfer where network bandwidth is insufficient</td></tr>
+          <tr><td>Amazon AppFlow</td><td>SaaS data (Salesforce, ServiceNow, SAP)</td><td>Ingest data from SaaS applications without custom connectors</td></tr>
+          <tr><td>AWS Transfer Family</td><td>Files via SFTP/FTP/FTPS/AS2</td><td>Partners/customers upload files using existing SFTP workflows</td></tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+
+<!-- TASK 1.2: TRANSFORM -->
+<div id="transform">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Task Statement 1.2</div>
+        <h2>Transform and Process Data</h2>
+        <p>Converting raw data into clean, structured, query-optimized formats using the right processing engine.</p>
+      </div>
+
+      <div class="intro-card">
+        <h3>The transformation decision</h3>
+        <p>The right transformation engine depends on three things: <strong>scale</strong> (megabytes vs terabytes vs petabytes), <strong>runtime</strong> (seconds vs minutes vs hours), and <strong>complexity</strong> (simple field renaming vs custom ML models). Lambda for lightweight event-driven; Glue for serverless Spark ETL; EMR when you need the full Hadoop ecosystem or custom libraries.</p>
+      </div>
+
+      <div class="section-header" style="margin-top:8px; margin-bottom:20px;"><h2 style="font-size:1.3rem;">Transformation Engine Comparison</h2></div>
+
+      <table class="compare-table">
+        <thead><tr><th>Engine</th><th>Underlying tech</th><th>Max duration</th><th>Best for</th></tr></thead>
+        <tbody>
+          <tr><td>AWS Lambda</td><td>Managed function runtime</td><td>15 minutes</td><td>Lightweight event-driven transforms; pipeline coordination</td></tr>
+          <tr><td>AWS Glue ETL</td><td>Managed Spark (Python/Scala)</td><td>Hours</td><td>Serverless Spark ETL; Glue Data Catalog integration</td></tr>
+          <tr><td>Amazon EMR</td><td>Spark, Hadoop, Hive, Presto</td><td>Days</td><td>Custom frameworks; full Hadoop ecosystem; large-scale processing</td></tr>
+          <tr><td>Glue DataBrew</td><td>Visual no-code prep</td><td>Hours</td><td>Analysts cleaning data without code; PII masking; one-time prep</td></tr>
+          <tr><td>AWS Batch</td><td>Docker containers on EC2/Fargate</td><td>Days</td><td>Custom container, long-running batch, non-Spark processing</td></tr>
+        </tbody>
+      </table>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:20px;"><h2 style="font-size:1.3rem;">AWS Glue — Deep Dive</h2></div>
+
+      <div class="cards-grid">
+        <div class="benefit-card">
+          <div class="card-icon icon-orange">📚</div>
+          <h3>Glue Data Catalog</h3>
+          <p>Central metadata repository for all tables across your data lake. Stores schema, location, and partition information. Compatible with Hive Metastore. Used by Athena, EMR, Redshift Spectrum, and Glue jobs.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-blue">🕷️</div>
+          <h3>Glue Crawlers</h3>
+          <p>Automated schema discovery — point at S3, RDS, DynamoDB, etc. Crawler infers schema and creates/updates table definitions in the Data Catalog. Run on schedule or trigger on new data arrival.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-teal">⚙️</div>
+          <h3>DPU Sizing</h3>
+          <p>1 DPU = 4 vCPU + 16 GB RAM. G.1X = 1 DPU per worker; G.2X = 2 DPU per worker (32 GB RAM). Use G.2X to fix OOM errors. Add more workers for parallelism. Use Job Bookmarks to skip processed data.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-purple">🔁</div>
+          <h3>DynamicFrames</h3>
+          <p>Glue's abstraction over Spark DataFrames — handles inconsistent schemas with <code>resolveChoice()</code> and <code>dropNullFields()</code>. Convert to Spark DataFrame when standard Spark APIs are needed.</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:20px;"><h2 style="font-size:1.3rem;">Data Formats &amp; Partitioning</h2></div>
+
+      <table class="compare-table">
+        <thead><tr><th>Format</th><th>Type</th><th>Splittable?</th><th>Best use</th></tr></thead>
+        <tbody>
+          <tr><td>CSV / JSON</td><td>Row-based</td><td>CSV: yes; JSON: no</td><td>Ingestion layer (Bronze); interchange between systems</td></tr>
+          <tr><td>Parquet</td><td>Columnar</td><td>Yes (row groups)</td><td>Analytics (Silver/Gold); Athena queries; Redshift Spectrum</td></tr>
+          <tr><td>ORC</td><td>Columnar</td><td>Yes</td><td>Hive on EMR; high-compression analytics workloads</td></tr>
+          <tr><td>Avro</td><td>Row-based + schema</td><td>Yes (with Kafka)</td><td>Kafka/MSK with Schema Registry; schema evolution</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-success">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <h4>The single most impactful Athena optimization</h4>
+          <p>Convert CSV to Parquet and partition by date: <code>s3://lake/events/year=2024/month=01/day=15/</code>. A 1 TB table queried for one day goes from scanning 1 TB ($5.00) to scanning ~2.7 GB ($0.01). That's a 500x cost reduction from two configuration changes.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+
+<!-- TASK 1.3: ORCHESTRATE -->
+<div id="orchestrate">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Task Statement 1.3</div>
+        <h2>Orchestrate Data Pipelines</h2>
+        <p>Coordinating multi-step pipelines, handling failures, and triggering runs based on events or schedules.</p>
+      </div>
+
+      <div class="section-header" style="margin-top:8px; margin-bottom:20px;"><h2 style="font-size:1.3rem;">Orchestration Service Comparison</h2></div>
+
+      <table class="compare-table">
+        <thead><tr><th>Service</th><th>Best for</th><th>Cost model</th><th>Open-source portable?</th></tr></thead>
+        <tbody>
+          <tr><td>AWS Step Functions</td><td>AWS-native multi-service pipelines; visual workflow; retry/catch logic</td><td>Per state transition</td><td>No</td></tr>
+          <tr><td>Amazon MWAA</td><td>Teams with existing Airflow DAGs; complex DAG dependencies</td><td>Always-on environment</td><td>Yes (Apache Airflow)</td></tr>
+          <tr><td>Glue Workflows</td><td>Glue-only pipelines (crawlers + jobs + triggers)</td><td>Free (Glue job cost only)</td><td>No</td></tr>
+          <tr><td>EventBridge</td><td>Schedule triggers; event-driven pipeline starts</td><td>Per event/rule</td><td>No</td></tr>
+        </tbody>
+      </table>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:20px;"><h2 style="font-size:1.3rem;">Step Functions — Error Handling</h2></div>
+
+      <div class="cards-grid">
+        <div class="benefit-card">
+          <div class="card-icon icon-orange">🔄</div>
+          <h3>Retry with Backoff</h3>
+          <p>Configure <code>MaxAttempts</code>, <code>IntervalSeconds</code>, and <code>BackoffRate</code> on any Task state. Automatically retries transient failures (Glue job throttling, Lambda timeouts) with exponential backoff before failing.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-blue">🪤</div>
+          <h3>Catch &amp; Route</h3>
+          <p>Define <code>Catch</code> to route failed tasks to error-handling states (send SNS alert, quarantine data, trigger manual review). <code>States.ALL</code> catches any error type.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-teal">🗺️</div>
+          <h3>Map State</h3>
+          <p>Process each item in an array in parallel — e.g., process 1,000 S3 files concurrently. Set <code>MaxConcurrency</code> to limit parallelism. Ideal for fan-out processing patterns.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-purple">⏳</div>
+          <h3>Wait for Task Token</h3>
+          <p>Pause workflow and wait for an external system to call back with a token. Used for human approval steps or long-running async processes. Standard workflow can wait up to 1 year.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <h4>Choosing MWAA vs Step Functions</h4>
+          <p><strong>Step Functions</strong>: New AWS-native project, simple-to-medium pipeline, want visual workflow, lower cost for intermittent pipelines. <strong>MWAA</strong>: Existing Airflow DAGs, team knows Python/Airflow, need complex cross-team dependencies, want open-source portability. Cost matters: Step Functions charges per state transition (nearly free for once-daily pipelines); MWAA charges even when idle.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+
+<!-- PRACTICE QUESTIONS -->
+<div id="practice">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Exam Preparation</div>
+        <h2>Practice Questions</h2>
+        <p>Domain 1 questions — identify the answer before reading the explanation.</p>
+      </div>
+
+      <div class="questions-list">
+
+        <div class="question-card">
+          <div class="question-stem">Q1. A company needs to ingest 500,000 clickstream events per second from their website for real-time fraud detection within 200 milliseconds. Which service should they use?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span>Amazon Kinesis Data Firehose</div>
+            <div class="option correct"><span class="option-letter">B</span>Amazon Kinesis Data Streams</div>
+            <div class="option"><span class="option-letter">C</span>Amazon SQS</div>
+            <div class="option"><span class="option-letter">D</span>AWS Glue Streaming</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: B</strong> — Kinesis Data Streams delivers sub-second latency to custom consumers. Firehose (A) buffers for 60–900 seconds — too slow for 200ms requirements. SQS (C) is a message queue, not optimized for this throughput/latency profile. Glue Streaming (D) adds processing latency.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q2. A Glue ETL job reprocesses all 500 GB of S3 data every night, even though only ~2 GB of new files are added daily. What is the correct fix?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span>Increase the number of DPUs</div>
+            <div class="option correct"><span class="option-letter">B</span>Enable Glue Job Bookmarks</div>
+            <div class="option"><span class="option-letter">C</span>Convert data to Parquet format</div>
+            <div class="option"><span class="option-letter">D</span>Add pushdown predicates</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: B</strong> — Job Bookmarks track which S3 objects/rows have already been processed. Subsequent runs only process new data. A increases compute but still processes everything. C improves query performance. D reduces data read but requires explicit filter expressions — Bookmarks are the purpose-built solution.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q3. IoT sensors send JSON records to Kinesis Data Streams. The team wants records stored in Amazon S3 as Parquet files automatically, with no custom consumer code. What is the BEST solution?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span>Lambda reads from Kinesis and writes Parquet to S3</div>
+            <div class="option correct"><span class="option-letter">B</span>Kinesis Data Firehose with format conversion enabled, using the Glue Data Catalog schema</div>
+            <div class="option"><span class="option-letter">C</span>AWS Glue Streaming job reads from Kinesis and writes Parquet to S3</div>
+            <div class="option"><span class="option-letter">D</span>Amazon MSK Connect with an S3 sink connector</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: B</strong> — Firehose with format conversion natively converts JSON to Parquet using the Glue Data Catalog schema — zero consumer code. Lambda (A) requires writing and maintaining code. Glue Streaming (C) works but requires managing a Glue job. MSK Connect (D) is for Kafka, not Kinesis Data Streams.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q4. A Glue ETL job fails intermittently with "Java heap space" errors on large partitions. CloudWatch shows JVM heap at 96% before failure. What is the BEST immediate fix?</div>
+          <div class="question-options">
+            <div class="option correct"><span class="option-letter">A</span>Upgrade the worker type from G.1X to G.2X</div>
+            <div class="option"><span class="option-letter">B</span>Add more G.1X workers</div>
+            <div class="option"><span class="option-letter">C</span>Convert input data from CSV to Parquet</div>
+            <div class="option"><span class="option-letter">D</span>Enable Job Bookmarks</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: A</strong> — G.2X doubles memory per worker (32 GB vs 16 GB), directly addressing JVM OOM. B (more workers) adds parallelism but the same memory per worker — each worker still runs out of memory on large partitions. C and D address different problems (format efficiency and reprocessing).</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q5. A company migrates their on-premises Oracle database to Amazon Aurora PostgreSQL. They need minimal downtime and the migration must handle ongoing changes during the cutover window. What is the correct service combination?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span>AWS DataSync for schema + data transfer</div>
+            <div class="option correct"><span class="option-letter">B</span>AWS SCT for schema conversion + AWS DMS with Full Load + CDC mode</div>
+            <div class="option"><span class="option-letter">C</span>AWS DMS alone for both schema conversion and data migration</div>
+            <div class="option"><span class="option-letter">D</span>AWS Snowball for data transfer + manual schema creation</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: B</strong> — Oracle → Aurora PostgreSQL is a heterogeneous migration. SCT converts Oracle DDL/stored procedures to PostgreSQL syntax. DMS in Full Load + CDC mode migrates all existing data, then continues replicating changes — allowing a near-zero-downtime cutover. DMS alone (C) handles data but not schema conversion for heterogeneous migrations.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q6. A data pipeline Step Functions state machine calls a Glue job. The Glue job occasionally fails due to transient throttling. How should the state machine be configured to handle this automatically?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span>Add a Wait state of 60 seconds before the Glue Task state</div>
+            <div class="option"><span class="option-letter">B</span>Add a Choice state after the Glue Task state to check for failure</div>
+            <div class="option correct"><span class="option-letter">C</span>Add a Retry configuration to the Glue Task state with MaxAttempts=3 and exponential backoff</div>
+            <div class="option"><span class="option-letter">D</span>Run two Glue jobs in a Parallel state and use whichever succeeds first</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: C</strong> — Step Functions Retry on the Task state automatically re-attempts the Glue job on failure, with configurable interval and backoff. Wait (A) adds delay before execution, not after failure. Choice (B) requires manually re-entering the state — not automatic retry. Parallel (D) would run both jobs, doubling cost unnecessarily.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q7. A team has 40 existing Apache Airflow DAGs running on-premises. They want to run them on AWS with minimal code changes. Which service is the BEST fit?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span>AWS Step Functions</div>
+            <div class="option correct"><span class="option-letter">B</span>Amazon MWAA (Managed Workflows for Apache Airflow)</div>
+            <div class="option"><span class="option-letter">C</span>AWS Glue Workflows</div>
+            <div class="option"><span class="option-letter">D</span>Amazon EventBridge Scheduler</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: B</strong> — MWAA runs Apache Airflow natively — existing DAG Python files run unchanged. Step Functions (A) is AWS-proprietary and would require rewriting every DAG. Glue Workflows (C) only orchestrates Glue components, not arbitrary tasks. EventBridge (D) provides scheduling but not full DAG orchestration.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q8. An analytics team queries a 10 TB S3 table daily in Athena. Currently the table uses CSV format with no partitioning, costing ~$50/day. They want to reduce cost by at least 90%. What changes achieve this?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span>Enable Athena result caching</div>
+            <div class="option correct"><span class="option-letter">B</span>Convert to Parquet format with Snappy compression and add date-based partitioning</div>
+            <div class="option"><span class="option-letter">C</span>Switch from Athena to Amazon Redshift</div>
+            <div class="option"><span class="option-letter">D</span>Increase Athena workgroup scan limit</div>
+          </div>
+          <div class="question-explanation"><strong>Answer: B</strong> — Parquet columnar format reduces scanned bytes by reading only needed columns (~10x reduction). Date partitioning limits scans to relevant date ranges (filters out irrelevant days). Combined, a typical daily query over one month's data goes from scanning 10 TB to scanning &lt;100 GB — over 99% cost reduction. Result caching (A) only helps for exact duplicate queries.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<footer>
+  <strong>AWS Data Engineer Associate — Domain 1: Data Ingestion &amp; Transformation</strong><br />
+  Based on the DEA-C01 exam guide &bull; Part of the AWS Cloud Notes &amp; Certifications study series
+</footer>
+
+</body>
+</html>

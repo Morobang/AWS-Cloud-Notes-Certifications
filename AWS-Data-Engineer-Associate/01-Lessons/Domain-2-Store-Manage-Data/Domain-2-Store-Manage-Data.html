@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Domain 2: Store and Manage Data — AWS Data Engineer Associate</title>
+  <style>
+    :root {
+      --aws-orange: #FF9900;
+      --aws-dark: #232F3E;
+      --aws-blue: #1A73E8;
+      --aws-teal: #00A591;
+      --text-primary: #1a1a2e;
+      --text-secondary: #4a4a6a;
+      --bg-page: #f5f6fa;
+      --bg-card: #ffffff;
+      --border: #e0e4f0;
+      --accent-light: #fff8ec;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: var(--bg-page); color: var(--text-primary); line-height: 1.7; }
+
+    .cover { background: linear-gradient(135deg, var(--aws-dark) 0%, #16213e 60%, #0f3460 100%); color: #fff; padding: 80px 40px; text-align: center; position: relative; overflow: hidden; }
+    .cover::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 50%, rgba(255,153,0,0.12) 0%, transparent 60%); }
+    .cover-badge { display: inline-block; background: rgba(255,153,0,0.2); border: 1px solid rgba(255,153,0,0.5); color: var(--aws-orange); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 6px 16px; border-radius: 20px; margin-bottom: 24px; }
+    .cover h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 16px; }
+    .cover h1 span { color: var(--aws-orange); }
+    .cover p { font-size: 1.1rem; color: rgba(255,255,255,0.75); max-width: 600px; margin: 0 auto 36px; }
+    .cover-stats { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+    .stat { text-align: center; }
+    .stat-value { font-size: 2rem; font-weight: 800; color: var(--aws-orange); }
+    .stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    .chapter-nav { background: var(--aws-dark); padding: 0 40px; display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
+    .chapter-nav::-webkit-scrollbar { display: none; }
+    .nav-item { color: rgba(255,255,255,0.55); font-size: 0.82rem; font-weight: 600; text-decoration: none; padding: 14px 18px; white-space: nowrap; border-bottom: 3px solid transparent; transition: color 0.2s, border-color 0.2s; }
+    .nav-item:hover { color: #fff; border-color: var(--aws-orange); }
+
+    .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 64px 0 48px; }
+    .section-header { margin-bottom: 40px; }
+    .section-tag { display: inline-block; background: var(--accent-light); border: 1px solid rgba(255,153,0,0.3); color: var(--aws-orange); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 12px; border-radius: 12px; margin-bottom: 12px; }
+    .section-header h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; }
+    .section-header p { color: var(--text-secondary); font-size: 1.05rem; margin-top: 10px; max-width: 640px; }
+
+    .intro-card { background: var(--bg-card); border: 1px solid var(--border); border-left: 4px solid var(--aws-orange); border-radius: 12px; padding: 32px 36px; margin-bottom: 32px; }
+    .intro-card h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; }
+    .intro-card p { color: var(--text-secondary); line-height: 1.8; }
+    .intro-card p + p { margin-top: 12px; }
+
+    .domain-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+    .domain-table thead { background: var(--aws-dark); color: #fff; }
+    .domain-table thead th { padding: 14px 20px; text-align: left; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .domain-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    .domain-table tbody tr:last-child { border-bottom: none; }
+    .domain-table tbody tr:hover { background: #f9fafb; }
+    .domain-table tbody td { padding: 14px 20px; font-size: 0.92rem; color: var(--text-secondary); }
+    .domain-table tbody td:first-child { font-weight: 700; color: var(--text-primary); }
+
+    .compare-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 24px; }
+    .compare-table thead { background: var(--aws-dark); color: #fff; }
+    .compare-table thead th { padding: 12px 16px; text-align: left; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .compare-table tbody tr { border-bottom: 1px solid var(--border); }
+    .compare-table tbody tr:last-child { border-bottom: none; }
+    .compare-table tbody tr:hover { background: #f9fafb; }
+    .compare-table tbody td { padding: 12px 16px; font-size: 0.88rem; color: var(--text-secondary); vertical-align: top; }
+    .compare-table tbody td:first-child { font-weight: 700; color: var(--text-primary); white-space: nowrap; }
+
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .benefit-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; transition: box-shadow 0.2s, transform 0.2s; }
+    .benefit-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .card-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 16px; }
+    .icon-orange { background: rgba(255,153,0,0.12); }
+    .icon-blue { background: rgba(26,115,232,0.1); }
+    .icon-teal { background: rgba(0,165,145,0.1); }
+    .icon-purple { background: rgba(123,82,173,0.1); }
+    .benefit-card h3 { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+    .benefit-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
+
+    .callout { border-radius: 10px; padding: 20px 24px; margin: 24px 0; display: flex; gap: 16px; align-items: flex-start; }
+    .callout-info { background: #eef4ff; border-left: 4px solid var(--aws-blue); }
+    .callout-warning { background: #fff8ec; border-left: 4px solid var(--aws-orange); }
+    .callout-success { background: #edfaf5; border-left: 4px solid var(--aws-teal); }
+    .callout-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+    .callout-body h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary); }
+    .callout-body p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
+
+    .code-block { background: #1e1e2e; border-radius: 10px; padding: 20px 24px; margin: 16px 0; overflow-x: auto; }
+    .code-block code { font-family: "Cascadia Code", "Fira Code", "Courier New", monospace; font-size: 0.82rem; color: #cdd6f4; line-height: 1.8; white-space: pre; }
+    .code-block .comment { color: #6c7086; }
+    .code-block .string { color: #a6e3a1; }
+    .code-block .keyword { color: #cba6f7; }
+
+    .terms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+    .term-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+    .term-name { font-size: 0.88rem; font-weight: 700; color: var(--aws-orange); margin-bottom: 4px; }
+    .term-def { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
+
+    .questions-list { display: flex; flex-direction: column; gap: 20px; }
+    .question-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .question-stem { padding: 20px 24px; font-size: 0.95rem; font-weight: 600; color: var(--text-primary); }
+    .question-options { padding: 0 24px 16px; display: flex; flex-direction: column; gap: 8px; }
+    .option { display: flex; gap: 12px; padding: 10px 14px; border-radius: 8px; font-size: 0.88rem; color: var(--text-secondary); background: #f8f9ff; border: 1px solid transparent; }
+    .option.correct { background: #edfaf5; border-color: #2ecc71; color: var(--text-primary); font-weight: 600; }
+    .option-letter { font-weight: 700; color: var(--aws-orange); flex-shrink: 0; }
+    .option.correct .option-letter { color: #27ae60; }
+    .question-explanation { background: #f8f9ff; border-top: 1px solid var(--border); padding: 14px 24px; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+    .question-explanation strong { color: var(--text-primary); }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+    footer { background: var(--aws-dark); color: rgba(255,255,255,0.5); text-align: center; padding: 32px 24px; font-size: 0.82rem; }
+    footer strong { color: rgba(255,255,255,0.8); }
+
+    @media (max-width: 700px) {
+      .cover { padding: 60px 24px; }
+      .cover-stats { gap: 24px; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .chapter-nav { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- COVER -->
+<section class="cover">
+  <div class="cover-badge">AWS Data Engineer Associate — DEA-C01</div>
+  <h1>Domain 2: <span>Store and Manage Data</span></h1>
+  <p>Selecting the right data store, designing for performance and scale, schema evolution, lifecycle management, and transactional data lakes with Apache Iceberg.</p>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-value">26%</div><div class="stat-label">of the exam</div></div>
+    <div class="stat"><div class="stat-value">~17</div><div class="stat-label">exam questions</div></div>
+    <div class="stat"><div class="stat-value">3</div><div class="stat-label">task statements</div></div>
+  </div>
+</section>
+
+<nav class="chapter-nav">
+  <a class="nav-item" href="#overview">Overview</a>
+  <a class="nav-item" href="#choose">2.1 Choose a Data Store</a>
+  <a class="nav-item" href="#transform">2.2 Transform Data Stores</a>
+  <a class="nav-item" href="#lifecycle">2.3 Manage Data Lifecycle</a>
+  <a class="nav-item" href="#practice">Practice Questions</a>
+</nav>
+
+
+<!-- OVERVIEW -->
+<div id="overview">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Introduction</div>
+        <h2>Data Storage Strategy</h2>
+        <p>Domain 2 covers how to choose, design, optimize, and maintain the data stores at the heart of any analytics platform.</p>
+      </div>
+
+      <div class="intro-card">
+        <h3>The storage layer is where most design decisions live</h3>
+        <p>Choosing the wrong data store is the most expensive mistake in data engineering. The exam tests your ability to match workload characteristics — query patterns, throughput, latency, consistency, and cost — to the right AWS service. It also tests schema management (Glue Data Catalog, Iceberg, format evolution) and data lifecycle (S3 tiering, retention, archiving).</p>
+        <p>The key mental model: <strong>OLTP vs OLAP vs Object Storage vs Streaming</strong>. Once you categorize the workload, most service selections follow naturally.</p>
+      </div>
+
+      <table class="domain-table">
+        <thead>
+          <tr><th>Task</th><th>Topic</th><th>Key services</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>2.1</td><td>Choose a Data Store</td><td>S3, RDS, Aurora, DynamoDB, Redshift, OpenSearch, Neptune, Keyspaces, MemoryDB, DocumentDB</td></tr>
+          <tr><td>2.2</td><td>Understand Data Cataloging, Schema Evolution, and Optimization</td><td>Glue Data Catalog, Apache Iceberg, Parquet, Avro, Redshift distribution/sort keys</td></tr>
+          <tr><td>2.3</td><td>Manage the Data Lifecycle</td><td>S3 Lifecycle, S3 Intelligent-Tiering, S3 Glacier, Redshift archiving, DynamoDB TTL</td></tr>
+        </tbody>
+      </table>
+
+      <div class="section-header" style="margin-top:48px; margin-bottom:20px;">
+        <h2 style="font-size:1.3rem;">Key concepts to master</h2>
+      </div>
+      <div class="terms-grid">
+        <div class="term-card"><div class="term-name">OLTP</div><div class="term-def">Online Transaction Processing. Row-oriented, optimized for many short read/write transactions. RDS, Aurora, DynamoDB.</div></div>
+        <div class="term-card"><div class="term-name">OLAP</div><div class="term-def">Online Analytical Processing. Column-oriented, optimized for large aggregations over many rows. Redshift, Athena.</div></div>
+        <div class="term-card"><div class="term-name">Medallion Architecture</div><div class="term-def">Bronze (raw) → Silver (cleaned Parquet) → Gold (business aggregations). Organizes S3 data lake layers.</div></div>
+        <div class="term-card"><div class="term-name">Distribution Style</div><div class="term-def">Redshift setting controlling how data is spread across nodes: KEY, ALL, EVEN, or AUTO.</div></div>
+        <div class="term-card"><div class="term-name">Sort Key</div><div class="term-def">Redshift setting controlling physical row order on disk. Compound (range queries) vs Interleaved (multi-column).</div></div>
+        <div class="term-card"><div class="term-name">Apache Iceberg</div><div class="term-def">Open table format providing ACID transactions, schema evolution, time travel, and row-level deletes on S3.</div></div>
+        <div class="term-card"><div class="term-name">Single-Table Design</div><div class="term-def">DynamoDB pattern storing multiple entity types in one table using generic PK/SK patterns to minimize API calls.</div></div>
+        <div class="term-card"><div class="term-name">S3 Intelligent-Tiering</div><div class="term-def">Automatically moves objects between access tiers based on usage patterns. Ideal for unpredictable access.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- TASK 2.1 -->
+<div id="choose">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Task Statement 2.1</div>
+        <h2>Choose a Data Store</h2>
+        <p>Match workload characteristics to the right AWS storage service. The exam frequently tests this decision tree.</p>
+      </div>
+
+      <div class="intro-card">
+        <h3>The data store decision framework</h3>
+        <p>Start with the <strong>access pattern</strong>: Is it transactional (row-by-row) or analytical (aggregate scans)? Then consider <strong>data structure</strong>: relational, key-value, document, graph, time-series, or object? Finally, evaluate <strong>scale requirements</strong>: throughput, latency, and whether the schema is fixed or flexible.</p>
+      </div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>Service</th><th>Type</th><th>Best for</th><th>Key limit / characteristic</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Amazon S3</td><td>Object storage</td><td>Data lake, raw files, backups, Athena queries</td><td>Unlimited scale; not queryable without engine (Athena/Redshift Spectrum)</td></tr>
+          <tr><td>Amazon RDS</td><td>Relational OLTP</td><td>Transactional apps, complex joins, existing SQL workloads</td><td>Vertical scaling; Multi-AZ for HA; read replicas for read scale</td></tr>
+          <tr><td>Amazon Aurora</td><td>Relational OLTP</td><td>High-throughput transactional, MySQL/Postgres compatible</td><td>Distributed storage up to 128TB; up to 15 read replicas; Global Database</td></tr>
+          <tr><td>Amazon DynamoDB</td><td>Key-value / NoSQL</td><td>Single-digit ms at any scale, session state, IoT, gaming</td><td>Item max 400KB; partition key distributes load; GSI for alternate access</td></tr>
+          <tr><td>Amazon Redshift</td><td>Columnar OLAP</td><td>Data warehousing, complex analytics, large aggregations</td><td>MPP columnar; distribution + sort keys critical; VACUUM/ANALYZE required</td></tr>
+          <tr><td>Amazon OpenSearch</td><td>Search / analytics</td><td>Full-text search, log analytics, Kibana dashboards</td><td>Inverted index; expensive at scale; ISM for hot/warm/cold tiering</td></tr>
+          <tr><td>Amazon Neptune</td><td>Graph</td><td>Social networks, fraud detection, knowledge graphs</td><td>Gremlin / SPARQL / openCypher; relationship-first queries</td></tr>
+          <tr><td>Amazon Keyspaces</td><td>Wide-column</td><td>Cassandra migration, time-series, high-write workloads</td><td>CQL compatible; serverless capacity; no JOINs</td></tr>
+          <tr><td>Amazon MemoryDB</td><td>In-memory (Redis)</td><td>Ultra-low latency, leaderboards, caching with persistence</td><td>Redis-compatible; durable (transaction log); microsecond reads</td></tr>
+          <tr><td>Amazon DocumentDB</td><td>Document</td><td>JSON documents, MongoDB migration</td><td>MongoDB-compatible API; nested document queries</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-warning">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <h4>Exam pattern: wrong service for the workload</h4>
+          <p>Many exam questions present a performance problem (high latency, timeouts, query too slow) and ask you to fix it by changing the data store. RDS cannot handle millions of writes/sec → DynamoDB. Redshift cannot do millisecond lookups → DynamoDB or ElastiCache. S3 alone cannot serve fast queries → Redshift Spectrum or Athena.</p>
+        </div>
+      </div>
+
+      <div class="cards-grid" style="margin-top: 24px;">
+        <div class="benefit-card">
+          <div class="card-icon icon-orange">🗄️</div>
+          <h3>When to choose DynamoDB</h3>
+          <p>Consistent single-digit ms latency regardless of scale. Access patterns are known and fixed. Data fits a key-value or document model. High write throughput (thousands/sec). Consider: game state, user profiles, IoT telemetry, shopping carts.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-blue">📊</div>
+          <h3>When to choose Redshift</h3>
+          <p>Complex analytical queries joining large tables. Aggregations over billions of rows. BI tools need fast responses. Data is structured and schema-on-write. Consider: sales reports, financial analytics, executive dashboards.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-teal">🪣</div>
+          <h3>When to choose S3 + Athena</h3>
+          <p>Ad-hoc queries on semi-structured data. No pre-provisioned infrastructure. Variable query frequency. Data already in S3. Query cost per scan is acceptable. Consider: log analysis, audit queries, data exploration.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-purple">🔍</div>
+          <h3>When to choose OpenSearch</h3>
+          <p>Full-text search across documents. Log aggregation with free-form queries. Near-real-time search latency. Visualizations with OpenSearch Dashboards. Consider: application logs, e-commerce search, security analytics.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- TASK 2.2 -->
+<div id="transform">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Task Statement 2.2</div>
+        <h2>Understand Data Cataloging, Schema Evolution &amp; Optimization</h2>
+        <p>How to design data stores for query performance, handle schema changes over time, and manage metadata across the data lake.</p>
+      </div>
+
+      <div class="section-header" style="margin-bottom:16px;"><h2 style="font-size:1.3rem;">Redshift Performance Optimization</h2></div>
+
+      <div class="intro-card">
+        <h3>Redshift MPP architecture</h3>
+        <p>Redshift stores data in <strong>columnar format</strong> across multiple nodes (slices). Data is compressed by column, and queries execute in parallel. Performance depends on how data is physically distributed and sorted — two settings you control at table creation time: <strong>distribution style</strong> and <strong>sort key</strong>.</p>
+      </div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>Distribution Style</th><th>How it works</th><th>Best for</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>KEY</td><td>Rows with same key value go to same node. Matching keys between two tables = collocated join (no data movement).</td><td>Large fact tables joined to large dimension tables on a common key (e.g., customer_id).</td></tr>
+          <tr><td>ALL</td><td>Full copy of table on every node. Eliminates data movement for joins.</td><td>Small, slow-changing dimension tables (country codes, product categories).</td></tr>
+          <tr><td>EVEN</td><td>Round-robin distribution across all nodes. No join collocation.</td><td>Tables that are not frequently joined. Avoids skew when no obvious join key.</td></tr>
+          <tr><td>AUTO</td><td>Redshift chooses ALL for small tables, EVEN for large. Can change over time.</td><td>Default. Let Redshift decide; review SVCS_TABLE_INFO to verify.</td></tr>
+        </tbody>
+      </table>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>Sort Key Type</th><th>Best for</th><th>Example</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Compound (default)</td><td>Range-based filters on leading column. Effective when WHERE clause matches first sort column.</td><td>COMPOUND SORTKEY(order_date, region)</td></tr>
+          <tr><td>Interleaved</td><td>Multiple independent filter columns with equal selectivity. Slower VACUUM.</td><td>INTERLEAVED SORTKEY(customer_id, product_id, date)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <h4>VACUUM and ANALYZE — always a pair</h4>
+          <p><strong>VACUUM</strong> reclaims storage from deleted rows and re-sorts unsorted rows back into sort key order. Run after large DELETE or UPDATE operations. <strong>ANALYZE</strong> updates query planner statistics — run after VACUUM so the planner knows the new row distribution. Without ANALYZE, the planner may choose suboptimal join strategies. Use <code>VACUUM DELETE ONLY</code> to reclaim space without re-sorting (faster).</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:48px; margin-bottom:16px;"><h2 style="font-size:1.3rem;">DynamoDB Design Patterns</h2></div>
+
+      <div class="cards-grid">
+        <div class="benefit-card">
+          <div class="card-icon icon-orange">🔑</div>
+          <h3>Single-Table Design</h3>
+          <p>Store multiple entity types in one table. Use generic PK/SK patterns like <code>PK: USER#u001</code>, <code>SK: ORDER#2024-01#o99</code>. Query a user and all their orders with a single API call using begins_with on SK.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-blue">📑</div>
+          <h3>GSI — New Access Patterns</h3>
+          <p>Global Secondary Index projects different PK/SK attributes. Use when you need to query by email (not user_id), or by status + date. Max 20 GSIs per table. GSI reads consume capacity from the index, not the base table.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-teal">🔀</div>
+          <h3>Write Sharding</h3>
+          <p>If one partition key is too "hot" (millions of writes/sec to same key), append a random suffix: <code>STATUS#PENDING_3</code>. Spread load across multiple partitions. Scatter-gather to query all shards.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-purple">⏱️</div>
+          <h3>DynamoDB TTL</h3>
+          <p>Set an attribute as TTL epoch timestamp. DynamoDB auto-deletes expired items within 48 hours at no cost. Use for session expiry, temporary caches, event logs. TTL deletes appear in DynamoDB Streams for downstream processing.</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:48px; margin-bottom:16px;"><h2 style="font-size:1.3rem;">Apache Iceberg — Transactional Data Lake</h2></div>
+
+      <div class="intro-card">
+        <h3>What Iceberg solves</h3>
+        <p>Traditional S3 data lakes have no ACID guarantees. Two writers can corrupt each other's data. Deleting a row means rewriting entire Parquet files. Iceberg adds a <strong>metadata layer</strong> on top of S3 files that tracks every change as a snapshot. This enables: ACID transactions, row-level deletes (GDPR erasure), time travel (query data as of yesterday), schema evolution (add/rename/remove columns safely), and partition evolution (change partition strategy without rewriting data).</p>
+      </div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>Iceberg capability</th><th>How it works</th><th>Exam scenario</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>ACID transactions</td><td>Optimistic concurrency via snapshot isolation. Writers create new snapshot; conflicts abort.</td><td>Two Glue jobs writing to same table simultaneously — use Iceberg.</td></tr>
+          <tr><td>Row-level deletes</td><td>Merge-on-read: write delete file listing row positions to remove. No full file rewrite required.</td><td>GDPR "right to erasure" — delete customer rows by ID.</td></tr>
+          <tr><td>Time travel</td><td>Query older snapshots: <code>SELECT * FROM table FOR SYSTEM_TIME AS OF '2024-01-01'</code></td><td>Recover from accidental DELETE or audit historical state.</td></tr>
+          <tr><td>Schema evolution</td><td>Add/rename/drop columns tracked in metadata. Old files still readable by mapping column IDs.</td><td>Add new source field without rewriting existing Parquet files.</td></tr>
+          <tr><td>Partition evolution</td><td>Change partition spec going forward without rewriting historical data.</td><td>Switch from monthly to daily partitions as data volume grows.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-success">
+        <div class="callout-icon">✅</div>
+        <div class="callout-body">
+          <h4>Iceberg on AWS</h4>
+          <p>Iceberg is natively supported by <strong>AWS Glue</strong> (Glue Data Catalog stores Iceberg metadata), <strong>Amazon Athena</strong> (DDL + DML including DELETE/UPDATE), <strong>Amazon EMR</strong> (PySpark with Iceberg jar), and <strong>Amazon S3 Tables</strong> (managed Iceberg buckets with automatic compaction). The catalog is the source of truth for all table metadata.</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:48px; margin-bottom:16px;"><h2 style="font-size:1.3rem;">Schema Management — Glue Data Catalog</h2></div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>Format</th><th>Schema evolution support</th><th>Use in data lakes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Parquet</td><td>Add new columns (safe). Rename/remove columns breaks readers unless catalog maps them.</td><td>S3 data lake default. Columnar, compressed. Athena reads by column name, tolerates added columns.</td></tr>
+          <tr><td>Avro</td><td>Full evolution: add with defaults, remove, rename with aliases. Schema Registry enforces compatibility.</td><td>Kafka/MSK payloads. Schema stored in Glue Schema Registry or Confluent. Reader uses writer schema + reader schema.</td></tr>
+          <tr><td>ORC</td><td>Similar to Parquet. Column addition safe.</td><td>Hive workloads on EMR. ACID in Hive requires ORC with transactional table properties.</td></tr>
+          <tr><td>JSON/CSV</td><td>No schema enforcement. Any change silently breaks downstream consumers.</td><td>Raw/Bronze layer only. Always convert to Parquet/ORC in Silver layer.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-warning">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <h4>Glue mergeSchema option</h4>
+          <p>When reading Parquet files with different schemas (some files have a new column added later), set <code>mergeSchema = true</code> in the Glue job or Spark read options. Without this, Spark uses only the schema from the first file read and silently drops columns that don't match. This is a common exam scenario: "new columns are missing in the output" → mergeSchema.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- TASK 2.3 -->
+<div id="lifecycle">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Task Statement 2.3</div>
+        <h2>Manage the Data Lifecycle</h2>
+        <p>Tiering data to lower-cost storage over time, setting retention policies, archiving, and preventing accidental deletion.</p>
+      </div>
+
+      <div class="intro-card">
+        <h3>Data ages out of active use</h3>
+        <p>Most data engineering pipelines produce data that is accessed frequently at first (last 30 days), then occasionally (last year), then rarely or never (historical archive). AWS S3 storage classes map directly to this lifecycle: Standard → Standard-IA → Glacier Instant Retrieval → Glacier Flexible Retrieval → Glacier Deep Archive. Lifecycle policies automate these transitions based on object age.</p>
+      </div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>S3 Storage Class</th><th>Retrieval</th><th>Min storage</th><th>Best for</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>S3 Standard</td><td>Milliseconds</td><td>None</td><td>Active data accessed frequently (&gt;1x/month)</td></tr>
+          <tr><td>S3 Standard-IA</td><td>Milliseconds</td><td>30 days</td><td>Data accessed less than monthly, must be quickly retrievable</td></tr>
+          <tr><td>S3 One Zone-IA</td><td>Milliseconds</td><td>30 days</td><td>Reproducible data (can be regenerated if lost). No multi-AZ replication.</td></tr>
+          <tr><td>S3 Intelligent-Tiering</td><td>Milliseconds (frequent/infrequent) or minutes (archive)</td><td>None</td><td>Unknown or unpredictable access patterns. Monitors and auto-tiers.</td></tr>
+          <tr><td>S3 Glacier Instant Retrieval</td><td>Milliseconds</td><td>90 days</td><td>Archive data accessed ~quarterly. Same latency as Standard but lower cost.</td></tr>
+          <tr><td>S3 Glacier Flexible Retrieval</td><td>1–12 hours (Standard), 3–5 hours (Expedited), 12 hours (Bulk free)</td><td>90 days</td><td>Compliance archives, backups accessed rarely</td></tr>
+          <tr><td>S3 Glacier Deep Archive</td><td>12–48 hours</td><td>180 days</td><td>Lowest cost. Long-term regulatory retention (7+ years). Rarely accessed.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <h4>S3 Lifecycle — transition rules in JSON</h4>
+          <p>Lifecycle rules are applied to a bucket or prefix. Common pattern: Standard → Standard-IA after 30 days → Glacier Flexible after 90 days → expire (delete) after 365 days. Rules can also delete incomplete multipart uploads (cost leak if not cleaned up).</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <code><span class="comment"># S3 lifecycle rule — Bronze layer auto-tiering</span>
+{
+  <span class="string">"Rules"</span>: [{
+    <span class="string">"ID"</span>: <span class="string">"bronze-lifecycle"</span>,
+    <span class="string">"Status"</span>: <span class="string">"Enabled"</span>,
+    <span class="string">"Filter"</span>: { <span class="string">"Prefix"</span>: <span class="string">"bronze/"</span> },
+    <span class="string">"Transitions"</span>: [
+      { <span class="string">"Days"</span>: 30,  <span class="string">"StorageClass"</span>: <span class="string">"STANDARD_IA"</span> },
+      { <span class="string">"Days"</span>: 90,  <span class="string">"StorageClass"</span>: <span class="string">"GLACIER"</span> },
+      { <span class="string">"Days"</span>: 365, <span class="string">"StorageClass"</span>: <span class="string">"DEEP_ARCHIVE"</span> }
+    ],
+    <span class="string">"Expiration"</span>: { <span class="string">"Days"</span>: 2555 },  <span class="comment">// 7 years retention then delete</span>
+    <span class="string">"AbortIncompleteMultipartUpload"</span>: { <span class="string">"DaysAfterInitiation"</span>: 7 }
+  }]
+}</code>
+      </div>
+
+      <div class="cards-grid" style="margin-top: 32px;">
+        <div class="benefit-card">
+          <div class="card-icon icon-orange">🔒</div>
+          <h3>S3 Object Lock (WORM)</h3>
+          <p><strong>Governance mode</strong>: protect against accidental deletion; users with special IAM permission can override. <strong>Compliance mode</strong>: no one (including root) can delete until retention period expires. Use Compliance for SEC, FINRA, HIPAA regulatory requirements. Requires versioning enabled.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-blue">🗂️</div>
+          <h3>DynamoDB TTL</h3>
+          <p>Set a Unix epoch timestamp attribute (e.g., <code>expires_at</code>) on items. DynamoDB scans for expired items and deletes them within 48 hours — no cost for TTL deletes. TTL deletions appear in DynamoDB Streams so downstream consumers can react (e.g., invalidate a cache).</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-teal">📦</div>
+          <h3>Redshift Data Archiving</h3>
+          <p>Use <code>UNLOAD</code> to export old partitions to S3 as Parquet, then delete from Redshift to reclaim storage. Query archived data with <strong>Redshift Spectrum</strong> without reloading it. For rarely-queried historical data, Spectrum + S3 Glacier Instant Retrieval is significantly cheaper than hot Redshift storage.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-purple">🧹</div>
+          <h3>Iceberg Table Maintenance</h3>
+          <p>Iceberg accumulates metadata and small data files over time. Run periodic maintenance: <code>CALL system.expire_snapshots()</code> to remove old snapshots, <code>CALL system.rewrite_data_files()</code> to compact small files, <code>CALL system.remove_orphan_files()</code> to clean unreferenced files. In AWS: Glue Data Catalog handles this for S3 Tables automatically.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- PRACTICE QUESTIONS -->
+<div id="practice">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Practice Questions</div>
+        <h2>Domain 2 Exam Practice</h2>
+        <p>These questions reflect the style and difficulty of actual DEA-C01 exam questions. The correct answer is highlighted in green.</p>
+      </div>
+
+      <div class="questions-list">
+
+        <div class="question-card">
+          <div class="question-stem">Q1. A data engineering team needs to store IoT sensor readings from 10,000 devices. Each device sends 100 records per second. Queries always access data by device_id and time range. Which storage solution provides the best performance at this scale?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Amazon RDS MySQL with a composite index on (device_id, timestamp)</div>
+            <div class="option correct"><span class="option-letter">B</span> Amazon DynamoDB with device_id as partition key and timestamp as sort key</div>
+            <div class="option"><span class="option-letter">C</span> Amazon Redshift with a compound sort key on (device_id, timestamp)</div>
+            <div class="option"><span class="option-letter">D</span> Amazon S3 with Hive-style partitioning by device_id</div>
+          </div>
+          <div class="question-explanation"><strong>B is correct.</strong> DynamoDB is designed for high-throughput, single-digit ms access at any scale. The composite key (device_id PK + timestamp SK) perfectly matches the access pattern: get all readings for a device in a time range with a single Query call. RDS cannot handle 1M writes/sec. Redshift is for analytics, not OLTP writes. S3 alone cannot serve fast queries.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q2. A Redshift data warehouse has a 500-million-row fact table that is always joined to a 200-row country_codes dimension table. Queries are running slowly due to data movement between nodes during joins. What is the most effective fix?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Change the fact table distribution style to ALL</div>
+            <div class="option"><span class="option-letter">B</span> Change the fact table distribution style to KEY on country_code</div>
+            <div class="option correct"><span class="option-letter">C</span> Change the country_codes dimension table distribution style to ALL</div>
+            <div class="option"><span class="option-letter">D</span> Add an interleaved sort key to the fact table on country_code</div>
+          </div>
+          <div class="question-explanation"><strong>C is correct.</strong> Small, slow-changing dimension tables should use ALL distribution — every node gets a full copy, eliminating all data movement during joins. Setting the 500M-row fact table to ALL would create enormous storage overhead. KEY distribution on the fact table would only help if the dimension table were also KEY-distributed on the same key.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q3. A company has a data lake on S3 where data engineers and data scientists run different PySpark jobs that both write to the same S3 prefix simultaneously. Occasionally, data corruption is observed. Which solution addresses this without changing the storage layer?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Use S3 Versioning to recover from corruption</div>
+            <div class="option"><span class="option-letter">B</span> Add an SQS queue between writers to serialize writes</div>
+            <div class="option correct"><span class="option-letter">C</span> Convert the S3 prefix to an Apache Iceberg table</div>
+            <div class="option"><span class="option-letter">D</span> Move the data to Amazon Redshift</div>
+          </div>
+          <div class="question-explanation"><strong>C is correct.</strong> Apache Iceberg provides ACID transactions on S3 via snapshot isolation. Concurrent writers each create a new snapshot; if two writers conflict, one will fail and retry. S3 Versioning doesn't prevent corruption — it only preserves old versions. SQS serialization is complex and doesn't guarantee consistency. Moving to Redshift changes the storage layer, which the question excludes.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q4. A data engineer needs to implement a GDPR "right to erasure" capability for customer PII stored in an S3-based data lake. Data is stored in Parquet files, partitioned by date. What is the most cost-effective approach?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Rewrite all Parquet files after filtering out the customer's rows using an AWS Glue job</div>
+            <div class="option correct"><span class="option-letter">B</span> Convert the table to Apache Iceberg and use row-level DELETE to remove the customer's records</div>
+            <div class="option"><span class="option-letter">C</span> Delete the entire partition containing the customer's data</div>
+            <div class="option"><span class="option-letter">D</span> Encrypt the customer's data with a unique KMS key and delete the key</div>
+          </div>
+          <div class="question-explanation"><strong>B is correct.</strong> Iceberg supports row-level DELETE using merge-on-read (delete files), avoiding full Parquet file rewrites. This is targeted, cost-effective, and GDPR-compliant. Option A (rewrite all files) is expensive for large datasets. Option C (delete partition) also deletes other customers' data. Option D (cryptographic erasure) is valid but more complex; Iceberg row-level delete is the standard approach tested on the exam.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q5. A data pipeline reads Parquet files from S3. Over time, source teams have added new columns to some files. When the Glue ETL job runs, the new columns are missing from the output. What is the root cause and fix?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> The Glue crawler hasn't re-crawled the S3 prefix; re-run the crawler to update the schema</div>
+            <div class="option correct"><span class="option-letter">B</span> Spark is using the schema from the first file read; enable mergeSchema in the Glue job</div>
+            <div class="option"><span class="option-letter">C</span> Parquet doesn't support schema evolution; convert files to Avro format</div>
+            <div class="option"><span class="option-letter">D</span> The IAM role for the Glue job doesn't have permission to read the new columns</div>
+          </div>
+          <div class="question-explanation"><strong>B is correct.</strong> When reading multiple Parquet files with different schemas, Spark defaults to the schema of the first file it reads and silently drops extra columns. Setting <code>spark.read.option("mergeSchema", "true")</code> or using Glue's <code>GlueContext.create_dynamic_frame.from_catalog()</code> with <code>additional_options={"mergeSchema": "true"}</code> fixes this. Running the crawler updates the catalog schema but doesn't fix the Spark read behavior.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q6. A financial services company stores transaction data in S3. Regulatory requirements mandate that 7-year-old data cannot be deleted by anyone, including AWS root account users. Which S3 feature should be used?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> S3 Versioning with MFA Delete enabled</div>
+            <div class="option"><span class="option-letter">B</span> S3 Object Lock in Governance mode with a 7-year retention period</div>
+            <div class="option correct"><span class="option-letter">C</span> S3 Object Lock in Compliance mode with a 7-year retention period</div>
+            <div class="option"><span class="option-letter">D</span> S3 Lifecycle rule that prevents deletion for 7 years</div>
+          </div>
+          <div class="question-explanation"><strong>C is correct.</strong> S3 Object Lock Compliance mode is immutable — not even the root account can delete objects before the retention period expires. Governance mode can be overridden by users with the <code>s3:BypassGovernanceRetention</code> IAM permission. S3 Versioning + MFA Delete protects against accidental deletion but doesn't prevent privileged deletions. S3 Lifecycle rules manage transitions/deletions, not WORM retention.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q7. A Redshift table was recently used for a large DELETE operation that removed 40% of rows. Queries are now slower than before the DELETE. What should the data engineer do?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Run ANALYZE to update query planner statistics</div>
+            <div class="option"><span class="option-letter">B</span> Run VACUUM REINDEX to rebuild all sort keys</div>
+            <div class="option correct"><span class="option-letter">C</span> Run VACUUM DELETE ONLY followed by ANALYZE</div>
+            <div class="option"><span class="option-letter">D</span> Resize the Redshift cluster to add more nodes</div>
+          </div>
+          <div class="question-explanation"><strong>C is correct.</strong> After a large DELETE, Redshift marks rows as "ghost rows" but doesn't reclaim storage immediately. VACUUM DELETE ONLY reclaims the space from deleted rows (faster than full VACUUM because it doesn't re-sort). Following with ANALYZE updates the planner statistics so it knows the table is now 40% smaller and chooses appropriate join strategies. Adding nodes doesn't fix row-level garbage collection.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q8. A data team stores 3 years of clickstream data in S3 Standard. Data older than 30 days is rarely accessed and data older than 1 year is almost never accessed. The team wants to reduce storage costs while maintaining the ability to query any data within minutes. Which solution minimizes cost?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Move all data immediately to S3 Glacier Deep Archive</div>
+            <div class="option correct"><span class="option-letter">B</span> Set a lifecycle policy: Standard → Standard-IA at 30 days → Glacier Instant Retrieval at 365 days</div>
+            <div class="option"><span class="option-letter">C</span> Move all data older than 30 days to S3 Glacier Flexible Retrieval</div>
+            <div class="option"><span class="option-letter">D</span> Enable S3 Intelligent-Tiering on all objects</div>
+          </div>
+          <div class="question-explanation"><strong>B is correct.</strong> The tiered lifecycle matches the access pattern: Standard for current data, Standard-IA (millisecond retrieval, lower cost) for data 30–365 days old, Glacier Instant Retrieval (millisecond retrieval, lowest cost) for data older than a year. Option A (Deep Archive) has 12–48 hour retrieval — fails the "within minutes" requirement. Option C (Glacier Flexible) has 1–12 hour retrieval — also fails. Option D (Intelligent-Tiering) works but costs more due to per-object monitoring fees.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+<footer>
+  <strong>AWS Data Engineer Associate — DEA-C01</strong><br />
+  Domain 2: Store and Manage Data &nbsp;·&nbsp; 26% of exam &nbsp;·&nbsp; ~17 questions
+</footer>
+
+</body>
+</html>
