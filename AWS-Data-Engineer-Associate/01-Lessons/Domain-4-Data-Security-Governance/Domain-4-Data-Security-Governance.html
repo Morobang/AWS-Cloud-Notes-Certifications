@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Domain 4: Data Security &amp; Governance — AWS Data Engineer Associate</title>
+  <style>
+    :root {
+      --aws-orange: #FF9900;
+      --aws-dark: #232F3E;
+      --aws-blue: #1A73E8;
+      --aws-teal: #00A591;
+      --text-primary: #1a1a2e;
+      --text-secondary: #4a4a6a;
+      --bg-page: #f5f6fa;
+      --bg-card: #ffffff;
+      --border: #e0e4f0;
+      --accent-light: #fff8ec;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: var(--bg-page); color: var(--text-primary); line-height: 1.7; }
+
+    .cover { background: linear-gradient(135deg, var(--aws-dark) 0%, #16213e 60%, #0f3460 100%); color: #fff; padding: 80px 40px; text-align: center; position: relative; overflow: hidden; }
+    .cover::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 50%, rgba(255,153,0,0.12) 0%, transparent 60%); }
+    .cover-badge { display: inline-block; background: rgba(255,153,0,0.2); border: 1px solid rgba(255,153,0,0.5); color: var(--aws-orange); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 6px 16px; border-radius: 20px; margin-bottom: 24px; }
+    .cover h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 16px; }
+    .cover h1 span { color: var(--aws-orange); }
+    .cover p { font-size: 1.1rem; color: rgba(255,255,255,0.75); max-width: 600px; margin: 0 auto 36px; }
+    .cover-stats { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+    .stat { text-align: center; }
+    .stat-value { font-size: 2rem; font-weight: 800; color: var(--aws-orange); }
+    .stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    .chapter-nav { background: var(--aws-dark); padding: 0 40px; display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
+    .chapter-nav::-webkit-scrollbar { display: none; }
+    .nav-item { color: rgba(255,255,255,0.55); font-size: 0.82rem; font-weight: 600; text-decoration: none; padding: 14px 18px; white-space: nowrap; border-bottom: 3px solid transparent; transition: color 0.2s, border-color 0.2s; }
+    .nav-item:hover { color: #fff; border-color: var(--aws-orange); }
+
+    .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 64px 0 48px; }
+    .section-header { margin-bottom: 40px; }
+    .section-tag { display: inline-block; background: var(--accent-light); border: 1px solid rgba(255,153,0,0.3); color: var(--aws-orange); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 12px; border-radius: 12px; margin-bottom: 12px; }
+    .section-header h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; }
+    .section-header p { color: var(--text-secondary); font-size: 1.05rem; margin-top: 10px; max-width: 640px; }
+
+    .intro-card { background: var(--bg-card); border: 1px solid var(--border); border-left: 4px solid var(--aws-orange); border-radius: 12px; padding: 32px 36px; margin-bottom: 32px; }
+    .intro-card h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; }
+    .intro-card p { color: var(--text-secondary); line-height: 1.8; }
+    .intro-card p + p { margin-top: 12px; }
+
+    .domain-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+    .domain-table thead { background: var(--aws-dark); color: #fff; }
+    .domain-table thead th { padding: 14px 20px; text-align: left; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .domain-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    .domain-table tbody tr:last-child { border-bottom: none; }
+    .domain-table tbody tr:hover { background: #f9fafb; }
+    .domain-table tbody td { padding: 14px 20px; font-size: 0.92rem; color: var(--text-secondary); }
+    .domain-table tbody td:first-child { font-weight: 700; color: var(--text-primary); }
+
+    .compare-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 24px; }
+    .compare-table thead { background: var(--aws-dark); color: #fff; }
+    .compare-table thead th { padding: 12px 16px; text-align: left; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .compare-table tbody tr { border-bottom: 1px solid var(--border); }
+    .compare-table tbody tr:last-child { border-bottom: none; }
+    .compare-table tbody tr:hover { background: #f9fafb; }
+    .compare-table tbody td { padding: 12px 16px; font-size: 0.88rem; color: var(--text-secondary); vertical-align: top; }
+    .compare-table tbody td:first-child { font-weight: 700; color: var(--text-primary); white-space: nowrap; }
+
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .benefit-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; transition: box-shadow 0.2s, transform 0.2s; }
+    .benefit-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .card-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 16px; }
+    .icon-orange { background: rgba(255,153,0,0.12); }
+    .icon-blue { background: rgba(26,115,232,0.1); }
+    .icon-teal { background: rgba(0,165,145,0.1); }
+    .icon-purple { background: rgba(123,82,173,0.1); }
+    .benefit-card h3 { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+    .benefit-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
+
+    .callout { border-radius: 10px; padding: 20px 24px; margin: 24px 0; display: flex; gap: 16px; align-items: flex-start; }
+    .callout-info { background: #eef4ff; border-left: 4px solid var(--aws-blue); }
+    .callout-warning { background: #fff8ec; border-left: 4px solid var(--aws-orange); }
+    .callout-success { background: #edfaf5; border-left: 4px solid var(--aws-teal); }
+    .callout-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+    .callout-body h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary); }
+    .callout-body p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
+
+    .code-block { background: #1e1e2e; border-radius: 10px; padding: 20px 24px; margin: 16px 0; overflow-x: auto; }
+    .code-block code { font-family: "Cascadia Code", "Fira Code", "Courier New", monospace; font-size: 0.82rem; color: #cdd6f4; line-height: 1.8; white-space: pre; }
+    .code-block .comment { color: #6c7086; }
+    .code-block .string { color: #a6e3a1; }
+    .code-block .keyword { color: #cba6f7; }
+
+    .terms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+    .term-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+    .term-name { font-size: 0.88rem; font-weight: 700; color: var(--aws-orange); margin-bottom: 4px; }
+    .term-def { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
+
+    .questions-list { display: flex; flex-direction: column; gap: 20px; }
+    .question-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .question-stem { padding: 20px 24px; font-size: 0.95rem; font-weight: 600; color: var(--text-primary); }
+    .question-options { padding: 0 24px 16px; display: flex; flex-direction: column; gap: 8px; }
+    .option { display: flex; gap: 12px; padding: 10px 14px; border-radius: 8px; font-size: 0.88rem; color: var(--text-secondary); background: #f8f9ff; border: 1px solid transparent; }
+    .option.correct { background: #edfaf5; border-color: #2ecc71; color: var(--text-primary); font-weight: 600; }
+    .option-letter { font-weight: 700; color: var(--aws-orange); flex-shrink: 0; }
+    .option.correct .option-letter { color: #27ae60; }
+    .question-explanation { background: #f8f9ff; border-top: 1px solid var(--border); padding: 14px 24px; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+    .question-explanation strong { color: var(--text-primary); }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+    footer { background: var(--aws-dark); color: rgba(255,255,255,0.5); text-align: center; padding: 32px 24px; font-size: 0.82rem; }
+    footer strong { color: rgba(255,255,255,0.8); }
+
+    @media (max-width: 700px) {
+      .cover { padding: 60px 24px; }
+      .cover-stats { gap: 24px; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .chapter-nav { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- COVER -->
+<section class="cover">
+  <div class="cover-badge">AWS Data Engineer Associate — DEA-C01</div>
+  <h1>Domain 4: <span>Data Security &amp; Governance</span></h1>
+  <p>IAM and Lake Formation access control, KMS encryption at rest and in transit, data masking, and compliance with GDPR and privacy regulations.</p>
+  <div class="cover-stats">
+    <div class="stat"><div class="stat-value">18%</div><div class="stat-label">of the exam</div></div>
+    <div class="stat"><div class="stat-value">~12</div><div class="stat-label">exam questions</div></div>
+    <div class="stat"><div class="stat-value">3</div><div class="stat-label">task statements</div></div>
+  </div>
+</section>
+
+<nav class="chapter-nav">
+  <a class="nav-item" href="#overview">Overview</a>
+  <a class="nav-item" href="#authz">4.1 Authentication &amp; Authorization</a>
+  <a class="nav-item" href="#encrypt">4.2 Encryption</a>
+  <a class="nav-item" href="#privacy">4.3 Data Privacy</a>
+  <a class="nav-item" href="#practice">Practice Questions</a>
+</nav>
+
+
+<!-- OVERVIEW -->
+<div id="overview">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Introduction</div>
+        <h2>Securing the Data Platform</h2>
+        <p>Domain 4 covers the full security stack for AWS data engineering: who can access what, how data is protected at rest and in transit, and how to comply with data privacy regulations.</p>
+      </div>
+
+      <div class="intro-card">
+        <h3>Security is layered — identity, network, encryption, compliance</h3>
+        <p>A secure data platform has multiple defense layers: <strong>IAM and Lake Formation</strong> control who can see which tables and columns; <strong>VPC and network controls</strong> prevent data from leaving the private network; <strong>KMS encryption</strong> protects data at rest and in transit; and <strong>Macie, CloudTrail, and audit controls</strong> ensure compliance with privacy regulations like GDPR. The exam tests all four layers together.</p>
+        <p>The most common exam scenario: a data lake uses S3 + Glue Data Catalog. The question will ask which combination of IAM, Lake Formation, S3 bucket policy, and KMS provides the least-privilege access to specific tables or columns.</p>
+      </div>
+
+      <table class="domain-table">
+        <thead>
+          <tr><th>Task</th><th>Topic</th><th>Key services</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>4.1</td><td>Apply Authentication and Authorization Controls</td><td>IAM, Lake Formation, S3 bucket policies, Glue Data Catalog resource policies, VPC endpoints, S3 Access Points</td></tr>
+          <tr><td>4.2</td><td>Ensure Data Encryption and Masking</td><td>AWS KMS, SSE-S3, SSE-KMS, DSSE-KMS, envelope encryption, Redshift masking, Glue DataBrew</td></tr>
+          <tr><td>4.3</td><td>Prepare Logs for Audit and Comply with Privacy</td><td>Amazon Macie, AWS CloudTrail, S3 Object Lock, AWS Audit Manager, AWS Artifact</td></tr>
+        </tbody>
+      </table>
+
+      <div class="section-header" style="margin-top:48px; margin-bottom:20px;">
+        <h2 style="font-size:1.3rem;">Key concepts to master</h2>
+      </div>
+      <div class="terms-grid">
+        <div class="term-card"><div class="term-name">Least privilege</div><div class="term-def">Grant only the permissions needed to perform a specific task. Default deny everything; explicitly allow what's required.</div></div>
+        <div class="term-card"><div class="term-name">Envelope encryption</div><div class="term-def">KMS generates a DEK (data encryption key) to encrypt data. The DEK itself is encrypted by a KMS CMK. Only the encrypted DEK is stored alongside the data.</div></div>
+        <div class="term-card"><div class="term-name">Lake Formation</div><div class="term-def">Fine-grained access control for the Glue Data Catalog. Column-level, row-level, and tag-based permissions on top of IAM.</div></div>
+        <div class="term-card"><div class="term-name">SSE-KMS</div><div class="term-def">Server-Side Encryption with Customer Managed Keys. S3 encrypts each object with a unique DEK, encrypted by your CMK. Enables key rotation and audit trail.</div></div>
+        <div class="term-card"><div class="term-name">Cryptographic erasure</div><div class="term-def">GDPR right-to-erasure implementation: delete the KMS key for a customer's data, making it permanently unreadable without deleting files.</div></div>
+        <div class="term-card"><div class="term-name">Amazon Macie</div><div class="term-def">ML-powered PII discovery in S3. Scans objects and classifies sensitive data (SSN, credit cards, emails). Findings route to EventBridge for automated remediation.</div></div>
+        <div class="term-card"><div class="term-name">LF-TBAC</div><div class="term-def">Lake Formation Tag-Based Access Control. Assign tags to tables/columns, grant permissions by tag. Scales better than per-resource grants for large data catalogs.</div></div>
+        <div class="term-card"><div class="term-name">Data masking</div><div class="term-def">Obscure sensitive data for non-privileged users: static (replace in copy), dynamic (mask at query time), tokenization, hashing, or nullification.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- TASK 4.1 -->
+<div id="authz">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Task Statement 4.1</div>
+        <h2>Apply Authentication and Authorization Controls</h2>
+        <p>IAM policies, Lake Formation permissions, S3 bucket policies, VPC endpoints, and cross-account data sharing.</p>
+      </div>
+
+      <div class="intro-card">
+        <h3>IAM + Lake Formation: two permission systems working together</h3>
+        <p>When Lake Formation is enabled, access to Glue Data Catalog resources (databases, tables, columns) requires <strong>both</strong> IAM permissions AND Lake Formation permissions. IAM is the outer gate; Lake Formation is the inner gate. A user needs IAM permission to call the Glue API <em>and</em> Lake Formation permission to access the specific table. If either denies access, the request fails.</p>
+      </div>
+
+      <div class="section-header" style="margin-bottom:16px;"><h2 style="font-size:1.3rem;">Lake Formation Permissions</h2></div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>Permission type</th><th>Granularity</th><th>Example</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Database permissions</td><td>Entire database</td><td>Grant analyst role SELECT on all tables in the sales database</td></tr>
+          <tr><td>Table permissions</td><td>Single table</td><td>Grant data_science role SELECT on customers table only</td></tr>
+          <tr><td>Column-level security</td><td>Specific columns</td><td>Grant analyst role SELECT on customers table, EXCLUDE ssn, credit_card_number columns</td></tr>
+          <tr><td>Row-level filters</td><td>Rows matching a condition</td><td>Grant APAC analyst access to customers table WHERE region = 'APAC' only</td></tr>
+          <tr><td>LF-TBAC tags</td><td>Tag-based (scalable)</td><td>Tag tables with sensitivity=PII; grant finance role access to sensitivity=public only</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-warning">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <h4>Column exclusion vs column inclusion</h4>
+          <p>Lake Formation column permissions use an <strong>exclusion model</strong>: you grant SELECT on a table and specify which columns to <em>exclude</em>, rather than listing which columns are allowed. This means if a new column is added to the table, it is automatically visible to the grantee unless explicitly excluded. Design grants with this in mind — exclude by sensitivity classification, not by column name where possible. Use LF-TBAC to tag columns as PII=true and exclude all PII-tagged columns.</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:16px;"><h2 style="font-size:1.3rem;">S3 Bucket Policies for Data Lakes</h2></div>
+
+      <div class="cards-grid">
+        <div class="benefit-card">
+          <div class="card-icon icon-orange">🔐</div>
+          <h3>Enforce HTTPS</h3>
+          <p>Deny all S3 requests that don't use TLS. Condition: <code>"aws:SecureTransport": "false"</code> with Effect: Deny. Prevents data exposure over unencrypted connections. Apply to all data lake buckets as a baseline security control.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-blue">🏛️</div>
+          <h3>VPC Restriction</h3>
+          <p>Lock down a sensitive S3 bucket to only allow access from within a specific VPC. Condition: <code>"aws:SourceVpc": "vpc-xxxx"</code> with Effect: Deny on non-matching requests. Requires an S3 VPC Gateway Endpoint in the VPC.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-teal">🔗</div>
+          <h3>S3 Access Points</h3>
+          <p>Create named access points with per-use-case policies. Each data team gets their own access point (ARN) with a policy restricting them to their prefix. Simplifies bucket policy management — each access point policy is independent.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-purple">🌐</div>
+          <h3>Cross-Account Access</h3>
+          <p>Grant another AWS account access to S3 data: bucket policy allows the external account's principal, AND the external account's IAM policy allows access to the bucket. Both sides must grant permission. Use Resource Access Manager (RAM) for Lake Formation cross-account sharing.</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:16px;"><h2 style="font-size:1.3rem;">Network Controls</h2></div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>Endpoint type</th><th>Services</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>S3 Gateway Endpoint</td><td>S3, DynamoDB</td><td>Route S3 traffic within AWS backbone (no NAT Gateway needed). Free. Required to restrict S3 access to VPC-only.</td></tr>
+          <tr><td>Interface Endpoint (PrivateLink)</td><td>Kinesis, Glue, STS, Secrets Manager, KMS, etc.</td><td>Private IP in your VPC subnet for AWS service APIs. Prevents data from traversing the public internet.</td></tr>
+          <tr><td>VPC Peering / Transit Gateway</td><td>Cross-VPC</td><td>Connect multiple VPCs for cross-team or cross-account data access without public internet.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- TASK 4.2 -->
+<div id="encrypt">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Task Statement 4.2</div>
+        <h2>Ensure Data Encryption and Masking</h2>
+        <p>Server-side encryption options for S3, KMS key types, envelope encryption mechanics, and dynamic data masking for analytics.</p>
+      </div>
+
+      <div class="section-header" style="margin-bottom:16px;"><h2 style="font-size:1.3rem;">S3 Encryption Options</h2></div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>Option</th><th>Key management</th><th>Audit trail</th><th>Best for</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>SSE-S3 (AES-256)</td><td>AWS manages everything</td><td>No per-key audit</td><td>Default encryption with no compliance requirements</td></tr>
+          <tr><td>SSE-KMS</td><td>You manage CMK in KMS</td><td>CloudTrail logs every Decrypt call</td><td>Compliance, audit requirements, cross-account, key rotation</td></tr>
+          <tr><td>DSSE-KMS</td><td>Two independent KMS layers</td><td>Two audit trails</td><td>Dual-layer encryption for highly regulated data (SEC, CFTC)</td></tr>
+          <tr><td>SSE-C</td><td>You provide key per request</td><td>No KMS involvement</td><td>Bring-your-own-key scenarios; you manage key storage</td></tr>
+          <tr><td>Client-side encryption</td><td>You encrypt before upload</td><td>No AWS involvement</td><td>Maximum control; AWS never sees plaintext</td></tr>
+        </tbody>
+      </table>
+
+      <div class="intro-card">
+        <h3>How KMS envelope encryption works</h3>
+        <p>When S3 encrypts an object with SSE-KMS: (1) S3 asks KMS to generate a unique <strong>Data Encryption Key (DEK)</strong>. (2) KMS returns both the plaintext DEK and an encrypted copy of the DEK (encrypted with your CMK). (3) S3 uses the plaintext DEK to encrypt the object, then immediately discards the plaintext DEK. (4) The encrypted DEK is stored alongside the encrypted object in S3 metadata. To decrypt: S3 sends the encrypted DEK to KMS; KMS decrypts it using the CMK and returns the plaintext DEK; S3 uses it to decrypt the object. Your CMK never leaves KMS — only DEKs travel.</p>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <h4>KMS key types for the exam</h4>
+          <p><strong>AWS-owned keys</strong>: free, managed by AWS, no visibility or control — used by SSE-S3. <strong>AWS-managed keys</strong>: automatically created per-service (e.g., <code>aws/s3</code>), free, 3-year rotation, you can see them but can't control policy. <strong>Customer Managed Keys (CMK)</strong>: you create and manage, $1/month + $0.03/10K API calls, custom key policy, manual or automatic annual rotation. <strong>CloudHSM keys</strong>: FIPS 140-2 Level 3, hardware-backed, highest compliance requirement.</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:16px;"><h2 style="font-size:1.3rem;">Encryption by Service</h2></div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>Service</th><th>At-rest encryption</th><th>In-transit</th><th>Key detail</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Amazon S3</td><td>SSE-S3 (default), SSE-KMS, DSSE-KMS, SSE-C, CSE</td><td>HTTPS/TLS always available; enforce via bucket policy</td><td>Per-object DEK; enforce SSE-KMS via bucket policy Condition</td></tr>
+          <tr><td>Amazon Redshift</td><td>Hardware AES-256 (KMS or CloudHSM)</td><td>SSL for JDBC/ODBC connections</td><td>Enable at cluster creation; uses HSM-backed CEK → DEK hierarchy</td></tr>
+          <tr><td>Amazon RDS/Aurora</td><td>AES-256 via KMS (enable at creation)</td><td>SSL/TLS connections; enforce via parameter group</td><td>Snapshots encrypted with same key; read replicas inherit encryption</td></tr>
+          <tr><td>Amazon DynamoDB</td><td>Always encrypted (AWS-owned by default); CMK option available</td><td>HTTPS</td><td>CMK for compliance/audit; AWS-owned for simplicity</td></tr>
+          <tr><td>AWS Glue</td><td>Encrypt job bookmarks, metadata, CloudWatch logs (security config)</td><td>S3 encryption enforced by job IAM role</td><td>Use Glue Security Configurations for consistent encryption settings</td></tr>
+          <tr><td>Kinesis Data Streams</td><td>SSE with CMK (server-side)</td><td>HTTPS</td><td>Enable per-stream; applies to data at rest in the stream shards</td></tr>
+        </tbody>
+      </table>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:16px;"><h2 style="font-size:1.3rem;">Data Masking Strategies</h2></div>
+
+      <div class="cards-grid">
+        <div class="benefit-card">
+          <div class="card-icon icon-orange">🎭</div>
+          <h3>Static Masking</h3>
+          <p>Replace PII with fake-but-realistic values in a <em>copy</em> of the data. Original remains intact. Use for non-production environments (dev/test) so developers can work with realistic data without accessing real PII. AWS Glue DataBrew can detect and mask PII automatically.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-blue">⚡</div>
+          <h3>Dynamic Masking (Redshift)</h3>
+          <p>Mask data at query time based on the querying user's role — original data unchanged in storage. SQL: <code>CREATE MASKING POLICY hide_ssn AS (val TEXT) RETURNS TEXT USING ('XXX-XX-XXXX')</code>, then attach to column. Analysts see masked values; privileged users see real values.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-teal">🔢</div>
+          <h3>Tokenization</h3>
+          <p>Replace sensitive values with a random token that maps back to the original in a separate token vault. The application uses tokens; real values never leave the vault. Use for payment card data (PCI-DSS). Unlike hashing, tokenization is reversible for authorized lookups.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-purple">#️⃣</div>
+          <h3>Hashing / Pseudonymization</h3>
+          <p>Replace PII with a consistent hash (SHA-256 + salt). The same input always produces the same hash — allows joins across datasets without exposing real values. Not reversible without the original value. GDPR recognizes pseudonymization as a privacy-preserving technique (but not anonymization).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- TASK 4.3 -->
+<div id="privacy">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Task Statement 4.3</div>
+        <h2>Prepare Logs for Audit and Comply with Data Privacy</h2>
+        <p>GDPR compliance, Amazon Macie for PII discovery, CloudTrail for audit logging, and immutable storage with S3 Object Lock.</p>
+      </div>
+
+      <div class="intro-card">
+        <h3>Privacy regulations and the data engineer's responsibilities</h3>
+        <p>GDPR (EU) and similar regulations (CCPA, POPIA) impose specific technical requirements on how personal data is stored, accessed, and deleted. As a data engineer, your responsibilities include: enabling <strong>audit logging</strong> (who accessed what PII, when), implementing <strong>right to erasure</strong> (deleting or making unreadable all records for a specific individual), discovering <strong>where PII lives</strong> using Macie, and enforcing <strong>data retention and deletion</strong> using lifecycle rules and Object Lock.</p>
+      </div>
+
+      <div class="section-header" style="margin-bottom:16px;"><h2 style="font-size:1.3rem;">Amazon Macie — Automated PII Discovery</h2></div>
+
+      <div class="cards-grid">
+        <div class="benefit-card">
+          <div class="card-icon icon-orange">🔍</div>
+          <h3>What Macie does</h3>
+          <p>Scans S3 buckets using ML to identify PII: names, emails, SSNs, credit card numbers, passport numbers, health information. Generates findings categorized by severity. Runs on a schedule or on-demand. Integrates with EventBridge for automated remediation.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-blue">🤖</div>
+          <h3>Automated remediation</h3>
+          <p>Macie finding → EventBridge rule → Lambda function → auto-block public access on the bucket OR move file to quarantine prefix OR notify security team via SNS. This pattern is heavily tested: the event-driven loop from finding to automated action.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-teal">📋</div>
+          <h3>Custom data identifiers</h3>
+          <p>Define regex patterns for organization-specific PII that Macie doesn't detect by default (e.g., internal employee IDs, account numbers in a proprietary format). Combine with managed identifiers for comprehensive coverage.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="card-icon icon-purple">🗂️</div>
+          <h3>Catalog PII metadata</h3>
+          <p>After Macie discovery, tag Glue Data Catalog tables with PII classification metadata. Use these tags in Lake Formation LF-TBAC policies to automatically restrict access to any column or table tagged as PII=true, sensitivity=high, etc.</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:16px;"><h2 style="font-size:1.3rem;">CloudTrail — Audit Logging</h2></div>
+
+      <div class="intro-card">
+        <h3>Two types of CloudTrail events for data engineers</h3>
+        <p><strong>Management events</strong>: control-plane API calls (create bucket, modify Glue job, update IAM policy). Enabled by default in all trails. <strong>Data events</strong>: data-plane operations (S3 GetObject/PutObject/DeleteObject, DynamoDB GetItem/PutItem, Lambda invocations). Disabled by default — must be explicitly enabled. For GDPR audit trails, you need S3 data events to prove who accessed specific PII files and when.</p>
+      </div>
+
+      <div class="callout callout-warning">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <h4>Data events cost extra — enable selectively</h4>
+          <p>CloudTrail data events cost $0.10 per 100,000 events. A high-throughput S3 data lake can generate millions of GetObject events per day — enabling data events on all buckets can cost thousands of dollars per month. Best practice: enable data events only on buckets that contain PII or regulated data. Use S3 prefix filtering to narrow further: only log events on <code>s3://data-lake/silver/customers/</code>, not the entire bucket.</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:16px;"><h2 style="font-size:1.3rem;">GDPR Right to Erasure — Technical Approaches</h2></div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>Approach</th><th>How</th><th>Trade-offs</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Cryptographic erasure</td><td>Encrypt each customer's data with a unique per-customer KMS CMK. To erase: delete (schedule deletion of) the CMK. Data becomes permanently unreadable.</td><td>No file rewrites required. Works at any scale. CMK deletion has 7–30 day waiting period (can't be immediate).</td></tr>
+          <tr><td>Iceberg row-level DELETE</td><td>Run <code>DELETE FROM table WHERE customer_id = 'C001'</code> via Athena. Iceberg writes a delete file; data files are not immediately rewritten.</td><td>Surgical row deletion. Run periodic compaction to physically remove data. Requires Iceberg table format.</td></tr>
+          <tr><td>Full file rewrite (Glue)</td><td>Read all Parquet files, filter out the customer's rows, write new files, delete original files.</td><td>Works on any table format. Expensive for large datasets. Simple to implement.</td></tr>
+          <tr><td>DynamoDB delete</td><td>DeleteItem by customer_id (partition key). Immediate and permanent.</td><td>Straightforward for DynamoDB. Doesn't address copies in S3 data lake.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="section-header" style="margin-top:40px; margin-bottom:16px;"><h2 style="font-size:1.3rem;">Compliance Tools</h2></div>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>Service</th><th>Purpose</th><th>Key distinction</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>AWS Audit Manager</td><td>Continuously collect evidence of compliance with frameworks (GDPR, HIPAA, PCI-DSS, SOC 2). Maps AWS config checks to framework controls.</td><td>Proactive, ongoing evidence collection. Automated assessments. Produces audit-ready reports.</td></tr>
+          <tr><td>AWS Artifact</td><td>Download AWS compliance reports and agreements (ISO 27001, SOC 1/2/3, PCI-DSS Attestation of Compliance).</td><td>Reactive, on-demand document retrieval. AWS's own compliance certifications, not yours.</td></tr>
+          <tr><td>Amazon Macie</td><td>Discover and classify PII in S3. Alert on sensitive data exposure.</td><td>Data-level discovery. Macie finds the PII; Audit Manager tracks whether you're compliant with handling it.</td></tr>
+          <tr><td>AWS Config</td><td>Record configuration changes over time. Rules that alert when resources drift from desired state (e.g., S3 bucket becomes public).</td><td>Infrastructure-level compliance. Works with Audit Manager as an evidence source.</td></tr>
+          <tr><td>Amazon GuardDuty</td><td>Threat detection: anomalous IAM activity, malicious IPs, unusual S3 data access patterns.</td><td>Security threat detection, not compliance documentation. Detects active attacks or insider threats.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-success">
+        <div class="callout-icon">✅</div>
+        <div class="callout-body">
+          <h4>S3 Object Lock for immutable audit logs</h4>
+          <p>CloudTrail logs must be tamper-proof for regulatory compliance. Store CloudTrail logs in a dedicated S3 bucket with Object Lock in <strong>Compliance mode</strong>. This prevents even the root account from deleting logs before the retention period expires. Typical retention: 1–7 years depending on regulation. Pair with <strong>S3 Log File Validation</strong> (CloudTrail feature) to detect if log files were modified or deleted after delivery.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- PRACTICE QUESTIONS -->
+<div id="practice">
+  <div class="container">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag">Practice Questions</div>
+        <h2>Domain 4 Exam Practice</h2>
+        <p>These questions reflect the style and difficulty of actual DEA-C01 exam questions. The correct answer is highlighted in green.</p>
+      </div>
+
+      <div class="questions-list">
+
+        <div class="question-card">
+          <div class="question-stem">Q1. A company has a data lake in S3. A data analyst needs to query a customer table in the Glue Data Catalog but must NOT see the ssn and credit_card columns. The analyst already has IAM permissions to call Athena and Glue APIs. What is the most straightforward way to enforce column-level restriction?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Create a separate Glue table with those columns removed and grant IAM access to the new table</div>
+            <div class="option"><span class="option-letter">B</span> Create an Athena view that excludes those columns and grant IAM access to the view only</div>
+            <div class="option correct"><span class="option-letter">C</span> Use Lake Formation to grant the analyst SELECT on the customers table while excluding the ssn and credit_card columns</div>
+            <div class="option"><span class="option-letter">D</span> Use an S3 bucket policy to deny GetObject on the Parquet files containing those columns</div>
+          </div>
+          <div class="question-explanation"><strong>C is correct.</strong> Lake Formation provides native column-level security through the Grant Permissions dialog — you grant SELECT on the table and specify excluded columns. The analyst sees all other columns but ssn and credit_card are hidden. Option A (duplicate table) creates maintenance overhead. Option B (Athena view) works but Lake Formation is the purpose-built solution. Option D is not feasible — S3 objects contain all columns; you can't deny access to specific columns within a Parquet file via bucket policy.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q2. A data engineering team stores sensitive customer data in S3. The security team requires that all data be encrypted using keys managed by the company, with a CloudTrail audit log of every time a data file is decrypted. Which S3 encryption option meets these requirements?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> SSE-S3 (AES-256) with S3 default encryption enabled</div>
+            <div class="option"><span class="option-letter">B</span> SSE-C with customer-provided keys on each upload request</div>
+            <div class="option correct"><span class="option-letter">C</span> SSE-KMS with a Customer Managed Key (CMK)</div>
+            <div class="option"><span class="option-letter">D</span> Client-side encryption using the AWS Encryption SDK before uploading</div>
+          </div>
+          <div class="question-explanation"><strong>C is correct.</strong> SSE-KMS with a CMK satisfies both requirements: (1) company-managed key — you create and control the CMK in KMS, including the key policy; (2) CloudTrail audit trail — every KMS Decrypt call (which happens on every S3 GetObject for SSE-KMS objects) is logged in CloudTrail with the caller's identity, timestamp, and context. SSE-S3 uses AWS-managed keys with no per-key audit. SSE-C doesn't use KMS, so no CloudTrail audit. Client-side encryption provides control but no automatic CloudTrail integration.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q3. Amazon Macie discovers a finding that an S3 bucket containing customer PII has been made publicly accessible. The security team wants this to be automatically remediated within minutes without manual intervention. What is the most efficient architecture?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Configure Macie to send email alerts to the security team who then manually block access</div>
+            <div class="option"><span class="option-letter">B</span> Use AWS Config rules to check public access daily and send findings to an SQS queue</div>
+            <div class="option correct"><span class="option-letter">C</span> Configure Macie to publish findings to Amazon EventBridge, then create an EventBridge rule that triggers a Lambda function to call s3:PutPublicAccessBlock on the affected bucket</div>
+            <div class="option"><span class="option-letter">D</span> Enable AWS GuardDuty to detect and block public S3 access automatically</div>
+          </div>
+          <div class="question-explanation"><strong>C is correct.</strong> Macie findings are published to EventBridge. Create an EventBridge rule that matches Macie findings of type "Policy:IAMUser/S3BucketPublic" and targets a Lambda function. The Lambda calls the S3 API to enable Block Public Access on the bucket. This is fully automated, event-driven, and responds within seconds. Option A is manual. Option B (AWS Config) runs checks on a schedule, not in real-time. GuardDuty doesn't take automated remediation actions — it detects threats but doesn't block them.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q4. A company must comply with GDPR. A customer submits a "right to erasure" request. Their data exists in: (1) a Redshift data warehouse, (2) an S3 data lake with Parquet files, and (3) a DynamoDB table. What is the correct approach for each?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Delete the entire tables from all three services and restore from backup after removing the customer's rows</div>
+            <div class="option correct"><span class="option-letter">B</span> DELETE the customer's row in Redshift, use Iceberg row-level DELETE or file rewrite in S3, and DeleteItem in DynamoDB</div>
+            <div class="option"><span class="option-letter">C</span> Encrypt the customer's data with a new key and delete the key in all three services</div>
+            <div class="option"><span class="option-letter">D</span> Set the customer's PII fields to NULL in all three services without deleting the rows</div>
+          </div>
+          <div class="question-explanation"><strong>B is correct.</strong> Each service has the appropriate targeted deletion mechanism: Redshift supports standard SQL DELETE by customer_id; S3 data in Iceberg format supports row-level DELETE, or otherwise requires rewriting the Parquet files excluding that customer; DynamoDB's DeleteItem removes the item by its partition key. Option C (cryptographic erasure) is a valid alternative for S3, but not the simplest for Redshift and DynamoDB which have native delete operations. Option D (nullification) is pseudonymization, not erasure — it may not satisfy GDPR right to erasure if indirect identifiers remain.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q5. A data analyst needs to query data in a Glue Data Catalog table that is governed by Lake Formation. The analyst has an IAM policy with glue:GetTable and athena:StartQueryExecution permissions, but queries still fail with an "access denied" error. What is the most likely cause?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> The analyst's IAM role needs s3:GetObject permission on the underlying S3 bucket</div>
+            <div class="option correct"><span class="option-letter">B</span> The analyst has not been granted SELECT permission on the table in Lake Formation</div>
+            <div class="option"><span class="option-letter">C</span> Athena workgroup permissions are blocking the query</div>
+            <div class="option"><span class="option-letter">D</span> The Glue crawler needs to be re-run to refresh the table metadata</div>
+          </div>
+          <div class="question-explanation"><strong>B is correct.</strong> When Lake Formation is enabled, both IAM and Lake Formation permissions are required. The analyst has IAM permissions to call the APIs but hasn't been granted data-level access in Lake Formation. Lake Formation acts as an additional authorization layer on top of IAM — IAM permits the API call, Lake Formation permits the data access. Even with full IAM access, without a Lake Formation GRANT, the query fails. Option A is also required but is typically handled through the Lake Formation service role mechanism, not direct bucket permissions.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q6. A Redshift data warehouse serves both a privileged finance team (who need to see full SSNs) and an analyst team (who should see masked SSNs like 'XXX-XX-XXXX'). The same underlying table must serve both use cases without maintaining two copies of the data. What Redshift feature achieves this?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Row-level security (RLS) policy filtering rows by user role</div>
+            <div class="option"><span class="option-letter">B</span> Lake Formation column exclusions for the analyst role</div>
+            <div class="option correct"><span class="option-letter">C</span> Dynamic data masking policy attached to the SSN column, conditioned on user role</div>
+            <div class="option"><span class="option-letter">D</span> Two separate Redshift views: one with SSN for finance, one with NULL SSN for analysts</div>
+          </div>
+          <div class="question-explanation"><strong>C is correct.</strong> Redshift's Dynamic Data Masking (DDM) masks column values at query time based on the role of the querying user. The original data is unchanged in storage. Finance users assigned to the privileged role see the real SSN; analysts see 'XXX-XX-XXXX'. The masking policy is attached to the column and checks <code>current_user</code> or role membership. Option D (two views) works but requires ongoing maintenance. RLS filters rows, not column values. Lake Formation column exclusions hide the column entirely (null, not masked).</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q7. A compliance officer needs to prove that no one accessed a specific S3 bucket containing financial records over the past 90 days. Which AWS service and configuration provides this evidence?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> S3 Server Access Logs enabled on the bucket</div>
+            <div class="option"><span class="option-letter">B</span> AWS Config rules monitoring the bucket's configuration</div>
+            <div class="option correct"><span class="option-letter">C</span> AWS CloudTrail with S3 data events enabled for the specific bucket</div>
+            <div class="option"><span class="option-letter">D</span> Amazon GuardDuty S3 protection enabled on the account</div>
+          </div>
+          <div class="question-explanation"><strong>C is correct.</strong> CloudTrail data events for S3 log every GetObject, PutObject, DeleteObject call — capturing who (IAM principal), when (timestamp), and from where (IP, VPC). This provides a complete access audit trail for the compliance officer. S3 Server Access Logs (A) also capture access but are less reliable (best-effort delivery, less structured) and lack the depth of CloudTrail. AWS Config (B) tracks configuration changes, not data access. GuardDuty (D) detects threats but doesn't provide a comprehensive access log for compliance purposes.</div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-stem">Q8. A company needs to ensure their AWS CloudTrail audit logs stored in S3 cannot be deleted for 5 years, even by administrators with full IAM access. What is the correct configuration?</div>
+          <div class="question-options">
+            <div class="option"><span class="option-letter">A</span> Enable S3 Versioning and MFA Delete on the CloudTrail bucket</div>
+            <div class="option"><span class="option-letter">B</span> Create an S3 bucket policy denying DeleteObject for all principals except the root account</div>
+            <div class="option correct"><span class="option-letter">C</span> Enable S3 Object Lock in Compliance mode with a 5-year retention period on the CloudTrail bucket</div>
+            <div class="option"><span class="option-letter">D</span> Enable S3 Object Lock in Governance mode with a 5-year retention period on the CloudTrail bucket</div>
+          </div>
+          <div class="question-explanation"><strong>C is correct.</strong> S3 Object Lock <strong>Compliance mode</strong> is the only option where no one — not even the AWS root account — can delete objects before the retention period expires. Governance mode (D) can be bypassed by any IAM principal with the <code>s3:BypassGovernanceRetention</code> permission, including administrators. MFA Delete (A) adds a factor for deletion but doesn't prevent administrators with MFA from deleting. Bucket policies (B) can be modified by bucket owners with sufficient IAM permissions.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider" />
+<footer>
+  <strong>AWS Data Engineer Associate — DEA-C01</strong><br />
+  Domain 4: Data Security &amp; Governance &nbsp;·&nbsp; 18% of exam &nbsp;·&nbsp; ~12 questions
+</footer>
+
+</body>
+</html>

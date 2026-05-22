@@ -5,7 +5,8 @@
       "Bash(Get-ChildItem \"c:\\\\Users\\\\User\\\\Documents\\\\Github\\\\AWS-Cloud-Notes-Certifications\\\\AWS-Cloud-Practitioner\\\\01-Lessons\\\\Domain-2-Security and Compliance\\\\\" | Select-Object Name, Length, LastWriteTime)",
       "Bash(Get-ChildItem -Recurse -Filter \"*.md\" \"c:\\\\Users\\\\User\\\\Documents\\\\Github\\\\AWS-Cloud-Notes-Certifications\\\\AWS-Cloud-Practitioner\\\\02-Services\")",
       "Bash(Measure-Object)",
-      "Bash(Select-Object -ExpandProperty Count)"
+      "Bash(Select-Object -ExpandProperty Count)",
+      "Bash(git checkout *)"
     ]
   }
 }
